@@ -81,8 +81,8 @@
 	staticOverlays["animal"] = staticOverlay
 
 
-//Generic Collide(). Override MobCollide() and ObjCollide() instead of this.
-/mob/living/Collide(atom/A)
+//Generic Bump(). Override MobCollide() and ObjCollide() instead of this.
+/mob/living/Bump(atom/A)
 	if(..()) //we are thrown onto something
 		return
 	if (buckled || now_pushing)
@@ -138,9 +138,6 @@
 					if(!(world.time % 5))
 						to_chat(src, "<span class='warning'>[L] is restraining [P], you cannot push past.</span>")
 					return 1
-
-	if(moving_diagonally)//no mob swap during diagonal moves.
-		return 1
 
 	if(!M.buckled && !M.has_buckled_mobs())
 		var/mob_swap
@@ -200,8 +197,6 @@
 //Called when we want to push an atom/movable
 /mob/living/proc/PushAM(atom/movable/AM)
 	if(now_pushing)
-		return 1
-	if(moving_diagonally)// no pushing during diagonal moves.
 		return 1
 	if(!client && (mob_size < MOB_SIZE_SMALL))
 		return
@@ -501,24 +496,52 @@
 	return
 
 /mob/living/Move(atom/newloc, direct)
-	if (buckled && buckled.loc != newloc) //not updating position
-		if (!buckled.anchored)
-			return buckled.Move(newloc, direct)
-		else
-			return 0
+	if(buckled)
+		return buckled.Move(newloc, direct)
 
 	var/old_direction = dir
-	var/turf/T = loc
+	var/turf/oldT = loc
 	. = ..()
+	
+	if(. && pulling) //we were pulling a thing and didn't lose it during our move.
+		var/distance = bounds_dist(src, pulling)
+		if(pulling.anchored)
+			stop_pulling()
+		else if(distance > 16) // If we could move something in an angle this would be so much easier
+			step_towards(pulling, src, distance-16)
+			var/turf/myT = get_turf(src)
+			var/turf/theirT = get_turf(pulling)
+			var/x_dist = ((theirT.x - myT.x) * 32) - step_x + pulling.step_x
+			var/y_dist = ((theirT.y - myT.y) * 32) - step_y + pulling.step_y
+			
+			var/pull_dir = get_dir(src, pulling)
+			var/move_dir
+			if(!(pull_dir in GLOB.diagonals)) // We want to slowly move it to the same axis of movement as us
+				if(pull_dir & (NORTH | SOUTH))
+					switch(x_dist)
+						if(-INFINITY to -1)
+							move_dir = EAST
+						if(1 to INFINITY)
+							move_dir = WEST
+				else if(pull_dir & (EAST | WEST))
+					switch(y_dist)
+						if(-INFINITY to -1)
+							move_dir = NORTH
+						if(1 to INFINITY)
+							move_dir = SOUTH
+			if(move_dir)
+				var/old_pulling_dir = pulling.dir
+				step(pulling, move_dir, 1)
+				pulling.dir = old_pulling_dir
 
-	if(pulledby && moving_diagonally != FIRST_DIAG_STEP && get_dist(src, pulledby) > 1)//separated from our puller and not in the middle of a diagonal move.
+	if(pulledby && get_dist(src, pulledby) > 1)//separated from our puller and not in the middle of a diagonal move.
 		pulledby.stop_pulling()
 
 	if(active_storage && !(CanReach(active_storage.parent,view_only = TRUE)))
 		active_storage.close(src)
 
 	if(lying && !buckled && prob(getBruteLoss()*200/maxHealth))
-		makeTrail(newloc, T, old_direction)
+		makeTrail(newloc, oldT, old_direction)
 
 /mob/living/movement_delay(ignorewalk = 0)
 	. = 0

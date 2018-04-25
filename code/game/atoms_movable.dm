@@ -1,6 +1,13 @@
 /atom/movable
 	layer = OBJ_LAYER
-	var/last_move = null
+	appearance_flags = TILE_BOUND|PIXEL_SCALE
+
+	// Movement related vars
+	step_size = 8
+	var/last_move = NONE
+	var/walking = NONE
+
+	// Misc
 	var/anchored = FALSE
 	var/datum/thrownthing/throwing = null
 	var/throw_speed = 2 //How many tiles to move per ds when being thrown. Float values are fully supported
@@ -19,11 +26,8 @@
 	var/inertia_next_move = 0
 	var/inertia_move_delay = 5
 	var/pass_flags = 0
-	var/moving_diagonally = 0 //0: not doing a diagonal move. 1 and 2: doing the first/second step of the diagonal move
 	var/list/client_mobs_in_contents // This contains all the client mobs within this container
 	var/list/acted_explosions	//for explosion dodging
-	glide_size = 8
-	appearance_flags = TILE_BOUND|PIXEL_SCALE
 	var/datum/forced_movement/force_moving = null	//handled soley by forced_movement.dm
 	var/floating = FALSE
 	var/movement_type = GROUND		//Incase you have multiple types, you automatically use the most useful one. IE: Skating on ice, flippers on water, flying over chasm/space, etc.
@@ -31,7 +35,7 @@
 	var/grab_state = 0
 
 /atom/movable/vv_edit_var(var_name, var_value)
-	var/static/list/banned_edits = list("step_x", "step_y", "step_size")
+	var/static/list/banned_edits = list()
 	var/static/list/careful_edits = list("bound_x", "bound_y", "bound_width", "bound_height")
 	if(var_name in banned_edits)
 		return FALSE	//PLEASE no.
@@ -142,91 +146,16 @@
 
 
 /atom/movable/Move(atom/newloc, direct = 0)
-	var/atom/movable/pullee = pulling
-	var/turf/T = loc
-	if(pulling)
-		if(pullee && get_dist(src, pullee) > 1)
-			stop_pulling()
-
-		if(pullee && pullee.loc != loc && !isturf(pullee.loc) ) //to be removed once all code that changes an object's loc uses forceMove().
-			log_game("DEBUG:[src]'s pull on [pullee] wasn't broken despite [pullee] being in [pullee.loc]. Pull stopped manually.")
-			stop_pulling()
-	if(!loc || !newloc)
+	if(!loc || !newloc || anchored)
 		return FALSE
+
 	var/atom/oldloc = loc
 
-	if(loc != newloc)
-		if (!(direct & (direct - 1))) //Cardinal move
-			. = ..()
-		else //Diagonal move, split it into cardinal moves
-			moving_diagonally = FIRST_DIAG_STEP
-			var/first_step_dir
-			if (direct & NORTH)
-				if (direct & EAST)
-					if (step(src, NORTH))
-						first_step_dir = NORTH
-						moving_diagonally = SECOND_DIAG_STEP
-						. = step(src, EAST)
-					else if (step(src, EAST))
-						first_step_dir = EAST
-						moving_diagonally = SECOND_DIAG_STEP
-						. = step(src, NORTH)
-				else if (direct & WEST)
-					if (step(src, NORTH))
-						first_step_dir = NORTH
-						moving_diagonally = SECOND_DIAG_STEP
-						. = step(src, WEST)
-					else if (step(src, WEST))
-						first_step_dir = WEST
-						moving_diagonally = SECOND_DIAG_STEP
-						. = step(src, NORTH)
-			else if (direct & SOUTH)
-				if (direct & EAST)
-					if (step(src, SOUTH))
-						first_step_dir = SOUTH
-						moving_diagonally = SECOND_DIAG_STEP
-						. = step(src, EAST)
-					else if (step(src, EAST))
-						first_step_dir = EAST
-						moving_diagonally = SECOND_DIAG_STEP
-						. = step(src, SOUTH)
-				else if (direct & WEST)
-					if (step(src, SOUTH))
-						first_step_dir = SOUTH
-						moving_diagonally = SECOND_DIAG_STEP
-						. = step(src, WEST)
-					else if (step(src, WEST))
-						first_step_dir = WEST
-						moving_diagonally = SECOND_DIAG_STEP
-						. = step(src, SOUTH)
-			if(!. && moving_diagonally == SECOND_DIAG_STEP)
-				setDir(first_step_dir)
-			moving_diagonally = 0
-			return
-
-	if(!loc || (loc == oldloc && oldloc != newloc))
-		last_move = 0
-		return
-
-	if(.)
-		Moved(oldloc, direct)
-	if(. && pulling && pulling == pullee) //we were pulling a thing and didn't lose it during our move.
-		if(pulling.anchored)
-			stop_pulling()
-			return
-		var/pull_dir = get_dir(src, pulling)
-		if(get_dist(src, pulling) > 1 || ((pull_dir - 1) & pull_dir)) //puller and pullee more than one tile away or in diagonal position
-			pulling.Move(T, get_dir(pulling, T)) //the pullee tries to reach our previous position
-			if(pulling && get_dist(src, pulling) > 1) //the pullee couldn't keep up
-				stop_pulling()
-		if(pulledby && moving_diagonally != FIRST_DIAG_STEP && get_dist(src, pulledby) > 1)//separated from our puller and not in the middle of a diagonal move.
-			pulledby.stop_pulling()
-
+	. = ..()
 
 	last_move = direct
 	setDir(direct)
-	if(. && has_buckled_mobs() && !handle_buckled_mob_movement(loc,direct)) //movement failed due to buckled mob(s)
-		return FALSE
+	Moved(oldloc, direct)
 
 //Called after a successful Move(). By this point, we've already moved
 /atom/movable/proc/Moved(atom/OldLoc, Dir, Forced = FALSE)
@@ -272,23 +201,21 @@
 // This is automatically called when something enters your square
 //oldloc = old location on atom, inserted when forceMove is called and ONLY when forceMove is called!
 /atom/movable/Crossed(atom/movable/AM, oldloc)
-	SendSignal(COMSIG_MOVABLE_CROSSED, AM)
+	SendSignal(COMSIG_MOVABLE_CROSSED, AM, oldloc)
 
 /atom/movable/Uncrossed(atom/movable/AM)
 	SendSignal(COMSIG_MOVABLE_UNCROSSED, AM)
 
-//This is tg's equivalent to the byond bump, it used to be called bump with a second arg
-//to differentiate it, naturally everyone forgot about this immediately and so some things
-//would bump twice, so now it's called Collide
-/atom/movable/proc/Collide(atom/A)
+/atom/movable/Bump(atom/A)
+	if(!A)
+		CRASH("Bump was called with no argument.")
 	SendSignal(COMSIG_MOVABLE_COLLIDE, A)
-	if(A)
-		if(throwing)
-			throwing.hit_atom(A)
-			. = TRUE
-			if(!A || QDELETED(A))
-				return
-		A.CollidedWith(src)
+	if(throwing)
+		throwing.hit_atom(A)
+		. = TRUE
+		if(QDELETED(A))
+			return
+	A.CollidedWith(src)
 
 /atom/movable/proc/forceMove(atom/destination)
 	. = FALSE

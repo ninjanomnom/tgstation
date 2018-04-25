@@ -507,7 +507,7 @@
 	src << browse(dat, "window=manifest;size=387x420;can_close=1")
 
 /mob/dead/new_player/Move()
-	return 0
+	return FALSE
 
 
 /mob/dead/new_player/proc/close_spawn_windows()

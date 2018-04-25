@@ -101,7 +101,7 @@
 	return 0 //Will there be an impact? Who knows.  Will we see it? No.
 
 
-/obj/singularity/Collide(atom/A)
+/obj/singularity/Bump(atom/A)
 	consume(A)
 	return
 
