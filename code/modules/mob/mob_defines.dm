@@ -2,7 +2,12 @@
 	datum_flags = DF_USE_TAG
 	density = TRUE
 	layer = MOB_LAYER
-	animate_movement = 2
+
+	bound_width = 16
+	bound_height = 16
+	bound_x = 8
+	bound_y = 8
+
 	flags_1 = HEAR_1
 	hud_possible = list(ANTAG_HUD)
 	pressure_resistance = 8

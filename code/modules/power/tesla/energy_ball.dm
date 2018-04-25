@@ -123,7 +123,7 @@
 	EB.orbit(src, orbitsize, pick(FALSE, TRUE), rand(10, 25), pick(3, 4, 5, 6, 36))
 
 
-/obj/singularity/energy_ball/Collide(atom/A)
+/obj/singularity/energy_ball/Bump(atom/A)
 	dust_mobs(A)
 
 /obj/singularity/energy_ball/CollidedWith(atom/movable/AM)

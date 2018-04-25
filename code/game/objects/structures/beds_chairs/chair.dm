@@ -4,6 +4,12 @@
 	icon = 'icons/obj/chairs.dmi'
 	icon_state = "chair"
 	anchored = TRUE
+
+	bound_width = 16
+	bound_height = 16
+	bound_x = 8
+	bound_y = 8
+
 	can_buckle = 1
 	buckle_lying = 0 //you sit in a chair, not lay
 	resistance_flags = NONE
