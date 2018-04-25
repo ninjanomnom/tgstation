@@ -290,6 +290,11 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 		return
 	ghostize(0)
 
+/mob/dead/observer/Move(newloc, direct)
+	if(!updatedir)
+		direct = SOUTH
+	return ..()
+
 /mob/dead/observer/is_active()
 	return 0
 
