@@ -295,9 +295,6 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 		direct = SOUTH
 	return ..()
 
-/mob/dead/observer/is_active()
-	return 0
-
 /mob/dead/observer/verb/reenter_corpse()
 	set category = "Ghost"
 	set name = "Re-enter Corpse"
