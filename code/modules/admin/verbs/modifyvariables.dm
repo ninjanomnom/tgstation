@@ -4,9 +4,6 @@ GLOBAL_LIST_INIT(VVicon_edit_lock, list("icon", "icon_state", "overlays", "under
 GLOBAL_PROTECT(VVicon_edit_lock)
 GLOBAL_LIST_INIT(VVckey_edit, list("key", "ckey"))
 GLOBAL_PROTECT(VVckey_edit)
-GLOBAL_LIST_INIT(VVpixelmovement, list("step_x", "step_y", "bound_height", "bound_width", "bound_x", "bound_y"))
-GLOBAL_PROTECT(VVpixelmovement)
-
 
 /client/proc/vv_get_class(var/var_name, var/var_value)
 	if(isnull(var_value))
@@ -560,13 +557,6 @@ GLOBAL_PROTECT(VVpixelmovement)
 		var/prompt = alert(src, "Editing this var changes this value on potentially thousands of items that share the same combination of armor values. If you want to edit the armor of just one item, use the \"Modify armor values\" dropdown item", "DANGER", "ABORT ", "Continue", " ABORT")
 		if (prompt != "Continue")
 			return
-	if(variable in GLOB.VVpixelmovement)
-		if(!check_rights(R_DEBUG))
-			return
-		var/prompt = alert(src, "Editing this var may irreparably break tile gliding for the rest of the round. THIS CAN'T BE UNDONE", "DANGER", "ABORT ", "Continue", " ABORT")
-		if (prompt != "Continue")
-			return
-
 
 	var/default = vv_get_class(variable, var_value)
 

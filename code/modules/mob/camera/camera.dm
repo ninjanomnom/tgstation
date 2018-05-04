@@ -3,7 +3,7 @@
 /mob/camera
 	name = "camera mob"
 	density = FALSE
-	anchored = TRUE
+	anchored = FALSE
 	status_flags = GODMODE  // You can't damage it.
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	see_in_dark = 7

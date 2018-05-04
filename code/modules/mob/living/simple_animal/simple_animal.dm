@@ -139,7 +139,7 @@
 				if(!(stop_automated_movement_when_pulled && pulledby)) //Some animals don't move when pulled
 					var/anydir = pick(GLOB.cardinals)
 					if(Process_Spacemove(anydir))
-						Move(get_step(src, anydir), anydir)
+						step(src, anydir)
 						turns_since_move = 0
 			return 1
 

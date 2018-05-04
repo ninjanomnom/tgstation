@@ -3,7 +3,7 @@
 	appearance_flags = TILE_BOUND|PIXEL_SCALE
 
 	// Movement related vars
-	step_size = 8
+	step_size = 16
 	var/last_move = NONE
 	var/walking = NONE
 
@@ -35,12 +35,6 @@
 	var/grab_state = 0
 
 /atom/movable/vv_edit_var(var_name, var_value)
-	var/static/list/banned_edits = list()
-	var/static/list/careful_edits = list("bound_x", "bound_y", "bound_width", "bound_height")
-	if(var_name in banned_edits)
-		return FALSE	//PLEASE no.
-	if((var_name in careful_edits) && (var_value % world.icon_size) != 0)
-		return FALSE
 	switch(var_name)
 		if("x")
 			var/turf/T = locate(var_value, y, z)
