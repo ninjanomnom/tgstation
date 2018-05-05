@@ -3,7 +3,7 @@
 	appearance_flags = TILE_BOUND|PIXEL_SCALE
 
 	// Movement related vars
-	step_size = 16
+	step_size = 8
 	var/last_move = NONE
 	var/walking = NONE
 
