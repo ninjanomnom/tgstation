@@ -4,6 +4,7 @@
 
 	// Movement related vars
 	step_size = 8
+	var/last_move_time = 0
 	var/last_move = NONE
 	var/walking = NONE
 
