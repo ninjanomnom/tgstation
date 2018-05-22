@@ -29,21 +29,11 @@
 	return
 
 //Needs to be phased out eventually in favor of movespeed_ds/s/tick hopefully!
-/mob/proc/movement_delay()	//update /living/movement_delay() if you change this
+/mob/proc/_movement_delay()	//update /living/movement_delay() if you change this
 	return 0
 
 /mob/proc/movespeed_ds()			//Pixels per decisecond
-	. = 32							//Incase of runtimes, we default to 1 tile per decisecond.
-	//The following line is assuming that mobs with delay 0 can move once per every movement_delay() ticks in the old code, so now we convert \
-	that to pixel speed only we evaluate it every tick rather than 1 tile per every <x> ticks. Very inefficient math code in the hopes we get rid of old-style movedelay numbers \
-	entirely later on and move to a pixels-per-second delay system..
-	var/oldstyle_slowdown = movement_delay()
-	var/tiles_per_second = world.fps
-	if(oldstyle_slowdown > 0)
-		tiles_per_second /= (oldstyle_slowdown + 1)
-	else if(oldstyle_slowdown < 0)
-		tiles_per_second *= ((-oldstyle_slowdown) + 1)
-	return (tiles_per_second / 10) * 32
+	. = cached_movespeed
 
 /mob/proc/movespeed_s()				//Pixels per second
 	return movespeed_ds() * 10
@@ -104,7 +94,7 @@
 	var/oldloc = mob.loc
 
 	var/pixels_to_move = mob.movespeed_ds() + pixel_move_overrun	//how many pixels we should move plus old overrun
-	pixel_move_overrun = pixels_to_move % 1						//round off overrun and store
+	pixel_move_overrun = MODULUS(pixels_to_move, 1)						//round off overrun and store
 	pixels_to_move -= pixel_move_overrun						//get rid of overrun
 
 	if(L.confused)												//randomly change dirs or whatever if you're unable to walk straight

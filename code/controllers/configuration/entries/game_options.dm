@@ -176,6 +176,16 @@
 
 /datum/config_entry/flag/emojis
 
+/datum/config_entry/number/mob_base_pixel_speed		//pixels per decisecond
+	var/static/value_cache = 0
+	config_entry_value = 0
+	default = 0
+
+/datum/config_entry/number/mob_base_pixel_speed/ValidateAndSet()
+	. = ..()
+	if(.)
+		value_cache = config_entry_value
+
 /datum/config_entry/number/run_delay	//Used for modifying movement speed for mobs.
 	var/static/value_cache = 0
 

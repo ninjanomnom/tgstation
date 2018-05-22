@@ -13,6 +13,7 @@
 
 	AddSpell(new /obj/effect/proc_holder/spell/aoe_turf/repulse/xeno(src))
 	AddAbility(new /obj/effect/proc_holder/alien/royal/praetorian/evolve())
+	add_movespeed_modifier(MOVESPEED_MODIFIER_ALIEN_PRAETORIAN)
 	. = ..()
 
 /mob/living/carbon/alien/humanoid/royal/praetorian/create_internal_organs()
@@ -21,11 +22,6 @@
 	internal_organs += new /obj/item/organ/alien/acid
 	internal_organs += new /obj/item/organ/alien/neurotoxin
 	..()
-
-
-/mob/living/carbon/alien/humanoid/royal/praetorian/movement_delay()
-	. = ..()
-	. += 1
 
 /obj/effect/proc_holder/alien/royal/praetorian/evolve
 	name = "Evolve"

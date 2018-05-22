@@ -583,6 +583,7 @@
 		if(S.chemical_cost >=0 && S.can_be_used_by(src))
 			statpanel("[S.panel]",((S.chemical_cost > 0) ? "[S.chemical_cost]" : ""),S)
 
+#define USER_FACE_DIRECTION_DELAY 0.5
 // facing verbs
 /mob/proc/canface()
 	if(!canmove)
@@ -607,7 +608,7 @@
 	if(!canface())
 		return FALSE
 	setDir(EAST)
-	client.move_delay += movement_delay()
+	client.move_delay = world.time + USER_FACE_DIRECTION_DELAY
 	return TRUE
 
 /mob/verb/westface()
@@ -615,7 +616,7 @@
 	if(!canface())
 		return FALSE
 	setDir(WEST)
-	client.move_delay += movement_delay()
+	client.move_delay = world.time + USER_FACE_DIRECTION_DELAY
 	return TRUE
 
 /mob/verb/northface()
@@ -623,7 +624,7 @@
 	if(!canface())
 		return FALSE
 	setDir(NORTH)
-	client.move_delay += movement_delay()
+	client.move_delay = world.time + USER_FACE_DIRECTION_DELAY
 	return TRUE
 
 /mob/verb/southface()
@@ -631,7 +632,7 @@
 	if(!canface())
 		return FALSE
 	setDir(SOUTH)
-	client.move_delay += movement_delay()
+	client.move_delay = world.time + USER_FACE_DIRECTION_DELAY
 	return TRUE
 
 /mob/proc/IsAdvancedToolUser()//This might need a rename but it should replace the can this mob use things check

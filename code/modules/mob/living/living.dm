@@ -502,7 +502,7 @@
 	var/old_direction = dir
 	var/turf/oldT = loc
 	. = ..()
-	
+
 	if(. && pulling) //we were pulling a thing and didn't lose it during our move.
 		var/distance = bounds_dist(src, pulling)
 		if(pulling.anchored)
@@ -513,7 +513,7 @@
 			var/turf/theirT = get_turf(pulling)
 			var/x_dist = ((theirT.x - myT.x) * 32) - step_x + pulling.step_x
 			var/y_dist = ((theirT.y - myT.y) * 32) - step_y + pulling.step_y
-			
+
 			var/pull_dir = get_dir(src, pulling)
 			var/move_dir
 			if(!(pull_dir in GLOB.diagonals)) // We want to slowly move it to the same axis of movement as us
@@ -1057,7 +1057,7 @@
 	update_transform()
 	if(!lying && lying_prev)
 		if(client)
-			client.move_delay = world.time + movement_delay()
+			client.move_delay = world.time += count_oldstyle_slowdown()
 	lying_prev = lying
 	return canmove
 

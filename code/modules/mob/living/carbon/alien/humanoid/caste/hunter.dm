@@ -10,10 +10,9 @@
 	internal_organs += new /obj/item/organ/alien/plasmavessel/small
 	..()
 
-/mob/living/carbon/alien/humanoid/hunter/movement_delay()
-	. = -1	//hunters are sanic
-	. += ..()	//but they still need to slow down on stun
-
+/mob/living/carbon/alien/humanoid/hunter/Initialize()
+	add_movespeed_modifier(MOVESPEED_MODIFIER_ALIEN_HUNTER)
+	. += ..()
 
 //Hunter verbs
 

@@ -1,3 +1,12 @@
 
 #define MOVESPEED_DATA_INDEX_PRIORITY 1
 #define MOVESPEED_DATA_INDEX_OLDSTYLE_SLOWDOWN 2
+
+//args for certain modifiers
+#define MOVESPEED_MODIFIER_ALIEN_QUEEN					"ALIEN_QUEEN_MODIFIER",			100,	oldstyle_slowdown = 3
+#define MOVESPEED_MODIFIER_ALIEN_PRAETORIAN				"ALIEN_PRAETORIAN_MODIFIER",	100,	oldstyle_slowdown = 1
+#define MOVESPEED_MODIFIER_ALIEN_HUNTER					"ALIEN_HUNTER_MODIFIER",		100,	oldstyle_slowdown = -1
+
+#define MOVESPEED_MODIFIER_PAI_INNATE					"PAI_INNATE"					100,	oldstyle_slowdown = 1
+#define MOVESPEED_MODIFIER_PAI_SPACEWALK				"PAI_SPACEWALK"					100,	oldstyle_slowdown = 2
+
