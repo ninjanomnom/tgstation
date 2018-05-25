@@ -4,17 +4,22 @@
 	oldstyle slowdown/speedup amount, \
 	))
 
-/mob/proc/add_movespeed_modifier(id, priority = 0, override = FALSE, oldstyle_slowdown = 0)
-	if(LAZYACCESS(movespeed_modification, id) && !override)
-		return
-	LAZYSET(movespeed_modification, id, list(priority, oldstyle_slowdown))
+/mob/proc/add_movespeed_modifier(id, priority = 0, flags = NONE, override = FALSE, oldstyle_slowdown = 0)
+	if(LAZYACCESS(movespeed_modification, id))
+		if(!override)
+			return FALSE
+		else
+			remove_movespeed_modifier(id)
+	LAZYSET(movespeed_modification, id, list(priority, flags, oldstyle_slowdown))
 	sort_movespeed_modlist()
 	update_movespeed()
+	return TRUE
 
 /mob/proc/remove_movespeed_modifier(id)
 	LAZYREMOVE(movespeed_modification, id)
 	UNSETEMPTY(movespeed_modification)
 	update_movespeed()
+	return TRUE
 
 /mob/proc/update_movespeed(resort = FALSE)
 	if(resort)
@@ -22,7 +27,7 @@
 	. = CONFIG_GET(number/mob_base_pixel_speed)
 	if(isnull(.))
 		. = 32
-	for(var/id in movespeed_modification)
+	for(var/id in get_movespeed_modifiers())
 		var/list/data = movespeed_modification[id]
 		var/oldstyle_slowdown = data[MOVESPEED_DATA_INDEX_OLDSTYLE_SLOWDOWN]
 		if(oldstyle_slowdown > 0)
@@ -31,9 +36,12 @@
 			. *= ((-oldstyle_slowdown) + 1)
 	cached_movespeed = .
 
+/mob/proc/get_movespeed_modifiers()
+	return movespeed_modification
+
 /mob/proc/count_oldstyle_slowdown()
 	. = 0
-	for(var/id in movespeed_modification)
+	for(var/id in get_movespeed_modifiers())
 		var/list/data = movespeed_modification[id]
 		. += data[MOVESPEED_DATA_INDEX_OLDSTYLE_SLOWDOWN]
 

@@ -150,5 +150,5 @@
 		return
 	Show()
 
-/mob/camera/imaginary_friend/movement_delay()
-	return 2
+/mob/camera/imaginary_friend/movespeed_ds()
+	return 10.6666667

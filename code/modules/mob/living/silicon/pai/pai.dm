@@ -76,11 +76,6 @@
 	canmove = FALSE
 	var/silent = FALSE
 	var/brightness_power = 5
-	var/slowdown = 0
-
-/mob/living/silicon/pai/movement_delay()
-	. = ..()
-	. += slowdown
 
 /mob/living/silicon/pai/can_unbuckle()
 	return FALSE

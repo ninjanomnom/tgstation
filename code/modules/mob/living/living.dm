@@ -543,26 +543,23 @@
 	if(lying && !buckled && prob(getBruteLoss()*200/maxHealth))
 		makeTrail(newloc, oldT, old_direction)
 
-/mob/living/movement_delay(ignorewalk = 0)
-	. = 0
-	if(isopenturf(loc) && !is_flying())
-		var/turf/open/T = loc
-		. += T.slowdown
+/mob/living/toggle_move_intent()
+	. = ..()
+	var/mod = 0
 	var/static/datum/config_entry/number/run_delay/config_run_delay
 	var/static/datum/config_entry/number/walk_delay/config_walk_delay
-	if(isnull(config_run_delay))
-		config_run_delay = CONFIG_GET(number/run_delay)
-		config_walk_delay = CONFIG_GET(number/walk_delay)
-	if(ignorewalk)
-		. += config_run_delay.value_cache
+	if(isnull(config_run_delay) || isnull(config_walk_delay))
+		config_run_delay = CONFIG_GET_DATUM(number/run_delay)
+		config_walk_delay = CONFIG_GET_DATUM(number/walk_delay)
+	if(m_intent == MOVE_INTENT_WALK)
+		mod = config_walk_delay.config_entry_value
 	else
-		switch(m_intent)
-			if(MOVE_INTENT_RUN)
-				if(drowsyness > 0)
-					. += 6
-				. += config_run_delay.value_cache
-			if(MOVE_INTENT_WALK)
-				. += config_walk_delay.value_cache
+		mod = config_run_delay.config_entry_value
+	add_movespeed_modifier(MOVESPEED_ID_MOB_WALK_RUN_CONFIG_SPEED, 100, override = TRUE, oldstyle_slowdown = mod)
+
+/mob/living/proc/update_turf_movespeed(turf/open/T)
+	if(isopenturf(T) && !is_flying())
+		add_movespeed_modifier(MOVESPEED_ID_LIVING_TURF_SPEEDMOD, 100, override = TRUE, oldstyle_slowdown = T.slowdown)
 
 /mob/living/proc/makeTrail(turf/target_turf, turf/start, direction)
 	if(!has_gravity())

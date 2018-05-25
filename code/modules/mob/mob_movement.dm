@@ -455,7 +455,11 @@
 	if(mob)
 		mob.toggle_move_intent()
 
-/mob/proc/toggle_move_intent()
+/mob/proc/toggle_move_intent(mob/user)
+	if(m_intent == MOVE_INTENT_RUN)
+		m_intent = MOVE_INTENT_WALK
+	else
+		m_intent = MOVE_INTENT_RUN
 	if(hud_used && hud_used.static_inventory)
 		for(var/obj/screen/mov_intent/selector in hud_used.static_inventory)
-			selector.toggle(src)
+			selector.update_icon()

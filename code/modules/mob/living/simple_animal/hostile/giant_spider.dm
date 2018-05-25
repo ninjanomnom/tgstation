@@ -174,12 +174,13 @@
 	mob_size = MOB_SIZE_LARGE
 	gold_core_spawnable = NO_SPAWN
 
-/mob/living/simple_animal/hostile/poison/giant_spider/tarantula/movement_delay()
+/mob/living/simple_animal/hostile/poison/giant_spider/tarantula/Moved()
 	var/turf/T = get_turf(src)
 	if(locate(/obj/structure/spider/stickyweb) in T)
 		speed = 2
 	else
 		speed = 7
+	update_simplemob_varspeed()
 	. = ..()
 
 //midwives are the queen of the spiders, can send messages to all them and web faster. That rare round where you get a queen spider and turn your 'for honor' players into 'r6siege' players will be a fun one.

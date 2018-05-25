@@ -154,6 +154,10 @@
 		has_opaque_atom = TRUE // Make sure to do this before reconsider_lights(), incase we're on instant updates. Guaranteed to be on in this case.
 		reconsider_lights()
 
+	if(isliving(AM))
+		var/mob/living/L = AM
+		L.update_turf_movespeed(src)
+
 /turf/open/Entered(atom/movable/AM)
 	..()
 	//melting

@@ -24,7 +24,7 @@
 	name = "squeeky floor"
 	var/sound
 
-/turf/open/indestructible/sound/Entered(var/mob/AM)
+/turf/open/indestructible/sound/Entered(mob/AM)
 	..()
 	if(istype(AM))
 		playsound(src,sound,50,1)
