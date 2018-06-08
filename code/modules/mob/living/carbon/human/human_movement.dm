@@ -8,6 +8,12 @@
 			if(data[MOVESPEED_DATA_INDEX_FLAGS] & IGNORE_NOSLOW)
 				.[id] = data
 
+/mob/living/carbon/human/movespeed_ds()
+	remove_movespeed_modifier(MOVESPEED_ID_HUMAN_OLDSPECIES)
+	if(istype(dna) && istype(dna.species))
+		add_movespeed_modifier(MOVESPEED_ID_HUMAN_OLDSPECIES, oldstyle_slowdown = dna.species._movement_delay())
+	return ..()
+
 /mob/living/carbon/human/update_movespeed()
 	var/static/datum/config_entry/number/config_human_delay
 	if(isnull(config_human_delay))
