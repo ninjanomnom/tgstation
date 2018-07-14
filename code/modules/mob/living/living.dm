@@ -17,7 +17,7 @@
 	medhud.add_to_hud(src)
 	faction += "[REF(src)]"
 	GLOB.mob_living_list += src
-	update_move_intent_slowdown()
+
 
 /mob/living/prepare_huds()
 	..()
@@ -502,7 +502,7 @@
 	var/old_direction = dir
 	var/turf/oldT = loc
 	. = ..()
-
+	
 	if(. && pulling) //we were pulling a thing and didn't lose it during our move.
 		var/distance = bounds_dist(src, pulling)
 		if(pulling.anchored)
@@ -513,7 +513,7 @@
 			var/turf/theirT = get_turf(pulling)
 			var/x_dist = ((theirT.x - myT.x) * 32) - step_x + pulling.step_x
 			var/y_dist = ((theirT.y - myT.y) * 32) - step_y + pulling.step_y
-
+			
 			var/pull_dir = get_dir(src, pulling)
 			var/move_dir
 			if(!(pull_dir in GLOB.diagonals)) // We want to slowly move it to the same axis of movement as us
@@ -543,26 +543,26 @@
 	if(lying && !buckled && prob(getBruteLoss()*200/maxHealth))
 		makeTrail(newloc, oldT, old_direction)
 
-/mob/living/toggle_move_intent()
-	. = ..()
-	update_move_intent_slowdown()
-
-/mob/living/proc/update_move_intent_slowdown()
-	var/mod = 0
+/mob/living/movement_delay(ignorewalk = 0)
+	. = 0
+	if(isopenturf(loc) && !is_flying())
+		var/turf/open/T = loc
+		. += T.slowdown
 	var/static/datum/config_entry/number/run_delay/config_run_delay
 	var/static/datum/config_entry/number/walk_delay/config_walk_delay
-	if(isnull(config_run_delay) || isnull(config_walk_delay))
-		config_run_delay = CONFIG_GET_DATUM(number/run_delay)
-		config_walk_delay = CONFIG_GET_DATUM(number/walk_delay)
-	if(m_intent == MOVE_INTENT_WALK)
-		mod = config_walk_delay.config_entry_value
+	if(isnull(config_run_delay))
+		config_run_delay = CONFIG_GET(number/run_delay)
+		config_walk_delay = CONFIG_GET(number/walk_delay)
+	if(ignorewalk)
+		. += config_run_delay.value_cache
 	else
-		mod = config_run_delay.config_entry_value
-	add_movespeed_modifier(MOVESPEED_ID_MOB_WALK_RUN_CONFIG_SPEED, TRUE, 100, override = TRUE, oldstyle_slowdown = mod)
-
-/mob/living/proc/update_turf_movespeed(turf/open/T)
-	if(isopenturf(T) && !is_flying())
-		add_movespeed_modifier(MOVESPEED_ID_LIVING_TURF_SPEEDMOD, TRUE, 100, override = TRUE, oldstyle_slowdown = T.slowdown)
+		switch(m_intent)
+			if(MOVE_INTENT_RUN)
+				if(drowsyness > 0)
+					. += 6
+				. += config_run_delay.value_cache
+			if(MOVE_INTENT_WALK)
+				. += config_walk_delay.value_cache
 
 /mob/living/proc/makeTrail(turf/target_turf, turf/start, direction)
 	if(!has_gravity())
@@ -1057,7 +1057,7 @@
 	update_transform()
 	if(!lying && lying_prev)
 		if(client)
-			client.move_delay = world.time += count_oldstyle_slowdown()
+			client.move_delay = world.time + movement_delay()
 	lying_prev = lying
 	return canmove
 
