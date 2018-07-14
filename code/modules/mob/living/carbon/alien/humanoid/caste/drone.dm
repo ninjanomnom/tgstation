@@ -17,6 +17,9 @@
 	internal_organs += new /obj/item/organ/alien/acid
 	..()
 
+/mob/living/carbon/alien/humanoid/drone/movement_delay()
+	. = ..()
+
 /obj/effect/proc_holder/alien/evolve
 	name = "Evolve to Praetorian"
 	desc = "Praetorian"
