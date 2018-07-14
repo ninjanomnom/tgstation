@@ -92,8 +92,10 @@
 		return FALSE
 
 	var/oldloc = mob.loc
-
 	var/pixels_to_move = mob.movespeed_ds() + pixel_move_overrun	//how many pixels we should move plus old overrun
+	var/diagonal_move = dir & (dir - 1)
+	if(diagonal_move)
+		pixels_to_move *= 0.5
 	pixel_move_overrun = MODULUS(pixels_to_move, 1)						//round off overrun and store
 	pixels_to_move -= pixel_move_overrun						//get rid of overrun
 
@@ -114,6 +116,12 @@
 	if(.) // If mob is null here, we deserve the runtime
 		if(mob.throwing)
 			mob.throwing.finalize(FALSE)
+
+	else if(diagonal_move)			//EXPERIMENTAL: Try to move cardinally if diagonal move fails.
+		for(var/i in GLOB.cardinals)
+			if(dir & i)
+				if(step(mob, i, pixels_to_move * 2))
+					break
 
 	for(var/obj/O in mob.user_movement_hooks)
 		O.intercept_user_move(dir, mob, newloc, oldloc)
@@ -453,7 +461,7 @@
 	set hidden = TRUE
 	set instant = TRUE
 	if(mob)
-		mob.toggle_move_intent()
+		mob.toggle_move_intent(usr)
 
 /mob/proc/toggle_move_intent(mob/user)
 	if(m_intent == MOVE_INTENT_RUN)
@@ -462,4 +470,4 @@
 		m_intent = MOVE_INTENT_RUN
 	if(hud_used && hud_used.static_inventory)
 		for(var/obj/screen/mov_intent/selector in hud_used.static_inventory)
-			selector.update_icon()
+			selector.update_icon(src)

@@ -3,7 +3,7 @@
 	var/obj/item/flightpack/F = get_flightpack()
 	if(istype(F) && F.flight)
 		FP = TRUE
-	. = ..(FP)
+	. = 0
 	if(!FP)
 		. += grab_state * 1	//Flightpacks are too powerful to be slowed too much by the weight of a corpse.
 	else
@@ -18,8 +18,7 @@
 			. += legcuffed.slowdown
 
 /mob/living/carbon/movespeed_ds()
-	remove_movespeed_modifier(MOVESPEED_ID_CARBON_OLDSPEED)
-	add_movespeed_modifier(MOVESPEED_ID_CARBON_OLDSPEED, oldstyle_slowdown = old_movement_delay())
+	add_movespeed_modifier(MOVESPEED_ID_CARBON_OLDSPEED, TRUE, oldstyle_slowdown = old_movement_delay())
 	return ..()
 
 /mob/living/carbon/slip(knockdown_amount, obj/O, lube)

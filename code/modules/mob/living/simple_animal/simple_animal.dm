@@ -271,14 +271,14 @@
 	if(!isnull(new_speed))
 		speed = new_speed
 	if(new_speed == 0)
-		remove_movespeed_modifier(MOVESPEED_ID_SIMPLEMOB_VARSPEED)
-	add_movespeed_modifier(MOVESPEED_ID_SIMPLEMOB_VARSPEED, 100, oldstyle_slowdown = speed, override = TRUE)
+		remove_movespeed_modifier(MOVESPEED_ID_SIMPLEMOB_VARSPEED, TRUE)
+	add_movespeed_modifier(MOVESPEED_ID_SIMPLEMOB_VARSPEED, TRUE, 100, oldstyle_slowdown = speed, override = TRUE)
 
 /mob/living/simple_animal/update_movespeed(resort)
 	var/static/datum/config_entry/number/config_animal_delay
 	if(QDELETED(config_animal_delay))
 		config_animal_delay = CONFIG_GET_DATUM(number/animal_delay)
-	add_movespeed_modifier(MOVESPEED_ID_SIMPLEMOB_CONFIG_SPEEDMOD, 100, oldstyle_slowdown = config_animal_delay.config_entry_value, override = TRUE)
+	add_movespeed_modifier(MOVESPEED_ID_SIMPLEMOB_CONFIG_SPEEDMOD, FALSE, 100, oldstyle_slowdown = config_animal_delay.config_entry_value, override = TRUE)
 	. = ..()
 
 /mob/living/simple_animal/Stat()

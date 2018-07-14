@@ -29,7 +29,7 @@
 	var/static/datum/config_entry/number/alien_delay/config_alien_delay
 	if(QDELETED(config_alien_delay))
 		config_alien_delay = CONFIG_GET_DATUM(number/alien_delay)
-	add_movespeed_modifier(MOVESPEED_ID_ALIEN_CONFIG_SPEEDMOD, 100, override = TRUE, oldstyle_slowdown = config_alien_delay.config_entry_value)
+	add_movespeed_modifier(MOVESPEED_ID_ALIEN_CONFIG_SPEEDMOD, FALSE, 100, override = TRUE, oldstyle_slowdown = config_alien_delay.config_entry_value)
 	. = ..()
 
 /mob/living/carbon/alien/humanoid/restrained(ignore_grab)

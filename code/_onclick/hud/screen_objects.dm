@@ -310,17 +310,18 @@
 /obj/screen/mov_intent/update_icon(mob/user)
 	if(!user && hud)
 		user = hud.mymob
+	if(!user)
+		return
 	switch(user.m_intent)
-		if("run")
+		if(MOVE_INTENT_RUN)
 			icon_state = "walking"
-		if("walk")
+		if(MOVE_INTENT_WALK)
 			icon_state = "running"
 
 /obj/screen/mov_intent/proc/toggle(mob/user)
 	if(isobserver(user))
 		return
 	user.toggle_move_intent(user)
-	user.update_icons()
 
 /obj/screen/pull
 	name = "stop pulling"

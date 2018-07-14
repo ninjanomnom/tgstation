@@ -9,16 +9,16 @@
 				.[id] = data
 
 /mob/living/carbon/human/movespeed_ds()
-	remove_movespeed_modifier(MOVESPEED_ID_HUMAN_OLDSPECIES)
+	remove_movespeed_modifier(MOVESPEED_ID_HUMAN_OLDSPECIES, TRUE)
 	if(istype(dna) && istype(dna.species))
-		add_movespeed_modifier(MOVESPEED_ID_HUMAN_OLDSPECIES, oldstyle_slowdown = dna.species._movement_delay())
+		add_movespeed_modifier(MOVESPEED_ID_HUMAN_OLDSPECIES, TRUE, oldstyle_slowdown = dna.species._movement_delay(src))
 	return ..()
 
 /mob/living/carbon/human/update_movespeed()
 	var/static/datum/config_entry/number/config_human_delay
 	if(isnull(config_human_delay))
 		config_human_delay = CONFIG_GET_DATUM(number/human_delay)
-	add_movespeed_modifier(MOVESPEED_ID_HUMAN_CONFIG_SPEEDMOD, 100, override = TRUE, oldstyle_slowdown = config_human_delay.config_entry_value)
+	add_movespeed_modifier(MOVESPEED_ID_HUMAN_CONFIG_SPEEDMOD, FALSE, 100, override = TRUE, oldstyle_slowdown = config_human_delay.config_entry_value)
 	return ..()
 
 /mob/living/carbon/human/slip(knockdown_amount, obj/O, lube)

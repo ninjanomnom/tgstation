@@ -518,9 +518,9 @@
 	med_hud_set_health()
 
 	if(stat == SOFT_CRIT)
-		add_movespeed_modifier(MOVESPEED_ID_CARBON_SOFTCRIT, oldstyle_slowdown = SOFTCRIT_ADD_SLOWDOWN)
+		add_movespeed_modifier(MOVESPEED_ID_CARBON_SOFTCRIT, TRUE, oldstyle_slowdown = SOFTCRIT_ADD_SLOWDOWN)
 	else
-		remove_movespeed_modifier(MOVESPEED_ID_CARBON_SOFTCRIT)
+		remove_movespeed_modifier(MOVESPEED_ID_CARBON_SOFTCRIT, TRUE)
 
 /mob/living/carbon/update_sight()
 	if(!client)

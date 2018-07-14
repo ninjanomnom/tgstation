@@ -17,7 +17,7 @@
 	medhud.add_to_hud(src)
 	faction += "[REF(src)]"
 	GLOB.mob_living_list += src
-
+	update_move_intent_slowdown()
 
 /mob/living/prepare_huds()
 	..()
@@ -545,6 +545,9 @@
 
 /mob/living/toggle_move_intent()
 	. = ..()
+	update_move_intent_slowdown()
+
+/mob/living/proc/update_move_intent_slowdown()
 	var/mod = 0
 	var/static/datum/config_entry/number/run_delay/config_run_delay
 	var/static/datum/config_entry/number/walk_delay/config_walk_delay
@@ -555,11 +558,11 @@
 		mod = config_walk_delay.config_entry_value
 	else
 		mod = config_run_delay.config_entry_value
-	add_movespeed_modifier(MOVESPEED_ID_MOB_WALK_RUN_CONFIG_SPEED, 100, override = TRUE, oldstyle_slowdown = mod)
+	add_movespeed_modifier(MOVESPEED_ID_MOB_WALK_RUN_CONFIG_SPEED, TRUE, 100, override = TRUE, oldstyle_slowdown = mod)
 
 /mob/living/proc/update_turf_movespeed(turf/open/T)
 	if(isopenturf(T) && !is_flying())
-		add_movespeed_modifier(MOVESPEED_ID_LIVING_TURF_SPEEDMOD, 100, override = TRUE, oldstyle_slowdown = T.slowdown)
+		add_movespeed_modifier(MOVESPEED_ID_LIVING_TURF_SPEEDMOD, TRUE, 100, override = TRUE, oldstyle_slowdown = T.slowdown)
 
 /mob/living/proc/makeTrail(turf/target_turf, turf/start, direction)
 	if(!has_gravity())

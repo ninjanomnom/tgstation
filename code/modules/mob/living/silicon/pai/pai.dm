@@ -109,7 +109,7 @@
 		pda.ownjob = "pAI Messenger"
 		pda.owner = text("[]", src)
 		pda.name = pda.owner + " (" + pda.ownjob + ")"
-	add_movespeed_modifier(MOVESPEED_MODIFIER_PAI_INNATE)
+	add_movespeed_modifier(MOVESPEED_ID_PAI_INNATE_SPEEDMOD, TRUE, 100, oldstyle_slowdown = 1)
 
 	. = ..()
 
@@ -256,9 +256,9 @@
 /mob/living/silicon/pai/Process_Spacemove(movement_dir = 0)
 	. = ..()
 	if(!.)
-		add_movespeed_modifier(MOVESPEED_MODIFIER_PAI_SPACEWALK)
+		add_movespeed_modifier(MOVESPEED_ID_PAI_SPACEWALK_SPEEDMOD, TRUE, 100, oldstyle_slowdown = 2)
 		return TRUE
-	remove_movespeed_modifier(MOVESPEED_MODIFIER_PAI_SPACEWALK)
+	remove_movespeed_modifier(MOVESPEED_ID_PAI_SPACEWALK_SPEEDMOD, TRUE)
 	return TRUE
 
 /mob/living/silicon/pai/examine(mob/user)

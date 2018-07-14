@@ -4,24 +4,34 @@
 	oldstyle slowdown/speedup amount, \
 	))
 
-/mob/proc/add_movespeed_modifier(id, priority = 0, flags = NONE, override = FALSE, oldstyle_slowdown = 0)
+//ANY ADD/REMOVE DONE IN UPDATE_MOVESPEED MUST HAVE THE UPDATE ARGUMENT SET AS FALSE!
+/mob/proc/add_movespeed_modifier(id, update = TRUE, priority = 0, flags = NONE, override = FALSE, oldstyle_slowdown = 0)
+	var/list/temp = list(priority, flags, oldstyle_slowdown)			//build the modification list
 	if(LAZYACCESS(movespeed_modification, id))
+		if(movespeed_modifier_identical_check(movespeed_modification[id], temp))
+			return FALSE
 		if(!override)
 			return FALSE
 		else
-			remove_movespeed_modifier(id)
+			remove_movespeed_modifier(id, update)
 	LAZYSET(movespeed_modification, id, list(priority, flags, oldstyle_slowdown))
-	sort_movespeed_modlist()
-	update_movespeed()
+	if(update)
+		update_movespeed(TRUE)
 	return TRUE
 
-/mob/proc/remove_movespeed_modifier(id)
+/mob/proc/remove_movespeed_modifier(id, update = TRUE)
+	if(!LAZYACCESS(movespeed_modification, id))
+		return FALSE
 	LAZYREMOVE(movespeed_modification, id)
 	UNSETEMPTY(movespeed_modification)
-	update_movespeed()
+	if(update)
+		update_movespeed(FALSE)
 	return TRUE
 
-/mob/proc/update_movespeed(resort = FALSE)
+/mob/proc/has_movespeed_modifier(id)
+	return LAZYACCESS(movespeed_modification, id)
+
+/mob/proc/update_movespeed(resort = TRUE)
 	if(resort)
 		sort_movespeed_modlist()
 	. = CONFIG_GET(number/mob_base_pixel_speed)
@@ -38,6 +48,14 @@
 
 /mob/proc/get_movespeed_modifiers()
 	return movespeed_modification
+
+/mob/proc/movespeed_modifier_identical_check(list/mod1, list/mod2)
+	if(!islist(mod1) || !islist(mod2) || mod1.len < MOVESPEED_DATA_INDEX_MAX || mod2.len < MOVESPEED_DATA_INDEX_MAX)
+		return FALSE
+	for(var/i in 1 to MOVESPEED_DATA_INDEX_MAX)
+		if(mod1[i] != mod2[i])
+			return FALSE
+	return TRUE
 
 /mob/proc/count_oldstyle_slowdown()
 	. = 0
@@ -63,7 +81,7 @@
 		var/resolved = FALSE
 		for(var/their_id in assembled)
 			var/list/their_data = assembled[their_id]
-			if(their_data[MOVESPEED_DATA_INDEX_PRIORITY < our_priority])
+			if(their_data[MOVESPEED_DATA_INDEX_PRIORITY] < our_priority)
 				assembled.Insert(assembled.Find(their_id), our_id)
 				assembled[our_id] = our_data
 				resolved = TRUE

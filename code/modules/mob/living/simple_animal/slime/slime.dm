@@ -136,25 +136,25 @@
 
 /mob/living/simple_animal/slime/on_reagent_change()
 	. = ..()
-	remove_movespeed_modifier(MOVESPEED_ID_SLIME_REAGENTMOD)
-	var/amount
+	remove_movespeed_modifier(MOVESPEED_ID_SLIME_REAGENTMOD, TRUE)
+	var/amount = 0
 	if(reagents.has_reagent("morphine")) // morphine slows slimes down
 		amount = 2
 	if(reagents.has_reagent("frostoil")) // Frostoil also makes them move VEEERRYYYYY slow
 		amount = 5
 	if(amount)
-		add_movespeed_modifier(MOVESPEED_ID_SLIME_REAGENTMOD, 100, override = TRUE, oldstyle_slowdown = amount)
+		add_movespeed_modifier(MOVESPEED_ID_SLIME_REAGENTMOD, TRUE, 100, override = TRUE, oldstyle_slowdown = amount)
 
 /mob/living/simple_animal/slime/updatehealth()
 	. = ..()
-	remove_movespeed_modifier(MOVESPEED_ID_SLIME_HEALTHMOD)
+	remove_movespeed_modifier(MOVESPEED_ID_SLIME_HEALTHMOD, FALSE)
 	var/health_deficiency = (100 - health)
 	var/mod = 0
 	if(health_deficiency >= 45)
 		mod += (health_deficiency / 25)
 	if(health <= 0)
 		mod += 2
-	add_movespeed_modifier(MOVESPEED_ID_SLIME_HEALTHMOD, 100, oldstyle_slowdown = mod)
+	add_movespeed_modifier(MOVESPEED_ID_SLIME_HEALTHMOD, TRUE, 100, oldstyle_slowdown = mod)
 
 /mob/living/simple_animal/slime/adjust_bodytemperature()
 	. = ..()
@@ -164,13 +164,13 @@
 	else if(bodytemperature < 183.222)
 		mod = (283.222 - bodytemperature) / 10 * 1.75
 	if(mod)
-		add_movespeed_modifier(MOVESPEED_ID_SLIME_TEMPMOD, 100, override = TRUE, oldstyle_slowdown = mod)
+		add_movespeed_modifier(MOVESPEED_ID_SLIME_TEMPMOD, TRUE, 100, override = TRUE, oldstyle_slowdown = mod)
 
 /mob/living/simple_animal/slime/update_movespeed()
 	var/static/datum/config_entry/number/config_slime_delay
 	if(QDELETED(config_slime_delay))
 		config_slime_delay = CONFIG_GET_DATUM(number/slime_delay)
-	add_movespeed_modifier(MOVESPEED_ID_SLIME_CONFIG_SPEEDMOD, 100, override = TRUE, oldstyle_slowdown = config_slime_delay.config_entry_value)
+	add_movespeed_modifier(MOVESPEED_ID_SLIME_CONFIG_SPEEDMOD, FALSE, 100, override = TRUE, oldstyle_slowdown = config_slime_delay.config_entry_value)
 	. = ..()
 
 /mob/living/simple_animal/slime/ObjCollide(obj/O)
