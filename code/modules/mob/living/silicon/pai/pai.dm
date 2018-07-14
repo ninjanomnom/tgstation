@@ -75,7 +75,13 @@
 	var/overload_maxhealth = 0
 	canmove = FALSE
 	var/silent = FALSE
+	var/hit_slowdown = 0
 	var/brightness_power = 5
+	var/slowdown = 0
+
+/mob/living/silicon/pai/movement_delay()
+	. = ..()
+	. += slowdown
 
 /mob/living/silicon/pai/can_unbuckle()
 	return FALSE
@@ -109,7 +115,6 @@
 		pda.ownjob = "pAI Messenger"
 		pda.owner = text("[]", src)
 		pda.name = pda.owner + " (" + pda.ownjob + ")"
-	add_movespeed_modifier(MOVESPEED_ID_PAI_INNATE_SPEEDMOD, TRUE, 100, oldstyle_slowdown = 1)
 
 	. = ..()
 
@@ -256,9 +261,9 @@
 /mob/living/silicon/pai/Process_Spacemove(movement_dir = 0)
 	. = ..()
 	if(!.)
-		add_movespeed_modifier(MOVESPEED_ID_PAI_SPACEWALK_SPEEDMOD, TRUE, 100, oldstyle_slowdown = 2)
+		slowdown = 2
 		return TRUE
-	remove_movespeed_modifier(MOVESPEED_ID_PAI_SPACEWALK_SPEEDMOD, TRUE)
+	slowdown = initial(slowdown)
 	return TRUE
 
 /mob/living/silicon/pai/examine(mob/user)
@@ -283,8 +288,10 @@
 	health = maxHealth - getBruteLoss() - getFireLoss()
 	update_stat()
 
+
 /mob/living/silicon/pai/process()
 	emitterhealth = CLAMP((emitterhealth + emitterregen), -50, emittermaxhealth)
+	hit_slowdown = CLAMP((hit_slowdown - 1), 0, 100)
 
 /mob/living/silicon/pai/generateStaticOverlay()
 	return

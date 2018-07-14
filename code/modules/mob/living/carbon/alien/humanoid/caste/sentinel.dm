@@ -15,3 +15,7 @@
 	internal_organs += new /obj/item/organ/alien/acid
 	internal_organs += new /obj/item/organ/alien/neurotoxin
 	..()
+
+
+/mob/living/carbon/alien/humanoid/sentinel/movement_delay()
+	. = ..()
