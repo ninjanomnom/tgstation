@@ -176,78 +176,28 @@
 
 /datum/config_entry/flag/emojis
 
-/datum/config_entry/number/mob_base_pixel_speed		//pixels per decisecond
-	config_entry_value = 0
-	default = 0
-
-/datum/config_entry/number/mob_base_pixel_speed/ValidateAndSet()
-	. = ..()
-	if(.)
-		for(var/mob/living/carbon/human/M in GLOB.mob_list)
-			M.update_movespeed(FALSE)
-
 /datum/config_entry/number/run_delay	//Used for modifying movement speed for mobs.
+	var/static/value_cache = 0
 
 /datum/config_entry/number/run_delay/ValidateAndSet()
 	. = ..()
 	if(.)
-		for(var/i in GLOB.mob_list)
-			var/mob/M = i
-			M.update_movespeed(FALSE)
+		value_cache = config_entry_value
 
 /datum/config_entry/number/walk_delay
+	var/static/value_cache = 0
 
 /datum/config_entry/number/walk_delay/ValidateAndSet()
 	. = ..()
 	if(.)
-		for(var/i in GLOB.mob_list)
-			var/mob/M = i
-			M.update_movespeed(FALSE)
+		value_cache = config_entry_value
 
 /datum/config_entry/number/human_delay	//Mob specific modifiers. NOTE: These will affect different mob types in different ways
-/datum/config_entry/number/human_delay/ValidateAndSet()
-	. = ..()
-	if(.)
-		for(var/mob/living/carbon/human/M in GLOB.mob_list)
-			M.update_movespeed(FALSE)
-
 /datum/config_entry/number/robot_delay
-/datum/config_entry/number/robot_delay/ValidateAndSet()
-	. = ..()
-	if(.)
-		for(var/mob/living/carbon/human/M in GLOB.mob_list)
-			M.update_movespeed(FALSE)
-
 /datum/config_entry/number/monkey_delay
-/datum/config_entry/number/monkey_delay/ValidateAndSet()
-	. = ..()
-	if(.)
-		for(var/mob/living/carbon/human/M in GLOB.mob_list)
-			M.update_movespeed(FALSE)
-
-
 /datum/config_entry/number/alien_delay
-/datum/config_entry/number/alien_delay/ValidateAndSet()
-	. = ..()
-	if(.)
-		for(var/mob/living/carbon/human/M in GLOB.mob_list)
-			M.update_movespeed(FALSE)
-
-
 /datum/config_entry/number/slime_delay
-/datum/config_entry/number/slime_delay/ValidateAndSet()
-	. = ..()
-	if(.)
-		for(var/mob/living/carbon/human/M in GLOB.mob_list)
-			M.update_movespeed(FALSE)
-
-
 /datum/config_entry/number/animal_delay
-/datum/config_entry/number/animal_delay/ValidateAndSet()
-	. = ..()
-	if(.)
-		for(var/mob/living/carbon/human/M in GLOB.mob_list)
-			M.update_movespeed(FALSE)
 
 /datum/config_entry/flag/roundstart_away	//Will random away mission be loaded.
 
