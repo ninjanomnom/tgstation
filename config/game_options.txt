@@ -33,6 +33,9 @@ EMOJIS
 ## To do this you must be a high level admin. Open the 'debug' tab ingame.
 ## Select "Debug Controller" and then, in the popup, select "Configuration". These variables should have the same name.
 
+## Base pixel movement speed of mobs that other things like the other speed values will edit upon, in pixels per decisecond.
+MOB_BASE_PIXEL_SPEED 32
+
 ## These values get directly added to values and totals ingame.
 ## To speed things up make the number negative, to slow things down, make the number positive.
 

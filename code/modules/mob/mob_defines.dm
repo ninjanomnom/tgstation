@@ -3,15 +3,21 @@
 	density = TRUE
 	layer = MOB_LAYER
 
+	flags_1 = HEAR_1
+	hud_possible = list(ANTAG_HUD)
+	pressure_resistance = 8
+	mouse_drag_pointer = MOUSE_ACTIVE_POINTER
+
+	//Pixel movement vars
 	bound_width = 16
 	bound_height = 16
 	bound_x = 8
 	bound_y = 8
 
-	flags_1 = HEAR_1
-	hud_possible = list(ANTAG_HUD)
-	pressure_resistance = 8
-	mouse_drag_pointer = MOUSE_ACTIVE_POINTER
+	var/list/movespeed_modification				//Lazy list. Call update_movespeed() after editing for changes to take effect. Use helper procs in mob_movespeed_modifiers.dm.
+	var/cached_movespeed = 32					//pixels per decisecond.
+	//
+
 	var/lighting_alpha = LIGHTING_PLANE_ALPHA_VISIBLE
 	var/datum/mind/mind
 	var/list/datum/action/actions = list()

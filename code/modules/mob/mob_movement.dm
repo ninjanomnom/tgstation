@@ -28,6 +28,109 @@
 			mob.control_object.forceMove(get_step(mob.control_object,direct))
 	return
 
+//Needs to be phased out eventually in favor of movespeed_ds/s/tick hopefully!
+/mob/proc/_movement_delay()	//update /living/movement_delay() if you change this
+	return 0
+
+/mob/proc/movespeed_ds()			//Pixels per decisecond
+	. = cached_movespeed
+
+/mob/proc/movespeed_s()				//Pixels per second
+	return movespeed_ds() * 10
+
+//CHECK MY MATH!!
+/mob/proc/movespeed_tick()			//Pixels per input subsystem tick. Check my math, please!!
+	return movespeed_ds() * ((SSinput.flags & SS_TICKER)? (world.tick_lag * SSinput.wait) : (SSinput.wait))
+//CHECK MY MATH!! ALSO NEEDS TO IMPLEMENT MASTER CONTROLLER PROCESSING VAR
+
+/client/Move(newloc, dir)
+	if(pixel_move_delay > world.time)
+		return FALSE
+	next_move_dir_add = NONE
+	next_move_dir_sub = NONE
+	if(!mob || !mob.loc)
+		return FALSE
+	if(!newloc || !dir)
+		return FALSE
+	if(mob.notransform)
+		return FALSE	//This is sota the goto stop mobs from moving var
+	if(mob.control_object)
+		return Move_object(dir)
+	if(!isliving(mob))
+		return mob.Move(newloc, dir)
+	if(mob.stat == DEAD)
+		mob.ghostize()
+		return FALSE
+	if(mob.force_moving)
+		return FALSE
+
+	var/mob/living/L = mob  //Already checked for isliving earlier
+	if(L.incorporeal_move)	//Move though walls
+		Process_Incorpmove(dir)
+		return FALSE
+
+	if(mob.remote_control)					//we're controlling something, our movement is relayed to it
+		return mob.remote_control.relaymove(mob, dir)
+
+	if(isAI(mob))
+		return AIMove(newloc, dir, mob)
+
+	if(Process_Grab()) //are we restrained by someone's grip?
+		return
+
+	if(mob.buckled)							//if we're buckled to something, tell it we moved.
+		return mob.buckled.relaymove(mob, dir)
+
+	if(!mob.canmove)
+		return FALSE
+
+	if(isobj(mob.loc) || ismob(mob.loc))	//Inside an object, tell it we moved
+		var/atom/O = mob.loc
+		return O.relaymove(mob, dir)
+
+	if(!mob.Process_Spacemove(dir))
+		return FALSE
+
+	var/oldloc = mob.loc
+	var/pixels_to_move = mob.movespeed_ds() + pixel_move_overrun	//how many pixels we should move plus old overrun
+	var/diagonal_move = dir & (dir - 1)
+	if(diagonal_move)
+		pixels_to_move *= 0.5
+	pixel_move_overrun = MODULUS(pixels_to_move, 1)						//round off overrun and store
+	pixels_to_move -= pixel_move_overrun						//get rid of overrun
+
+	if(L.confused)												//randomly change dirs or whatever if you're unable to walk straight
+		var/newdir = NONE
+		if(L.confused > 40)
+			newdir = pick(GLOB.alldirs)
+		else if(prob(L.confused * 1.5))
+			newdir = angle2dir(dir2angle(dir) + pick(90, -90))
+		else if(prob(L.confused * 3))
+			newdir = angle2dir(dir2angle(dir) + pick(45, -45))
+		if(newdir)
+			dir = newdir
+			newloc = get_step(L, dir)
+
+	. = step(mob, dir, pixels_to_move)								//move!
+
+	if(.) // If mob is null here, we deserve the runtime
+		if(mob.throwing)
+			mob.throwing.finalize(FALSE)
+
+	else if(diagonal_move)			//EXPERIMENTAL: Try to move cardinally if diagonal move fails.
+		for(var/i in GLOB.cardinals)
+			if(dir & i)
+				if(step(mob, i, pixels_to_move * 2))
+					break
+
+	for(var/obj/O in mob.user_movement_hooks)
+		O.intercept_user_move(dir, mob, newloc, oldloc)
+
+	var/atom/movable/P = mob.pulling
+	if(P && !ismob(P) && P.density)
+		mob.dir = turn(mob.dir, 180)
+
+/* OLDCODE
 #define MOVEMENT_DELAY_BUFFER 0.75
 #define MOVEMENT_DELAY_BUFFER_DELTA 1.25
 
@@ -117,6 +220,7 @@
 	var/atom/movable/P = mob.pulling
 	if(P && !ismob(P) && P.density)
 		mob.dir = turn(mob.dir, 180)
+*/
 
 ///Process_Grab()
 ///Called by client/Move()
@@ -357,9 +461,13 @@
 	set hidden = TRUE
 	set instant = TRUE
 	if(mob)
-		mob.toggle_move_intent()
+		mob.toggle_move_intent(usr)
 
-/mob/proc/toggle_move_intent()
+/mob/proc/toggle_move_intent(mob/user)
+	if(m_intent == MOVE_INTENT_RUN)
+		m_intent = MOVE_INTENT_WALK
+	else
+		m_intent = MOVE_INTENT_RUN
 	if(hud_used && hud_used.static_inventory)
 		for(var/obj/screen/mov_intent/selector in hud_used.static_inventory)
-			selector.toggle(src)
+			selector.update_icon(src)

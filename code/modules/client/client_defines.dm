@@ -21,6 +21,8 @@
 		/////////
 	var/datum/preferences/prefs = null
 	var/move_delay		= 1
+	var/pixel_move_delay = 0
+	var/pixel_move_overrun
 
 	var/area			= null
 

@@ -4,6 +4,7 @@
 
 	// Movement related vars
 	step_size = 8
+	var/last_move_time = 0
 	var/last_move = NONE
 	var/walking = NONE
 
@@ -332,7 +333,7 @@
 
 	//They are moving! Wouldn't it be cool if we calculated their momentum and added it to the throw?
 	if (thrower && thrower.last_move && thrower.client && thrower.client.move_delay >= world.time + world.tick_lag*2)
-		var/user_momentum = thrower.movement_delay()
+		var/user_momentum = thrower.count_oldstyle_slowdown()
 		if (!user_momentum) //no movement_delay, this means they move once per byond tick, lets calculate from that instead.
 			user_momentum = world.tick_lag
 

@@ -1063,7 +1063,7 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 // MOVE SPEED //
 ////////////////
 
-/datum/species/proc/movement_delay(mob/living/carbon/human/H)
+/datum/species/proc/_movement_delay(mob/living/carbon/human/H)
 	. = 0	//We start at 0.
 	var/flight = 0	//Check for flight and flying items
 	var/flightpack = 0
