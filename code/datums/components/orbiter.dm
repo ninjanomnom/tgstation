@@ -104,7 +104,12 @@
 	if(master.loc == oldloc)
 		return
 
-	var/turf/newturf = get_turf(master)
+	var/atom/movable/topmost = mover
+	var/turf/newturf = mover.loc
+	while(!istype(newturf))
+		topmost = newturf
+		newturf = newturf.loc
+
 	if(!newturf)
 		qdel(src)
 
@@ -113,7 +118,7 @@
 		var/atom/movable/thing = i
 		if(QDELETED(thing) || thing.loc == newturf)
 			continue
-		thing.forceMove(newturf)
+		thing.forceMove(newturf, topmost.step_x, topmost.step_y)
 		if(CHECK_TICK && master.loc != curloc)
 			// We moved again during the checktick, cancel current operation
 			break

@@ -314,7 +314,7 @@
 			if (isnull(newloc))
 				I.moveToNullspace()
 			else
-				I.forceMove(newloc)
+				I.forceMove(newloc, step_x, step_y)
 		I.dropped(src, silent)
 	return TRUE
 

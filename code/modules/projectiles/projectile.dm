@@ -408,7 +408,7 @@
 		trajectory.set_angle(new_angle)
 	return TRUE
 
-/obj/projectile/forceMove(atom/target)
+/obj/item/projectile/forceMove(atom/target, _step_x, _step_y)
 	if(!isloc(target) || !isloc(loc) || !z)
 		return ..()
 	var/zc = target.z != z

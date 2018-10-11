@@ -159,6 +159,13 @@ Difficulty: Hard
 			SLEEP_CHECK_DEATH(6)
 	SetRecoveryTime(20)
 
+/mob/living/simple_animal/hostile/megafauna/bubblegum/Moved()
+	new /obj/effect/decal/cleanable/blood(src.loc)
+	if(charging)
+		DestroySurroundings()
+	playsound(src, 'sound/effects/meteorimpact.ogg', 200, 1, 2, 1)
+	return ..()
+
 /mob/living/simple_animal/hostile/megafauna/bubblegum/proc/charge(atom/chargeat = target, delay = 3, chargepast = 2)
 	if(!chargeat)
 		return

@@ -68,7 +68,7 @@
 // Use this when setting the aiEye's location.
 // It will also stream the chunk that the new loc is in.
 
-/mob/camera/aiEye/proc/setLoc(T, force_update = FALSE)
+/mob/camera/aiEye/proc/setLoc(atom/T, force_update = FALSE, _step_x, _step_y)
 	if(ai)
 		if(!isturf(ai.loc))
 			return
@@ -76,7 +76,8 @@
 		if(!force_update && (T == get_turf(src)) )
 			return //we are already here!
 		if (T)
-			forceMove(T)
+			NORMALIZE_STEP(T, _step_x, _step_y)
+			forceMove(T, _step_x, _step_y)
 		else
 			moveToNullspace()
 		if(use_static != USE_STATIC_NONE)
@@ -94,8 +95,8 @@
 		if(ai.master_multicam)
 			ai.master_multicam.refresh_view()
 
-/mob/camera/aiEye/Move()
-	return 0
+/mob/camera/aiEye/Move(newloc, direct, _step_x, _step_y)
+	setLoc(newloc, null, _step_x, _step_y)
 
 /mob/camera/aiEye/proc/GetViewerClient()
 	if(ai)
