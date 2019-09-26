@@ -7,6 +7,9 @@
 #Ignore byond config folder.
 /cfg/**/*
 
+#Ignore dependencies on other dm projects
+code/_dependencies/
+
 #Ignore compiled files and other files generated during compilation.
 *.mdme
 *.dmb
