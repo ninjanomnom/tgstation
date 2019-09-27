@@ -3,7 +3,7 @@
 DEPENDENCIES_FOLDER="code/_dependencies"
 COMPONENTS_REPO="https://github.com/ninjanomnom/components.git"
 COMPONENTS_NAME="dcs"
-COMPONENTS_VERSION="v0.2.0"
+COMPONENTS_VERSION="origin/master"
 
 echo "Setting up dependencies:"
 
