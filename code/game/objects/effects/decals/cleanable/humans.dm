@@ -151,7 +151,7 @@
 	var/exited_dirs = 0
 	var/list/shoe_types = list()
 
-/obj/effect/decal/cleanable/blood/footprints/Initialize(mapload)
+/obj/effect/decal/cleanable/blood/footprints/Initialize(mapload, list/datum/disease/diseases, _step_x, _step_y)
 	. = ..()
 	icon_state = "" //All of the footprint visuals come from overlays
 	if(mapload)

@@ -265,14 +265,14 @@
 				temp_blood_DNA = drop.return_blood_DNA() //we transfer the dna from the drip to the splatter
 				qdel(drop)//the drip is replaced by a bigger splatter
 		else
-			drop = new(T, get_static_viruses())
+			drop = new(T, get_static_viruses(), step_x, step_y)
 			drop.transfer_mob_blood_dna(src)
 			return
 
 	// Find a blood decal or create a new one.
 	var/obj/effect/decal/cleanable/blood/B = locate() in T
 	if(!B)
-		B = new /obj/effect/decal/cleanable/blood/splatter(T, get_static_viruses())
+		B = new /obj/effect/decal/cleanable/blood/splatter(T, get_static_viruses(), step_x, step_y)
 	if (B.bloodiness < MAX_SHOE_BLOODINESS) //add more blood, up to a limit
 		B.bloodiness += BLOOD_AMOUNT_PER_DECAL
 	B.transfer_mob_blood_dna(src) //give blood info to the blood decal.
@@ -288,7 +288,7 @@
 		T = get_turf(src)
 	var/obj/effect/decal/cleanable/xenoblood/B = locate() in T.contents
 	if(!B)
-		B = new(T)
+		B = new(T, list(), step_x, step_y)
 	B.add_blood_DNA(list("UNKNOWN DNA" = "X*"))
 
 /mob/living/silicon/robot/add_splatter_floor(turf/T, small_drip)
@@ -296,4 +296,4 @@
 		T = get_turf(src)
 	var/obj/effect/decal/cleanable/oil/B = locate() in T.contents
 	if(!B)
-		B = new(T)
+		B = new(T, list(), step_x, step_y)
