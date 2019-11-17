@@ -228,6 +228,9 @@
 #undef ANGLE_ADJUST
 
 /atom/movable/Move(atom/newloc, direct, _step_x, _step_y)
+	if(SEND_SIGNAL(src, COMSIG_MOVABLE_PRE_MOVE, newloc, direct, _step_x, _step_y) & COMPONENT_MOVABLE_BLOCK_PRE_MOVE)
+		return FALSE
+
 	var/atom/oldloc = loc
 
 	. = ..()
