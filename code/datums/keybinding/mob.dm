@@ -132,7 +132,7 @@
 	return TRUE
 
 /datum/keybinding/mob/toggle_move_carefully
-	hotkey_keys = list("AltCtrl")
+	hotkey_keys = list("Shift")
 	name = "toggle_move_carefully"
 	full_name = "Hold to move carefully"
 	description = "Held down to move slowly and accurately, release to move fast again"
