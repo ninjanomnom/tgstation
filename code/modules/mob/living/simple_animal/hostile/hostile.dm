@@ -57,7 +57,9 @@
 	if(!targets_from)
 		targets_from = src
 	//PIXEL MOVEMENT
-	move_to_delay = move_to_delay * 0.1
+	move_to_delay *= 0.1
+	aggro_vision_range *= 32 // 32 pixels per turf
+	vision_range *= 32
 
 	wanted_objects = typecacheof(wanted_objects)
 
