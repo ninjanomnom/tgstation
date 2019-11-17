@@ -56,14 +56,6 @@
 
 	if(!targets_from)
 		targets_from = src
-	//PIXEL MOVEMENT
-<<<<<<< Updated upstream
-	move_to_delay *= 0.1
-	aggro_vision_range *= 32 // 32 pixels per turf
-	vision_range *= 32
-
-=======
->>>>>>> Stashed changes
 	wanted_objects = typecacheof(wanted_objects)
 
 
