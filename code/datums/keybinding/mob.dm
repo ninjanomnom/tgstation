@@ -139,7 +139,7 @@
 
 /datum/keybinding/mob/toggle_move_carefully/down(client/user)
 	var/mob/M = user.mob
-	M.add_movespeed_modifier(MOVESPEED_ID_MOVE_CAREFULLY, TRUE, 100, override = TRUE, multiplicative_slowdown = 16)
+	M.add_movespeed_modifier(MOVESPEED_ID_MOVE_CAREFULLY, TRUE, 100, override = TRUE, multiplicative_slowdown = INFINITY)
 	return TRUE
 
 /datum/keybinding/mob/toggle_move_carefully/up(client/user)
