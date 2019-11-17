@@ -3,6 +3,7 @@
 	dupe_mode = COMPONENT_DUPE_UNIQUE_PASSARGS
 	var/list/orbiters
 	var/datum/movement_detector/tracker
+	var/last_move
 
 //radius: range to orbit at, radius of the circle formed by orbiting (in pixels)
 //clockwise: whether you orbit clockwise or anti clockwise
@@ -78,7 +79,11 @@
 
 	//we stack the orbits up client side, so we can assign this back to normal server side without it breaking the orbit
 	orbiter.transform = initial_transform
-	orbiter.forceMove(get_turf(parent))
+	var/turf/newturf = get_turf(parent)
+	var/atom/movable/topmost = parent
+	while(topmost.loc != newturf)
+		topmost = topmost.loc
+	orbiter.forceMove(newturf, topmost.step_x, topmost.step_y)
 	to_chat(orbiter, "<span class='notice'>Now orbiting [parent].</span>")
 
 /datum/component/orbiter/proc/end_orbit(atom/movable/orbiter, refreshing=FALSE)
@@ -97,28 +102,26 @@
 /datum/component/orbiter/proc/move_react(atom/movable/master, atom/mover, atom/oldloc, direction)
 	set waitfor = FALSE // Transfer calls this directly and it doesnt care if the ghosts arent done moving
 
-	if(master.loc == oldloc)
-		return
+	var/this_move
+	this_move = last_move = world.time
 
-	var/atom/movable/topmost = mover
-	var/turf/newturf = mover.loc
-	while(!istype(newturf))
-		topmost = newturf
-		newturf = newturf.loc
+	var/turf/newturf = get_turf(master)
 
 	if(!newturf)
 		qdel(src)
 
-	var/atom/curloc = master.loc
+	var/atom/movable/topmost = mover
+	while(topmost.loc != newturf)
+		topmost = mover.loc
+
 	for(var/i in orbiters)
 		var/atom/movable/thing = i
-		if(QDELETED(thing) || thing.loc == newturf)
+		if(QDELETED(thing))
 			continue
 		thing.forceMove(newturf, topmost.step_x, topmost.step_y)
-		if(CHECK_TICK && master.loc != curloc)
+		if(CHECK_TICK && this_move != last_move)
 			// We moved again during the checktick, cancel current operation
-			break
-
+			return
 
 /datum/component/orbiter/proc/orbiter_move_react(atom/movable/orbiter, atom/oldloc, direction)
 	if(orbiter.loc == get_turf(parent))
