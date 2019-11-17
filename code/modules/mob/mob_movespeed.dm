@@ -108,7 +108,7 @@ Key procs
 				conflict_tracker[conflict] = amt
 			else
 				continue
-		. *= amt
+		. += amt
 	step_size = max(1, initial(step_size) / .)
 
 ///Get the move speed modifiers list of the mob
