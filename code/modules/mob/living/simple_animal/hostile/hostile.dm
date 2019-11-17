@@ -17,7 +17,7 @@
 	var/projectiletype	//set ONLY it and NULLIFY casingtype var, if we have ONLY projectile
 	var/projectilesound
 	var/casingtype		//set ONLY it and NULLIFY projectiletype, if we have projectile IN CASING
-	var/move_to_delay = 0 //delay for the automated movement.
+	var/move_to_delay = 0.3 //delay for the automated movement.
 	var/list/friends = list()
 	var/list/emote_taunt = list()
 	var/taunt_chance = 0
@@ -36,8 +36,8 @@
 
 //These vars are related to how mobs locate and target
 	var/robust_searching = 0 //By default, mobs have a simple searching method, set this to 1 for the more scrutinous searching (stat_attack, stat_exclusive, etc), should be disabled on most mobs
-	var/vision_range = 9 //How big of an area to search for targets in, a vision of 9 attempts to find targets as soon as they walk into screen view
-	var/aggro_vision_range = 9 //If a mob is aggro, we search in this radius. Defaults to 9 to keep in line with original simple mob aggro radius
+	var/vision_range = 288 //How big of an area to search for targets in, a vision of 9 attempts to find targets as soon as they walk into screen view
+	var/aggro_vision_range = 288 //If a mob is aggro, we search in this radius. Defaults to 9 to keep in line with original simple mob aggro radius
 	var/search_objects = 0 //If we want to consider objects when searching around, set this to 1. If you want to search for objects while also ignoring mobs until hurt, set it to 2. To completely ignore mobs, even when attacked, set it to 3
 	var/search_objects_timer_id //Timer for regaining our old search_objects value after being attacked
 	var/search_objects_regain_time = 30 //the delay between being attacked and gaining our old search_objects value back
@@ -57,10 +57,13 @@
 	if(!targets_from)
 		targets_from = src
 	//PIXEL MOVEMENT
+<<<<<<< Updated upstream
 	move_to_delay *= 0.1
 	aggro_vision_range *= 32 // 32 pixels per turf
 	vision_range *= 32
 
+=======
+>>>>>>> Stashed changes
 	wanted_objects = typecacheof(wanted_objects)
 
 

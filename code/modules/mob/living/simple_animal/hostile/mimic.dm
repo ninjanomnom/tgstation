@@ -27,7 +27,7 @@
 	minbodytemp = 0
 
 	faction = list("mimic")
-	move_to_delay = 9
+	move_to_delay = 0.9
 	gold_core_spawnable = HOSTILE_SPAWN
 	del_on_death = 1
 

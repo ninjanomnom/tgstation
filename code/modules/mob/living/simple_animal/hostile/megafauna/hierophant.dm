@@ -53,10 +53,10 @@ Difficulty: Hard
 	melee_damage_lower = 15
 	melee_damage_upper = 15
 	speed = 10
-	move_to_delay = 10
+	move_to_delay = 1
 	ranged = TRUE
 	ranged_cooldown_time = 40
-	aggro_vision_range = 21 //so it can see to one side of the arena to the other
+	aggro_vision_range = 672 //so it can see to one side of the arena to the other
 	loot = list(/obj/item/hierophant_club)
 	crusher_loot = list(/obj/item/hierophant_club, /obj/item/crusher_trophy/vortex_talisman)
 	wander = FALSE
