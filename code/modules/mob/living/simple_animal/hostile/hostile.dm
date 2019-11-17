@@ -17,7 +17,7 @@
 	var/projectiletype	//set ONLY it and NULLIFY casingtype var, if we have ONLY projectile
 	var/projectilesound
 	var/casingtype		//set ONLY it and NULLIFY projectiletype, if we have projectile IN CASING
-	var/move_to_delay = 3 //delay for the automated movement.
+	var/move_to_delay = 0 //delay for the automated movement.
 	var/list/friends = list()
 	var/list/emote_taunt = list()
 	var/taunt_chance = 0
@@ -56,6 +56,9 @@
 
 	if(!targets_from)
 		targets_from = src
+	//PIXEL MOVEMENT
+	move_to_delay = move_to_delay * 0.1
+
 	wanted_objects = typecacheof(wanted_objects)
 
 
@@ -120,7 +123,7 @@
 
 /mob/living/simple_animal/hostile/bullet_act(obj/projectile/P)
 	if(stat == CONSCIOUS && !target && AIStatus != AI_OFF && !client)
-		if(P.firer && get_dist(src, P.firer) <= aggro_vision_range)
+		if(P.firer && bounds_dist(src, P.firer) <= aggro_vision_range)
 			FindTarget(list(P.firer), 1)
 		Goto(P.starting, move_to_delay, 3)
 	return ..()
@@ -177,8 +180,8 @@
 	if(target != null)//If we already have a target, but are told to pick again, calculate the lowest distance between all possible, and pick from the lowest distance targets
 		for(var/pos_targ in Targets)
 			var/atom/A = pos_targ
-			var/target_dist = get_dist(targets_from, target)
-			var/possible_target_distance = get_dist(targets_from, A)
+			var/target_dist = bounds_dist(targets_from, target)
+			var/possible_target_distance = bounds_dist(targets_from, A)
 			if(target_dist < possible_target_distance)
 				Targets -= A
 	if(!Targets.len)//We didnt find nothin!
@@ -270,7 +273,7 @@
 		if(target.z != T.z)
 			LoseTarget()
 			return 0
-		var/target_distance = get_dist(targets_from,target)
+		var/target_distance = bounds_dist(targets_from,target)
 		if(ranged) //We ranged? Shoot at em
 			if(!target.Adjacent(targets_from) && ranged_cooldown <= world.time) //But make sure they're not in range for a melee attack and our range attack is off cooldown
 				OpenFire(target)
@@ -294,7 +297,7 @@
 			return 1
 		return 0
 	if(environment_smash)
-		if(target.loc != null && get_dist(targets_from, target.loc) <= vision_range) //We can't see our target, but he's in our vision range still
+		if(target.loc != null && bounds_dist(targets_from, target.loc) <= vision_range) //We can't see our target, but he's in our vision range still
 			if(ranged_ignores_vision && ranged_cooldown <= world.time) //we can't see our target... but we can fire at them!
 				OpenFire(target)
 			if((environment_smash & ENVIRONMENT_SMASH_WALLS) || (environment_smash & ENVIRONMENT_SMASH_RWALLS)) //If we're capable of smashing through walls, forget about vision completely after finding our target
@@ -564,7 +567,7 @@ mob/living/simple_animal/hostile/proc/DestroySurroundings() // for use with mega
 	. = list()
 	for (var/I in SSmobs.clients_by_zlevel[_Z])
 		var/mob/M = I
-		if (get_dist(M, src) < vision_range)
+		if (bounds_dist(M, src) < vision_range)
 			if (isturf(M.loc))
 				. += M
 			else if (M.loc.type in hostile_machines)

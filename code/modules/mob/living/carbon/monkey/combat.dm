@@ -37,14 +37,13 @@
 			for(var/i = 0; i < maxStepsTick; ++i)
 				if(!IsDeadOrIncap())
 					if(myPath.len >= 1)
-						walk_to(src,myPath[1],0,5)
+						walk_to(src,myPath[1],0)
 						myPath -= myPath[1]
+			walk_to(src, target) // we pathed to the waypoint now head straight for the target
 			return 1
 
 	// failed to path correctly so just try to head straight for a bit
-	walk_to(src,get_turf(target),0,5)
-	sleep(1)
-	walk_to(src,0)
+	walk_for(src, get_dir(loc, get_turf(target)), until=0.5 SECONDS)
 
 	return 0
 

@@ -22,7 +22,7 @@
 					resisting = FALSE
 				else if((mode == MONKEY_IDLE && !pickupTarget && !prob(MONKEY_SHENANIGAN_PROB)) || !handle_combat())
 					if(prob(25) && (mobility_flags & MOBILITY_MOVE) && isturf(loc) && !pulledby)
-						step(src, pick(GLOB.cardinals))
+						walk_for(src, pick(GLOB.cardinals), until=0.5 SECONDS)
 					else if(prob(1))
 						emote(pick("scratch","jump","roll","tail"))
 			else
