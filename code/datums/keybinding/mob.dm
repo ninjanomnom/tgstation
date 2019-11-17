@@ -131,6 +131,22 @@
 		user.mob.dropItemToGround(I)
 	return TRUE
 
+/datum/keybinding/mob/toggle_move_carefully
+	hotkey_keys = list("Shift")
+	name = "toggle_move_carefully"
+	full_name = "Hold to move carefully"
+	description = "Held down to move slowly and accurately, release to move fast again"
+
+/datum/keybinding/mob/toggle_move_carefully/down(client/user)
+	var/mob/M = user.mob
+	M.add_movespeed_modifier(MOVESPEED_ID_MOVE_CAREFULLY, TRUE, 100, override = TRUE, multiplicative_slowdown = 16)
+	return TRUE
+
+/datum/keybinding/mob/toggle_move_carefully/up(client/user)
+	var/mob/M = user.mob
+	M.remove_movespeed_modifier(MOVESPEED_ID_MOVE_CAREFULLY, TRUE)
+	return TRUE
+
 /datum/keybinding/mob/toggle_move_intent
 	hotkey_keys = list("Alt")
 	name = "toggle_move_intent"
