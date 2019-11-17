@@ -27,7 +27,7 @@
 	minbodytemp = 0
 
 	faction = list("mimic")
-	move_to_delay = 9
+	move_to_delay = 0.9
 	del_on_death = 1
 
 // Aggro when you try to open them. Will also pickup loot when spawns and drop it when dies.
