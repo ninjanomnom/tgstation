@@ -14,6 +14,7 @@
 	bound_height = 16
 	bound_width = 16
 	bound_x = 8
+	step_size = 16 // half a tile zoomer
 	//The sound this plays on impact.
 	var/hitsound = 'sound/weapons/pierce.ogg'
 	var/hitsound_wall = ""
@@ -379,6 +380,9 @@
 	trajectory = new(starting.x, starting.y, starting.z, step_x, step_y, Angle, SSprojectiles.global_pixel_speed)
 	last_projectile_move = world.time
 	fired = TRUE
+	if(firer)
+		step_x = firer.step_x
+		step_y = firer.step_y
 	if(hitscan)
 		process_hitscan()
 	if(!(datum_flags & DF_ISPROCESSING))
