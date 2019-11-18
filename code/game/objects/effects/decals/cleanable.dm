@@ -7,17 +7,15 @@
 	var/mergeable_decal = TRUE //when two of these are on a same tile or do we need to merge them into just one?
 	var/beauty = 0
 
-/obj/effect/decal/cleanable/Initialize(mapload, list/datum/disease/diseases, _step_x, _step_y)
+/obj/effect/decal/cleanable/Initialize(mapload, list/datum/disease/diseases)
 	. = ..()
-	step_x = _step_x
-	step_y = _step_y
 	if (random_icon_states && (icon_state == initial(icon_state)) && length(random_icon_states) > 0)
 		icon_state = pick(random_icon_states)
 	create_reagents(300)
 	if(loc && isturf(loc))
 		for(var/obj/effect/decal/cleanable/C in loc)
 			if(C != src && C.type == type && !QDELETED(C))
-				if(replace_decal(C) && !_step_x && !_step_y)
+				if (replace_decal(C))
 					return INITIALIZE_HINT_QDEL
 
 	if(LAZYLEN(diseases))
