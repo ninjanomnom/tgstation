@@ -323,16 +323,10 @@
 	update_bounds(olddir=old_dir, newdir=direct)
 
 // Unless you have some really weird rotation try to implement a generic version of your rotation here and make a flag for it
-/atom/movable/proc/update_bounds(width, height, bx, by, olddir, newdir)
-	SEND_SIGNAL(src, COMSIG_MOVABLE_UPDATE_BOUNDS, vars)
-	if(width || height || bx || by)
-		bound_width = width
-		bound_height = height
-		bound_x = bx
-		bound_y = by
-		return // We were given manual updates by someone up there, dont even bother checking the automated update flags
+/atom/movable/proc/update_bounds(olddir, newdir)
+	SEND_SIGNAL(src, COMSIG_MOVABLE_UPDATE_BOUNDS, args)
 
-	if(!(bound_width % 32) && !(bound_height % 32) && !bound_x && !bound_y) // We cover all our squares and have no offset
+	if(bound_width == bound_height && !bound_x && !bound_y) // We're a square and have no offset
 		return
 
 	if(brotation & BOUNDS_SIMPLE_ROTATE)
@@ -346,7 +340,6 @@
 
 			bound_x = bound_y
 			bound_y = eastgap
-
 
 /atom/movable/proc/forceMove(atom/destination, _step_x, _step_y)
 	. = FALSE

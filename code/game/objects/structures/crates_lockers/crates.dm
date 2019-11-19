@@ -35,10 +35,7 @@
 /obj/structure/closet/crate/CanAllowThrough(atom/movable/mover, turf/target)
 	. = ..()
 	if(!istype(mover, /obj/structure/closet))
-		var/obj/structure/closet/crate/locatedcrate
-		for(var/obj/structure/closet/crate/thing in mover.bounds)
-			if(thing != src)
-				locatedcrate = thing
+		var/obj/structure/closet/crate/locatedcrate = locate() in obounds(mover)
 		if(locatedcrate) //you can walk on it like tables, if you're not in an open crate trying to move to a closed crate
 			if(opened) //if we're open, allow entering regardless of located crate openness
 				return TRUE
