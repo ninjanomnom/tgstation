@@ -13,14 +13,16 @@
 	var/x = thing.step_x
 	var/y = thing.step_y
 	var/turf/place = thing.loc
-	x += dist * cos(deg)
-	y += dist * sin(deg)
+	x += dist * sin(deg)
+	y += dist * cos(deg)
 	NORMALIZE_STEP(place, x, y)
 	return thing.Move(place, get_dir(thing.loc, place), x, y)
 
 // Returns the direction from thingA to thingB in degrees
 // EAST is 0 and goes counter clockwise
 /proc/get_deg(atom/movable/thingA, atom/movable/thingB)
+	if(QDELETED(thingA) || QDELETED(thingB))
+		return
 	var/turf/placeA = get_turf(thingA)
 	var/turf/placeB = get_turf(thingB)
 	var/stepbx = 0
@@ -35,4 +37,4 @@
 		stepay = thingA.step_y
 	var/x = ((placeB.x*PIXELS)+stepbx) - ((placeA.x*PIXELS)+stepax)
 	var/y = ((placeB.y*PIXELS)+stepby) - ((placeA.y*PIXELS)+stepay)
-	return ATAN2(x, y)
+	return ATAN2(y, x)

@@ -311,7 +311,7 @@
 	var/datum/point/vector/current = trajectory
 	if(!current)
 		var/turf/T = get_turf(src)
-		current = new(T.x, T.y, T.z, pixel_x, pixel_y, isnull(forced_angle)? Angle : forced_angle, SSprojectiles.global_pixel_speed)
+		current = new(T.x, T.y, T.z, step_x, step_y, isnull(forced_angle)? Angle : forced_angle, SSprojectiles.global_pixel_speed)
 	var/datum/point/vector/v = current.return_vector_after_increments(moves * SSprojectiles.global_iterations_per_move)
 	return v.return_turf()
 
@@ -343,7 +343,7 @@
 			time_offset += overrun * speed
 		time_offset += MODULUS(elapsed_time_deciseconds, speed)
 
-	for(var/i in 1 to required_moves)
+	for(var/i in 1 to required_moves * 2) // if required moves is turfs and we move 16 pixels per pixel_move we need to double this
 		pixel_move(1, FALSE)
 
 /obj/projectile/proc/fire(angle, atom/direct_target)
@@ -479,7 +479,7 @@
 			after_z_change(old, loc)
 			hitscan_last = loc
 		else
-			degstep(src, get_deg(src, original), 1)
+			degstep(src, Angle, 1)
 			hitscan_last = loc
 	Range()
 
@@ -603,8 +603,6 @@
 			DISABLE_BITFIELD(movement_type, UNSTOPPABLE)
 		if(fired && can_hit_target(original, permutated, TRUE))
 			Bump(original)
-			if(isturf(original))
-				process_hit(original)
 
 /obj/projectile/Destroy()
 	if(hitscan)
