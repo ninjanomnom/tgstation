@@ -100,12 +100,12 @@
 		direct = FULLTILE_WINDOW_DIR
 	return ..()
 
-/obj/structure/window/update_bounds(width, height, bx, by, olddir, newdir, flags)
+/obj/structure/window/update_bounds(olddir, newdir)
 	if(newdir == FULLTILE_WINDOW_DIR)
-		width = 32
-		height = 32
-		bx = 0
-		by = 0
+		bound_width = 32
+		bound_height = 32
+		bound_x = 0
+		bound_y = 0
 	else if(olddir == FULLTILE_WINDOW_DIR)
 		olddir = dir = initial(dir)
 		bound_width = initial(bound_width)
