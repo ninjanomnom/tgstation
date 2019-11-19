@@ -11,9 +11,8 @@
 	pass_flags = PASSTABLE
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	movement_type = FLYING
-	bound_height = 16
-	bound_width = 16
-	bound_x = 8
+	bound_height = 1
+	bound_width = 1
 	step_size = 16 // half a tile zoomer
 	//The sound this plays on impact.
 	var/hitsound = 'sound/weapons/pierce.ogg'
@@ -479,7 +478,7 @@
 			after_z_change(old, loc)
 			hitscan_last = loc
 		else
-			degstep(src, Angle, 1)
+			degstep(src, original_angle, 1)
 			hitscan_last = loc
 	Range()
 
