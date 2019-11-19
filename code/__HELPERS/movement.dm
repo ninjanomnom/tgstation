@@ -8,8 +8,6 @@
 
 // Like step but you move on an angle instead of a cardinal direction
 /proc/degstep(atom/movable/thing, deg, dist)
-	if(!thing)
-		return
 	var/x = thing.step_x
 	var/y = thing.step_y
 	var/turf/place = thing.loc
@@ -21,8 +19,6 @@
 // Returns the direction from thingA to thingB in degrees
 // EAST is 0 and goes counter clockwise
 /proc/get_deg(atom/movable/thingA, atom/movable/thingB)
-	if(QDELETED(thingA) || QDELETED(thingB))
-		return
 	var/turf/placeA = get_turf(thingA)
 	var/turf/placeB = get_turf(thingB)
 	var/stepbx = 0

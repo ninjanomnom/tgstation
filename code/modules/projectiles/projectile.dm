@@ -11,8 +11,9 @@
 	pass_flags = PASSTABLE
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	movement_type = FLYING
-	bound_height = 1
-	bound_width = 1
+	bound_height = 4
+	bound_width = 4
+	bound_x = 2
 	step_size = 16 // half a tile zoomer
 	//The sound this plays on impact.
 	var/hitsound = 'sound/weapons/pierce.ogg'
@@ -342,7 +343,7 @@
 			time_offset += overrun * speed
 		time_offset += MODULUS(elapsed_time_deciseconds, speed)
 
-	for(var/i in 1 to required_moves * 2) // if required moves is turfs and we move 16 pixels per pixel_move we need to double this
+	for(var/i in 1 to required_moves * (32 / step_size)) // required moves is in turfs
 		pixel_move(1, FALSE)
 
 /obj/projectile/proc/fire(angle, atom/direct_target)
