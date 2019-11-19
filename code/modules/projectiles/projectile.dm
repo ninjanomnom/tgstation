@@ -458,24 +458,18 @@
 /obj/projectile/proc/pixel_move(trajectory_multiplier, hitscanning = FALSE)
 	if(!loc || !trajectory)
 		return
-	for(var/i in 1 to SSprojectiles.global_iterations_per_move)
-		degstep(src, get_deg(src, original), 2)
-/* 	last_projectile_move = world.time
+	last_projectile_move = world.time
 	if(!nondirectional_sprite && !hitscanning)
 		var/matrix/M = new
 		M.Turn(Angle)
 		transform = M
 	if(homing)
 		process_homing()
-	var/forcemoved = FALSE
 	for(var/i in 1 to SSprojectiles.global_iterations_per_move)
 		if(QDELETED(src))
 			return
 		trajectory.increment(trajectory_multiplier)
 		var/turf/T = trajectory.return_turf()
-		if(!istype(T))
-			qdel(src)
-			return
 		if(T.z != loc.z)
 			var/old = loc
 			before_z_change(loc, T)
@@ -483,18 +477,10 @@
 			forceMove(T)
 			trajectory_ignore_forcemove = FALSE
 			after_z_change(old, loc)
-			if(!hitscanning)
-				pixel_x = trajectory.return_px()
-				pixel_y = trajectory.return_py()
-			forcemoved = TRUE
 			hitscan_last = loc
-		else if(T != loc)
-			step_towards(src, T)
+		else
+			degstep(src, get_deg(src, original), 1)
 			hitscan_last = loc
-	if(!hitscanning && !forcemoved)
-		pixel_x = trajectory.return_px() - trajectory.mpx * trajectory_multiplier * SSprojectiles.global_iterations_per_move
-		pixel_y = trajectory.return_py() - trajectory.mpy * trajectory_multiplier * SSprojectiles.global_iterations_per_move
-		animate(src, pixel_x = trajectory.return_px(), pixel_y = trajectory.return_py(), time = 1, flags = ANIMATION_END_NOW) */
 	Range()
 
 /obj/projectile/proc/process_homing()			//may need speeding up in the future performance wise.
@@ -617,6 +603,8 @@
 			DISABLE_BITFIELD(movement_type, UNSTOPPABLE)
 		if(fired && can_hit_target(original, permutated, TRUE))
 			Bump(original)
+			if(isturf(original))
+				process_hit(original)
 
 /obj/projectile/Destroy()
 	if(hitscan)
