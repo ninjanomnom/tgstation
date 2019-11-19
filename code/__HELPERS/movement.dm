@@ -1,3 +1,5 @@
+#define PIXELS 32
+
 /proc/walk_for(atom/movable/thing, direct, lag, speed, until)
 	set waitfor = FALSE
 	walk(thing, direct, lag, speed)
@@ -9,8 +11,8 @@
 	var/x = thing.step_x
 	var/y = thing.step_y
 	var/turf/place = thing.loc
-	x += dist * cos(deg)
-	y += dist * sin(deg)
+	x += dist * sin(deg)
+	y += dist * cos(deg)
 	NORMALIZE_STEP(place, x, y)
 	return thing.Move(place, get_dir(thing.loc, place), x, y)
 
@@ -19,6 +21,16 @@
 /proc/get_deg(atom/movable/thingA, atom/movable/thingB)
 	var/turf/placeA = get_turf(thingA)
 	var/turf/placeB = get_turf(thingB)
-	var/x = ((placeB.x*32)+thingB.step_x) - ((placeA.x*32)+thingA.step_x)
-	var/y = ((placeB.y*32)+thingB.step_y) - ((placeA.y*32)+thingA.step_y)
-	return ATAN2(x, y)
+	var/stepbx = 0
+	var/stepby = 0
+	var/stepax = 0
+	var/stepay = 0
+	if(ismovableatom(thingB))
+		stepbx = thingB.step_x
+		stepby = thingB.step_y
+	if(ismovableatom(thingA))
+		stepax = thingA.step_x
+		stepay = thingA.step_y
+	var/x = ((placeB.x*PIXELS)+stepbx) - ((placeA.x*PIXELS)+stepax)
+	var/y = ((placeB.y*PIXELS)+stepby) - ((placeA.y*PIXELS)+stepay)
+	return ATAN2(y, x)
