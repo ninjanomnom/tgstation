@@ -11,6 +11,10 @@
 	pass_flags = PASSTABLE
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	movement_type = FLYING
+	bound_height = 4
+	bound_width = 4
+	bound_x = 2
+	step_size = 16 // half a tile zoomer
 	//The sound this plays on impact.
 	var/hitsound = 'sound/weapons/pierce.ogg'
 	var/hitsound_wall = ""
@@ -159,11 +163,19 @@
 
 		return BULLET_ACT_HIT
 
+	if(ismovable(target))
+		var/atom/movable/AM = target
+		if(target == original)
+			hitx = AM.step_x + p_x - 16
+			hity = AM.step_y + p_y - 16
+		else
+			hitx = AM.step_x + rand(-8, 8)
+			hity = AM.step_y + rand(-8, 8)
+			
 	if(!isliving(target))
 		if(impact_effect_type && !hitscan)
 			new impact_effect_type(target_loca, hitx, hity)
 		return BULLET_ACT_HIT
-
 	var/mob/living/L = target
 
 	if(blocked != 100) // not completely blocked
@@ -223,8 +235,8 @@
 	beam_segments[beam_index] = null
 
 /obj/projectile/Bump(atom/A)
+	. = ..()
 	var/datum/point/pcache = trajectory.copy_to()
-	var/turf/T = get_turf(A)
 	if(check_ricochet(A) && check_ricochet_flag(A) && ricochets < ricochets_max)
 		ricochets++
 		if(A.handle_ricochet(src))
@@ -236,7 +248,7 @@
 				store_hitscan_collision(pcache)
 			return TRUE
 
-	var/distance = get_dist(T, starting) // Get the distance between the turf shot from and the mob we hit and use that for the calculations.
+	var/distance = bounds_dist(A, starting) / 32 // Get the distance between the turf shot from and the mob we hit and use that for the calculations.
 	def_zone = ran_zone(def_zone, max(100-(7*distance), 5)) //Lower accurancy/longer range tradeoff. 7 is a balanced number to use.
 
 	if(isturf(A) && hitsound_wall)
@@ -245,29 +257,29 @@
 			volume = 5
 		playsound(loc, hitsound_wall, volume, TRUE, -1)
 
-	return process_hit(T, select_target(T, A))
+	return process_hit(select_target(A))
 
 #define QDEL_SELF 1			//Delete if we're not UNSTOPPABLE flagged non-temporarily
 #define DO_NOT_QDEL 2		//Pass through.
 #define FORCE_QDEL 3		//Force deletion.
 
-/obj/projectile/proc/process_hit(turf/T, atom/target, qdel_self, hit_something = FALSE)		//probably needs to be reworked entirely when pixel movement is done.
-	if(QDELETED(src) || !T || !target)		//We're done, nothing's left.
+/obj/projectile/proc/process_hit(atom/target, qdel_self, hit_something = FALSE)		//probably needs to be reworked entirely when pixel movement is done.
+	if(QDELETED(src) || !target)		//We're done, nothing's left.
 		if((qdel_self == FORCE_QDEL) || ((qdel_self == QDEL_SELF) && !temporary_unstoppable_movement && !CHECK_BITFIELD(movement_type, UNSTOPPABLE)))
 			qdel(src)
 		return hit_something
 	permutated |= target		//Make sure we're never hitting it again. If we ever run into weirdness with piercing projectiles needing to hit something multiple times.. well.. that's a to-do.
 	if(!prehit(target))
-		return process_hit(T, select_target(T), qdel_self, hit_something)		//Hit whatever else we can since that didn't work.
+		return process_hit(select_target(target), qdel_self, hit_something)		//Hit whatever else we can since that didn't work.
 	SEND_SIGNAL(target, COMSIG_PROJECTILE_PREHIT, args)
 	var/result = target.bullet_act(src, def_zone)
 	if(result == BULLET_ACT_FORCE_PIERCE)
 		if(!CHECK_BITFIELD(movement_type, UNSTOPPABLE))
 			temporary_unstoppable_movement = TRUE
 			ENABLE_BITFIELD(movement_type, UNSTOPPABLE)
-		return process_hit(T, select_target(T), qdel_self, TRUE)		//Hit whatever else we can since we're piercing through but we're still on the same tile.
+		return process_hit(select_target(target), qdel_self, TRUE)		//Hit whatever else we can since we're piercing through but we're still on the same tile.
 	else if(result == BULLET_ACT_TURF)									//We hit the turf but instead we're going to also hit something else on it.
-		return process_hit(T, select_target(T), QDEL_SELF, TRUE)
+		return process_hit(select_target(target), QDEL_SELF, TRUE)
 	else		//Whether it hit or blocked, we're done!
 		qdel_self = QDEL_SELF
 		hit_something = TRUE
@@ -279,33 +291,9 @@
 #undef DO_NOT_QDEL
 #undef FORCE_QDEL
 
-/obj/projectile/proc/select_target(turf/T, atom/target)			//Select a target from a turf.
-	if((original in T) && can_hit_target(original, permutated, TRUE, TRUE))
-		return original
+/obj/projectile/proc/select_target(atom/target)			//Select a target from a turf.
 	if(target && can_hit_target(target, permutated, target == original, TRUE))
 		return target
-	var/list/mob/living/possible_mobs = typecache_filter_list(T, GLOB.typecache_mob)
-	var/list/mob/mobs = list()
-	for(var/mob/living/M in possible_mobs)
-		if(!can_hit_target(M, permutated, M == original, TRUE))
-			continue
-		mobs += M
-	if (length(mobs))
-		var/mob/M = pick(mobs)
-		return M.lowest_buckled_mob()
-	var/list/obj/possible_objs = typecache_filter_list(T, GLOB.typecache_machine_or_structure)
-	var/list/obj/objs = list()
-	for(var/obj/O in possible_objs)
-		if(!can_hit_target(O, permutated, O == original, TRUE))
-			continue
-		objs += O
-	if (length(objs))
-		var/obj/O = pick(objs)
-		return O
-	//Nothing else is here that we can hit, hit the turf if we haven't.
-	if(!(T in permutated) && can_hit_target(T, permutated, T == original, TRUE))
-		return T
-	//Returns null if nothing at all was found.
 
 /obj/projectile/proc/check_ricochet()
 	if(prob(ricochet_chance))
@@ -323,7 +311,7 @@
 	var/datum/point/vector/current = trajectory
 	if(!current)
 		var/turf/T = get_turf(src)
-		current = new(T.x, T.y, T.z, pixel_x, pixel_y, isnull(forced_angle)? Angle : forced_angle, SSprojectiles.global_pixel_speed)
+		current = new(T.x, T.y, T.z, step_x, step_y, isnull(forced_angle)? Angle : forced_angle, SSprojectiles.global_pixel_speed)
 	var/datum/point/vector/v = current.return_vector_after_increments(moves * SSprojectiles.global_iterations_per_move)
 	return v.return_turf()
 
@@ -355,7 +343,7 @@
 			time_offset += overrun * speed
 		time_offset += MODULUS(elapsed_time_deciseconds, speed)
 
-	for(var/i in 1 to required_moves)
+	for(var/i in 1 to required_moves * (32 / step_size)) // required moves is in turfs
 		pixel_move(1, FALSE)
 
 /obj/projectile/proc/fire(angle, atom/direct_target)
@@ -389,9 +377,12 @@
 	trajectory_ignore_forcemove = TRUE
 	forceMove(starting)
 	trajectory_ignore_forcemove = FALSE
-	trajectory = new(starting.x, starting.y, starting.z, pixel_x, pixel_y, Angle, SSprojectiles.global_pixel_speed)
+	trajectory = new(starting.x, starting.y, starting.z, step_x, step_y, Angle, SSprojectiles.global_pixel_speed)
 	last_projectile_move = world.time
 	fired = TRUE
+	if(firer)
+		step_x = firer.step_x
+		step_y = firer.step_y
 	SEND_SIGNAL(src, COMSIG_PROJECTILE_FIRE)
 	if(hitscan)
 		process_hitscan()
@@ -475,15 +466,11 @@
 		transform = M
 	if(homing)
 		process_homing()
-	var/forcemoved = FALSE
 	for(var/i in 1 to SSprojectiles.global_iterations_per_move)
 		if(QDELETED(src))
 			return
 		trajectory.increment(trajectory_multiplier)
 		var/turf/T = trajectory.return_turf()
-		if(!istype(T))
-			qdel(src)
-			return
 		if(T.z != loc.z)
 			var/old = loc
 			before_z_change(loc, T)
@@ -491,18 +478,10 @@
 			forceMove(T)
 			trajectory_ignore_forcemove = FALSE
 			after_z_change(old, loc)
-			if(!hitscanning)
-				pixel_x = trajectory.return_px()
-				pixel_y = trajectory.return_py()
-			forcemoved = TRUE
 			hitscan_last = loc
-		else if(T != loc)
-			step_towards(src, T)
+		else
+			degstep(src, original_angle, 1)
 			hitscan_last = loc
-	if(!hitscanning && !forcemoved)
-		pixel_x = trajectory.return_px() - trajectory.mpx * trajectory_multiplier * SSprojectiles.global_iterations_per_move
-		pixel_y = trajectory.return_py() - trajectory.mpy * trajectory_multiplier * SSprojectiles.global_iterations_per_move
-		animate(src, pixel_x = trajectory.return_px(), pixel_y = trajectory.return_py(), time = 1, flags = ANIMATION_END_NOW)
 	Range()
 
 /obj/projectile/proc/process_homing()			//may need speeding up in the future performance wise.

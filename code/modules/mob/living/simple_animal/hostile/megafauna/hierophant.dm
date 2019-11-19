@@ -682,7 +682,7 @@ Difficulty: Hard
 			var/mob/living/simple_animal/hostile/H = L //mobs find and damage you...
 			if(H.stat == CONSCIOUS && !H.target && H.AIStatus != AI_OFF && !H.client)
 				if(!QDELETED(caster))
-					if(get_dist(H, caster) <= H.aggro_vision_range)
+					if(bounds_dist(H, caster) <= H.aggro_vision_range)
 						H.FindTarget(list(caster), 1)
 					else
 						H.Goto(get_turf(caster), H.move_to_delay, 3)
