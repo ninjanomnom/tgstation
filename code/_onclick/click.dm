@@ -190,9 +190,13 @@
 		--depth
 
 		for(var/atom/target in checking)  // will filter out nulls
-			if(closed[target] || isarea(target))  // avoid infinity situations
+			if(closed[target])  // avoid infinity situations
 				continue
 			closed[target] = TRUE
+			
+			if(isarea(target))
+				continue
+
 			if(isturf(target) || isturf(target.loc) || (target in direct_access)) //Directly accessible atoms
 				if(Adjacent(target) || (tool && CheckToolReach(src, target, tool.reach))) //Adjacent or reaching attacks
 					return TRUE
