@@ -11,8 +11,8 @@
 	pass_flags = PASSTABLE
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	movement_type = FLYING
-	bound_height = 4
-	bound_width = 4
+	bound_height = 8
+	bound_width = 8
 	bound_x = 2
 	step_size = 16 // half a tile zoomer
 	//The sound this plays on impact.
