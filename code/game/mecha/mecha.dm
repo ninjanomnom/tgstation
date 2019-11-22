@@ -114,6 +114,7 @@
 
 	var/occupant_sight_flags = 0 //sight flags to give to the occupant (e.g. mech mining scanner gives meson-like vision)
 	var/mouse_pointer
+	var/sound_cooldown = 0
 
 	hud_possible = list (DIAG_STAT_HUD, DIAG_BATT_HUD, DIAG_MECH_HUD, DIAG_TRACK_HUD)
 
@@ -530,7 +531,8 @@
 
 ///Plays the mech step sound effect. Split from movement procs so that other mechs (HONK) can override this one specific part.
 /obj/mecha/proc/play_stepsound()
-	if(stepsound)
+	if(stepsound && sound_cooldown < world.time)
+		sound_cooldown = world.time + 0.5 SECONDS
 		playsound(src,stepsound,40,1)
 
 /obj/mecha/Move(atom/newloc, direct)
@@ -583,7 +585,7 @@
 /obj/mecha/proc/domove(direction)
 	if(!Process_Spacemove(direction))
 		return 0
-	if(!has_charge(step_energy_drain))
+	if(!has_charge(step_energy_drain / step_size))
 		return 0
 	if(zoom_mode)
 		if(world.time - last_message > 20)
@@ -602,15 +604,14 @@
 		return 0
 
 	var/move_result = 0
-	var/oldloc = loc
 	if(internal_damage & MECHA_INT_CONTROL_LOST)
 		move_result = mechsteprand()
 	else if(dir != direction && (!strafe || occupant.client.keys_held["Alt"]))
 		move_result = mechturn(direction)
 	else
 		move_result = mechstep(direction)
-	if(move_result && loc != oldloc)// halfway done diagonal move still returns false
-		use_power(step_energy_drain)
+	if(move_result)// halfway done diagonal move still returns false
+		use_power(step_energy_drain / step_size)
 		return 1
 	return 0
 
