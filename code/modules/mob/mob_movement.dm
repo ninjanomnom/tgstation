@@ -252,7 +252,7 @@
   * Find movable atoms? near a mob that are viable for pushing off when moving
   */
 /mob/get_spacemove_backup()
-	for(var/A in orange(1, get_turf(src)))
+	for(var/A in obounds(src, 16))
 		if(isarea(A))
 			continue
 		else if(isturf(A))

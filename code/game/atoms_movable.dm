@@ -458,12 +458,12 @@
 		step(src, AM.dir)
 	..()
 
-/atom/movable/proc/safe_throw_at(atom/target, range, speed, mob/thrower, spin = TRUE, diagonals_first = FALSE, datum/callback/callback, force = MOVE_FORCE_STRONG)
+/atom/movable/proc/safe_throw_at(atom/target, range, speed, mob/thrower, spin = TRUE, diagonals_first = FALSE, datum/callback/callback, force = MOVE_FORCE_STRONG, params)
 	if((force < (move_resist * MOVE_FORCE_THROW_RATIO)) || (move_resist == INFINITY))
 		return
-	return throw_at(target, range, speed, thrower, spin, diagonals_first, callback, force)
+	return throw_at(target, range, speed, thrower, spin, diagonals_first, callback, force, params)
 
-/atom/movable/proc/throw_at(atom/target, range, speed, mob/thrower, spin = TRUE, diagonals_first = FALSE, datum/callback/callback, force = MOVE_FORCE_STRONG) //If this returns FALSE then callback will not be called.
+/atom/movable/proc/throw_at(atom/target, range, speed, mob/thrower, spin = TRUE, diagonals_first = FALSE, datum/callback/callback, force = MOVE_FORCE_STRONG, params) //If this returns FALSE then callback will not be called.
 	. = FALSE
 	if (!target || speed <= 0)
 		return
@@ -511,6 +511,11 @@
 	TT.diagonals_first = diagonals_first
 	TT.force = force
 	TT.callback = callback
+	if(thrower && params)
+		var/list/calculated = calculate_projectile_angle_and_pixel_offsets(thrower, params)
+		TT.angle = calculated[1]
+		TT.sx = calculated[2]
+		TT.sy = calculated[3]
 	if(!QDELETED(thrower))
 		TT.target_zone = thrower.zone_selected
 
