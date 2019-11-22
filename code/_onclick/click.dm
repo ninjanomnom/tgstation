@@ -68,7 +68,7 @@
 	if(world.time <= next_click)
 		return
 	next_click = world.time + 1
-
+	client?.mouseParams = params
 	if(check_click_intercept(params,A))
 		return
 
@@ -80,7 +80,7 @@
 
 	var/list/modifiers = params2list(params)
 	if(modifiers["shift"] && modifiers["middle"])
-		ShiftMiddleClickOn(A)
+		ShiftMiddleClickOn(A, params)
 		return
 	if(modifiers["shift"] && modifiers["ctrl"])
 		CtrlShiftClickOn(A)
@@ -119,7 +119,7 @@
 		return
 
 	if(in_throw_mode)
-		throw_item(A)
+		throw_item(A, params)
 		return
 
 	var/obj/item/W = get_active_held_item()
@@ -369,7 +369,8 @@
 	A.CtrlShiftClick(src)
 	return
 
-/mob/proc/ShiftMiddleClickOn(atom/A)
+/mob/proc/ShiftMiddleClickOn(atom/A, params)
+	client?.mouseParams = params
 	src.pointed(A)
 	return
 

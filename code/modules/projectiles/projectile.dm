@@ -469,19 +469,18 @@
 	for(var/i in 1 to SSprojectiles.global_iterations_per_move)
 		if(QDELETED(src))
 			return
-		trajectory.increment(trajectory_multiplier)
-		var/turf/T = trajectory.return_turf()
-		if(T.z != loc.z)
+		//trajectory.increment(trajectory_multiplier)
+		//var/turf/T = trajectory.return_turf()
+		degstep(src, original_angle, 1)
+		hitscan_last = loc
+/* 		if(T?.z != loc?.z)
 			var/old = loc
 			before_z_change(loc, T)
 			trajectory_ignore_forcemove = TRUE
 			forceMove(T)
 			trajectory_ignore_forcemove = FALSE
 			after_z_change(old, loc)
-			hitscan_last = loc
-		else
-			degstep(src, original_angle, 1)
-			hitscan_last = loc
+			hitscan_last = loc */
 	Range()
 
 /obj/projectile/proc/process_homing()			//may need speeding up in the future performance wise.
