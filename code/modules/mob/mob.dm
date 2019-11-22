@@ -449,10 +449,9 @@
 		return FALSE
 
 	var/obj/effect/E = new /obj/effect/temp_visual/point(A,invisibility)
-	var/list/params = params2list(client.mouseParams)
-	E.step_x = text2num(params["icon-x"])
-	E.step_y = text2num(params["icon-y"])
-
+	var/list/mouse_control = params2list(client.mouseParams)
+	E.step_x = CLAMP(text2num(mouse_control["icon-x"]) - 16, -(world.icon_size/2), world.icon_size/2)
+	E.step_y = CLAMP(text2num(mouse_control["icon-y"]) - 16, -(world.icon_size/2), world.icon_size/2)
 	return TRUE
 
 ///Can this mob resist (default FALSE)
