@@ -31,6 +31,8 @@ would spawn and follow the beaker, even if it is carried or thrown.
 	var/effect_type
 	var/total_effects = 0
 	var/autocleanup = FALSE //will delete itself after use
+	var/stepx = 16
+	var/stepy = 16
 
 /datum/effect_system/Destroy()
 	holder = null
@@ -59,7 +61,13 @@ would spawn and follow the beaker, even if it is carried or thrown.
 /datum/effect_system/proc/generate_effect()
 	if(holder)
 		location = get_turf(holder)
+		if(ismovableatom(holder))
+			var/atom/movable/AM = holder
+			stepx = AM.step_x
+			stepy = AM.step_y
 	var/obj/effect/E = new effect_type(location)
+	E.step_x = stepx
+	E.step_y = stepy
 	total_effects++
 	var/direction
 	if(cardinals)
