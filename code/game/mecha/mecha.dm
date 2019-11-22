@@ -609,7 +609,7 @@
 		move_result = mechturn(direction)
 	else
 		move_result = mechstep(direction)
-	if(move_result || loc != oldloc)// halfway done diagonal move still returns false
+	if(move_result && loc != oldloc)// halfway done diagonal move still returns false
 		use_power(step_energy_drain)
 		return 1
 	return 0

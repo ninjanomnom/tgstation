@@ -130,10 +130,10 @@ SUBSYSTEM_DEF(throwing)
 /datum/thrownthing/proc/finalize(hit = FALSE, target=null)
 	set waitfor = FALSE
 	//done throwing, either because it hit something or it finished moving
-	thrownthing.step_x = sx - 16
-	thrownthing.step_y = sy - 16
 	if(!thrownthing)
 		return
+	thrownthing.step_x = sx - 16
+	thrownthing.step_y = sy - 16
 	thrownthing.throwing = null
 	if (!hit)
 		for (var/thing in get_turf(thrownthing)) //looking for our target on the turf we land on.

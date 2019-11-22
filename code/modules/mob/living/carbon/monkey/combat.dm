@@ -257,7 +257,7 @@
 					target = L
 
 			if(target != null)
-				walk_away(src, target, MONKEY_ENEMY_VISION, 5)
+				walk_away(src, target, MONKEY_ENEMY_VISION)
 			else
 				back_to_idle()
 
