@@ -79,7 +79,7 @@
 					return
 			user.stop_pulling()
 		else if(user.pulling.pass_flags & PASSTABLE)
-			user.Move_Pulled(src)
+			user.Move_Pulled(src, user.client?.mouseParams)
 			if (user.pulling.loc == loc)
 				user.visible_message("<span class='notice'>[user] places [user.pulling] onto [src].</span>",
 					"<span class='notice'>You place [user.pulling] onto [src].</span>")

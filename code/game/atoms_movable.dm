@@ -164,7 +164,7 @@
 			var/mob/living/L = ex_pulled
 			L.update_mobility()// mob gets up if it was lyng down in a chokehold
 
-/atom/movable/proc/Move_Pulled(atom/A)
+/atom/movable/proc/Move_Pulled(atom/A, params)
 	if(!pulling)
 		return
 	if(pulling.anchored || pulling.move_resist > move_force || !pulling.Adjacent(src))
@@ -179,10 +179,16 @@
 		return
 	if(!Process_Spacemove(get_dir(pulling.loc, A)))
 		return
-	step(pulling, get_dir(pulling.loc, A))
+	if(params)
+		var/list/mouse = calculate_projectile_angle_and_pixel_offsets(params)
+		var/sx = text2num(mouse["icon-x"]) - 16
+		var/sy = text2num(mouse["icon-y"]) - 16
+		pulling.Move(get_step(pulling, get_dir(pulling.loc, A)), get_dir(pulling.loc, A), sx, sy)
+	else
+		step(pulling, get_dir(pulling.loc, A))
 	return TRUE
 
-/mob/living/Move_Pulled(atom/A)
+/mob/living/Move_Pulled(atom/A, params)
 	. = ..()
 	if(!. || !isliving(A))
 		return

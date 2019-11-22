@@ -118,7 +118,7 @@
 	. = ..()
 	if(.)
 		return
-	user.Move_Pulled(src)
+	user.Move_Pulled(src, user.client?.mouseParams)
 
 /turf/proc/multiz_turf_del(turf/T, dir)
 

@@ -174,7 +174,7 @@ GLOBAL_LIST_EMPTY(conveyors_by_id)
 	. = ..()
 	if(.)
 		return
-	user.Move_Pulled(src)
+	user.Move_Pulled(src, user.client?.mouseParams)
 
 // make the conveyor broken
 // also propagate inoperability to any connected conveyor with the same ID
