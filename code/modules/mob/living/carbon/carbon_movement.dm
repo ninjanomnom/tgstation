@@ -8,6 +8,7 @@
 /mob/living/carbon/Process_Spacemove(movement_dir = 0)
 	if(..())
 		return 1
+		
 	if(!isturf(loc))
 		return 0
 
