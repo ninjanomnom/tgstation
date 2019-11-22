@@ -10,6 +10,7 @@
 	infra_luminosity = 15 //byond implementation is bugged.
 	force = 5
 	flags_1 = HEAR_1
+	step_size = 4 // half the speed of a mob
 	var/ruin_mecha = FALSE //if the mecha starts on a ruin, don't automatically give it a tracking beacon to prevent metagaming.
 	var/can_move = 0 //time of next allowed movement
 	var/mob/living/carbon/occupant = null
@@ -552,7 +553,7 @@
 					to_chat(occupant, "<span class='info'>You push off [backup] to propel yourself.</span>")
 		return TRUE
 
-	if(can_move <= world.time && active_thrusters && movement_dir && active_thrusters.thrust(movement_dir))
+	if(active_thrusters && movement_dir && active_thrusters.thrust(movement_dir))
 		step_silent = TRUE
 		return TRUE
 
@@ -580,8 +581,6 @@
 	return domove(direction)
 
 /obj/mecha/proc/domove(direction)
-	if(can_move >= world.time)
-		return 0
 	if(!Process_Spacemove(direction))
 		return 0
 	if(!has_charge(step_energy_drain))
@@ -612,7 +611,6 @@
 		move_result = mechstep(direction)
 	if(move_result || loc != oldloc)// halfway done diagonal move still returns false
 		use_power(step_energy_drain)
-		can_move = world.time + step_in
 		return 1
 	return 0
 
@@ -641,14 +639,10 @@
 
 /obj/mecha/Bump(var/atom/obstacle)
 	if(phasing && get_charge() >= phasing_energy_drain && !throwing)
-		if(!can_move)
-			return
-		can_move = 0
 		if(phase_state)
 			flick(phase_state, src)
 		forceMove(get_step(src,dir))
 		use_power(phasing_energy_drain)
-		addtimer(VARSET_CALLBACK(src, can_move, TRUE), step_in*3)
 	else
 		if(..()) //mech was thrown
 			return

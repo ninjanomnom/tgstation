@@ -119,7 +119,7 @@
 		return
 
 	if(in_throw_mode)
-		throw_item(A)
+		throw_item(A, params)
 		return
 
 	var/obj/item/W = get_active_held_item()

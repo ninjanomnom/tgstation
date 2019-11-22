@@ -448,7 +448,10 @@
 	if (!tile)
 		return FALSE
 
-	new /obj/effect/temp_visual/point(A,invisibility)
+	var/obj/effect/E = new /obj/effect/temp_visual/point(A,invisibility)
+	var/list/params = params2list(client.mouseParams)
+	E.step_x = text2num(params["icon-x"])
+	E.step_y = text2num(params["icon-y"])
 
 	return TRUE
 

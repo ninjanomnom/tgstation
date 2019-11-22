@@ -59,6 +59,9 @@ SUBSYSTEM_DEF(throwing)
 	var/pure_diagonal
 	var/diagonal_error
 	var/datum/callback/callback
+	var/sx = 16
+	var/sy = 16
+	var/angle
 	var/paused = FALSE
 	var/delayed_time = 0
 	var/last_move = 0
@@ -87,12 +90,13 @@ SUBSYSTEM_DEF(throwing)
 		return
 
 	var/atom/step
-
 	last_move = world.time
-
 	//calculate how many tiles to move, making up for any missed ticks.
 	var/tilestomove = CEILING(min(((((world.time+world.tick_lag) - start_time + delayed_time) * speed) - (dist_travelled ? dist_travelled : -1)), speed*MAX_TICKS_TO_MAKE_UP) * (world.tick_lag * SSthrowing.wait), 1)
-	while (tilestomove-- > 0)
+	// whatever we're moving we need double to get the pixels to travel, 1 tile = 16 * 2 pixels!
+	// this might end up screwy in the long run, but this make sense to me right now
+	tilestomove *= 2
+	while (tilestomove-- > 0) 
 		if ((dist_travelled >= maxrange || AM.loc == target_turf) && AM.has_gravity(AM.loc))
 			finalize()
 			return
@@ -111,13 +115,15 @@ SUBSYSTEM_DEF(throwing)
 			finalize()
 			return
 
-		AM.Move(step, get_dir(AM, step))
+		degstep(AM, angle, 16)
+		// AM.step_size = 16
+		// AM.Move(step, get_dir(AM, step))
 
 		if (!AM.throwing) // we hit something during our move
 			finalize(hit = TRUE)
 			return
 
-		dist_travelled++
+		dist_travelled += 0.5 // half a tile
 
 		if (dist_travelled > MAX_THROWING_DIST)
 			finalize()
@@ -126,7 +132,7 @@ SUBSYSTEM_DEF(throwing)
 /datum/thrownthing/proc/finalize(hit = FALSE, target=null)
 	set waitfor = FALSE
 	//done throwing, either because it hit something or it finished moving
-	stack_trace("[thrownthing] hit something at [get_turf(thrownthing)]")
+	//stack_trace("[thrownthing] hit something at [get_turf(thrownthing)]")
 	if(!thrownthing)
 		return
 	thrownthing.throwing = null
