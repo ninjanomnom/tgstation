@@ -9,9 +9,8 @@
 	if(..())
 		return 1
 		
-	for(var/x in locs)
-		if(!isturf(x))
-			return 0
+	if(!isturf(loc))
+		return 0
 
 	// Do we have a jetpack implant (and is it on)?
 	var/obj/item/organ/cyberimp/chest/thrusters/T = getorganslot(ORGAN_SLOT_THRUSTERS)

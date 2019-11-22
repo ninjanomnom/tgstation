@@ -31,8 +31,8 @@ would spawn and follow the beaker, even if it is carried or thrown.
 	var/effect_type
 	var/total_effects = 0
 	var/autocleanup = FALSE //will delete itself after use
-	var/stepx = 0
-	var/stepy = 0
+	var/stepx = 16
+	var/stepy = 16
 
 /datum/effect_system/Destroy()
 	holder = null

@@ -15,7 +15,6 @@
 	var/fadetype = "ion_fade"
 	var/fade = TRUE
 	var/nograv_required = FALSE
-	var/list/effects_list = list() // something something list
 
 /datum/effect_system/trail_follow/set_up(atom/atom)
 	attach(atom)
@@ -48,25 +47,18 @@
 		if(!holder.has_gravity() || !nograv_required)
 			if(ismovableatom(holder))
 				var/atom/movable/AM = holder
-				for(var/turf/K in AM.locs)
-					effects_list |= new effect_type(K)
-					for(var/obj/effect/E in effects_list)
-						set_dir(E)
-						if(fade)
-							flick(fadetype, E)
-							E.icon_state = ""
-						if(qdel_in_time)
-							QDEL_IN(E, qdel_in_time)
-						effects_list -= E
-			else
-				var/obj/effect/E = new effect_type(get_turf(holder))
-				set_dir(E)
-				if(fade)
-					flick(fadetype, E)
-					E.icon_state = ""
-				if(qdel_in_time)
-					QDEL_IN(E, qdel_in_time)
-			cooldown = world.time + 1 SECONDS
+				stepx = AM.step_x
+				stepy = AM.step_y
+			var/obj/effect/E = new effect_type(get_turf(holder))
+			E.step_x = stepx
+			E.step_y = stepy
+			set_dir(E)
+			if(fade)
+				flick(fadetype, E)
+				E.icon_state = ""
+			if(qdel_in_time)
+				QDEL_IN(E, qdel_in_time)
+			cooldown = world.time + 0.5 SECONDS
 
 /datum/effect_system/trail_follow/proc/check_conditions()
 	if(!get_turf(holder))

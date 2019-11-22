@@ -116,8 +116,6 @@ SUBSYSTEM_DEF(throwing)
 			return
 
 		degstep(AM, angle, 16)
-		// AM.step_size = 16
-		// AM.Move(step, get_dir(AM, step))
 
 		if (!AM.throwing) // we hit something during our move
 			finalize(hit = TRUE)
@@ -132,7 +130,6 @@ SUBSYSTEM_DEF(throwing)
 /datum/thrownthing/proc/finalize(hit = FALSE, target=null)
 	set waitfor = FALSE
 	//done throwing, either because it hit something or it finished moving
-	//stack_trace("[thrownthing] hit something at [get_turf(thrownthing)]")
 	if(!thrownthing)
 		return
 	thrownthing.throwing = null

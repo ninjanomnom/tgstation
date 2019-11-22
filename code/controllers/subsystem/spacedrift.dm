@@ -38,12 +38,9 @@ SUBSYSTEM_DEF(spacedrift)
 			continue
 
 		var/old_dir = AM.dir
-		// var/old_loc = AM.loc
 		AM.inertia_moving = TRUE
 		step(AM, AM.inertia_dir, AM.step_size) // TODO: rework inertia to use degstep and angles
 		AM.inertia_moving = FALSE
-/* 		if (AM.loc == old_loc)
-			AM.inertia_dir = 0 */
 
 		AM.setDir(old_dir)
 		if (MC_TICK_CHECK)
