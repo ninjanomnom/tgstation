@@ -3,7 +3,7 @@
 	appearance_flags = TILE_BOUND|PIXEL_SCALE
 
 	// Movement related vars
-	step_size = 32
+	step_size = 16
 	var/walking = NONE
 	var/move_resist = MOVE_RESIST_DEFAULT
 	var/move_force = MOVE_FORCE_DEFAULT
@@ -175,12 +175,10 @@
 		if(L.buckled && L.buckled.buckle_prevents_pull) //if they're buckled to something that disallows pulling, prevent it
 			stop_pulling()
 			return
-	if(A == loc && pulling.density)
-		return
 	if(!Process_Spacemove(get_dir(pulling.loc, A)))
 		return
 	if(params)
-		var/list/mouse = calculate_projectile_angle_and_pixel_offsets(params)
+		var/list/mouse = params2list(params)
 		var/sx = text2num(mouse["icon-x"]) - 16
 		var/sy = text2num(mouse["icon-y"]) - 16
 		pulling.Move(get_step(pulling, get_dir(pulling.loc, A)), get_dir(pulling.loc, A), sx, sy)
