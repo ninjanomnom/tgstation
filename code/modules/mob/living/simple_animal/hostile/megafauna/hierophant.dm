@@ -473,7 +473,7 @@ Difficulty: Hard
 	if(!stat && . && oldLoc != loc)
 		var/obj/effect/temp_visual/hierophant/squares/HS = new(oldLoc)
 		HS.setDir(movement_dir)
-		if(!stat && next_move_sound <= world.time)
+		if(next_move_sound <= world.time)
 			playsound(src, 'sound/mecha/mechmove04.ogg', 150, TRUE, -4)
 			next_move_sound = world.time + 0.5 SECONDS
 		if(target)
