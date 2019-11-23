@@ -159,12 +159,6 @@ Difficulty: Hard
 			SLEEP_CHECK_DEATH(6)
 	SetRecoveryTime(20)
 
-/mob/living/simple_animal/hostile/megafauna/bubblegum/Moved()
-	new /obj/effect/decal/cleanable/blood(src.loc)
-	if(charging)
-		DestroySurroundings()
-	playsound(src, 'sound/effects/meteorimpact.ogg', 200, 1, 2, 1)
-	return ..()
 
 /mob/living/simple_animal/hostile/megafauna/bubblegum/proc/charge(atom/chargeat = target, delay = 3, chargepast = 2)
 	if(!chargeat)
@@ -448,6 +442,9 @@ Difficulty: Hard
 		..()
 
 /mob/living/simple_animal/hostile/megafauna/bubblegum/Move()
+	if(!stat && next_move_sound <= world.time)
+		playsound(src.loc, 'sound/effects/meteorimpact.ogg', 200, 1, 2, 1)
+		next_move_sound = world.time + 0.5 SECONDS
 	update_approach()
 	if(revving_charge)
 		return FALSE
@@ -457,11 +454,10 @@ Difficulty: Hard
 	..()
 
 /mob/living/simple_animal/hostile/megafauna/bubblegum/Moved(atom/OldLoc, Dir, Forced = FALSE)
-	if(Dir)
-		new /obj/effect/decal/cleanable/blood/bubblegum(src.loc)
+	if(Dir && OldLoc != loc)
+		new /obj/effect/decal/cleanable/blood/bubblegum(loc)
 	if(charging)
 		DestroySurroundings()
-	playsound(src, 'sound/effects/meteorimpact.ogg', 200, TRUE, 2, TRUE)
 	return ..()
 
 /mob/living/simple_animal/hostile/megafauna/bubblegum/Bump(atom/A)

@@ -61,7 +61,7 @@ SUBSYSTEM_DEF(throwing)
 	var/datum/callback/callback
 	var/sx = 16
 	var/sy = 16
-	var/angle
+	var/angle = 0
 	var/paused = FALSE
 	var/delayed_time = 0
 	var/last_move = 0
@@ -77,6 +77,8 @@ SUBSYSTEM_DEF(throwing)
 
 /datum/thrownthing/proc/tick()
 	var/atom/movable/AM = thrownthing
+	if(!angle)
+		angle = Get_Angle(AM, target_turf)
 	if (!isturf(AM.loc) || !AM.throwing)
 		finalize()
 		return
