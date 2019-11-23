@@ -10,7 +10,10 @@
 	density = TRUE
 	ui_x = 420
 	ui_y = 415
-
+	bound_height = 16
+	bound_width = 16
+	bound_x = 8
+	bound_y = 2
 	var/on = FALSE
 	var/direction = PUMP_OUT
 	var/obj/machinery/atmospherics/components/binary/pump/pump
