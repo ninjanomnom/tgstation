@@ -344,7 +344,7 @@
 			time_offset += overrun * speed
 		time_offset += MODULUS(elapsed_time_deciseconds, speed)
 
-	for(var/i in 1 to required_moves * (32 / step_size)) // required moves is in turfs
+	for(var/i in 1 to required_moves) // required moves is in turfs
 		pixel_move(1, FALSE)
 
 /obj/projectile/proc/fire(angle, atom/direct_target)
@@ -469,7 +469,7 @@
 	for(var/i in 1 to SSprojectiles.global_iterations_per_move)
 		if(QDELETED(src))
 			return
-		degstepprojectile(src, original_angle, 1)
+		degstepprojectile(src, original_angle, 2) // 2 * 16 = 32 CHAD
 		hitscan_last = loc
 	Range()
 
