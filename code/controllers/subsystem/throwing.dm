@@ -87,9 +87,9 @@ SUBSYSTEM_DEF(throwing)
 		delayed_time += world.time - last_move
 		return
 
-	// if (dist_travelled && hitcheck()) //to catch sneaky things moving on our tile while we slept
-	// 	finalize()
-	// 	return
+	if (dist_travelled && hitcheck()) //to catch sneaky things moving on our tile while we slept
+		finalize()
+		return
 
 	var/atom/step
 	last_move = world.time
@@ -134,8 +134,6 @@ SUBSYSTEM_DEF(throwing)
 	//done throwing, either because it hit something or it finished moving
 	if(!thrownthing)
 		return
-	// thrownthing.step_x = sx - 16
-	// thrownthing.step_y = sy - 16
 	thrownthing.throwing = null
 	if (!hit)
 		for (var/thing in get_turf(thrownthing)) //looking for our target on the turf we land on.
