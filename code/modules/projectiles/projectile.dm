@@ -385,8 +385,10 @@
 	last_projectile_move = world.time
 	fired = TRUE
 	if(firer && (firer.step_x || firer.step_y))
-		step_x = firer.step_x - 6 //offsets to ensure you can't shoot through walls
-		step_y = firer.step_y - 12
+		if(angle2dir(Angle) == EAST)
+			step_x = firer.step_x - 6 //offsets to ensure you can't shoot through walls
+		if(angle2dir(Angle) == NORTH)
+			step_y = firer.step_y - 12
 	if(hitscan)
 		process_hitscan()
 	if(!(datum_flags & DF_ISPROCESSING))
