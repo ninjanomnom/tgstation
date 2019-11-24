@@ -11,10 +11,11 @@
 	pass_flags = PASSTABLE
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	movement_type = FLYING
-	bound_height = 8
-	bound_width = 8
-	bound_x = 4
-	brotation = NONE
+	bound_height = 19
+	bound_width = 5
+	bound_x = 14
+	bound_y = 7
+	brotation = BOUNDS_SIMPLE_ROTATE
 	step_size = 16 // half a tile zoomer
 	//The sound this plays on impact.
 	var/hitsound = 'sound/weapons/pierce.ogg'
@@ -469,7 +470,7 @@
 	for(var/i in 1 to SSprojectiles.global_iterations_per_move)
 		if(QDELETED(src))
 			return
-		degstepprojectile(src, original_angle, 2) // 2 * 16 = 32 CHAD
+		degstepprojectile(src, original_angle, 2)
 		hitscan_last = loc
 	Range()
 
