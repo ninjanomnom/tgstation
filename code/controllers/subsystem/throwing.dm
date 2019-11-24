@@ -78,7 +78,7 @@ SUBSYSTEM_DEF(throwing)
 /datum/thrownthing/proc/tick()
 	var/atom/movable/AM = thrownthing
 	if(!angle)
-		angle = Get_Angle(AM, target_turf)
+		angle = get_deg(AM, target_turf)
 	if (!isturf(AM.loc) || !AM.throwing)
 		finalize()
 		return

@@ -54,3 +54,7 @@
 	var/x = ((placeB.x*PIXELS)+stepbx) - ((placeA.x*PIXELS)+stepax)
 	var/y = ((placeB.y*PIXELS)+stepby) - ((placeA.y*PIXELS)+stepay)
 	return ATAN2(y, x)
+
+// use this instead of get_dir because this works on same turf
+/proc/get_pixeldir(atom/movable/thingA, atom/movable/thingB)
+	return angle2dir(get_deg(thingA, thingB))

@@ -10,6 +10,11 @@
 	throwforce = 12
 	throw_speed = 2
 	throw_range = 7
+	bound_x = 7
+	bound_width = 20
+	bound_y = 10
+	bound_height = 12
+	brotation = NONE
 	w_class = WEIGHT_CLASS_BULKY
 	custom_materials = list(/datum/material/iron = 500)
 	attack_verb = list("robusted")

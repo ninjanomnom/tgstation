@@ -384,9 +384,9 @@
 	trajectory = new(starting.x, starting.y, starting.z, step_x, step_y, Angle, SSprojectiles.global_pixel_speed)
 	last_projectile_move = world.time
 	fired = TRUE
-	if(firer)
-		step_x = firer.step_x
-		step_y = firer.step_y
+	if(firer && (firer.step_x || firer.step_y))
+		step_x = firer.step_x - 6 //offsets to ensure you can't shoot through walls
+		step_y = firer.step_y - 12
 	if(hitscan)
 		process_hitscan()
 	if(!(datum_flags & DF_ISPROCESSING))
@@ -472,7 +472,7 @@
 	for(var/i in 1 to SSprojectiles.global_iterations_per_move)
 		if(QDELETED(src))
 			return
-		degstepprojectile(src, original_angle, 2)
+		degstepprojectile(src, Angle, 2)
 		hitscan_last = loc
 	Range()
 
