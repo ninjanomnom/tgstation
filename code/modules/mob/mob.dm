@@ -452,6 +452,10 @@
 	var/list/mouse_control = params2list(client.mouseParams)
 	E.step_x = CLAMP(text2num(mouse_control["icon-x"]) - 16, -(world.icon_size/2), world.icon_size/2)
 	E.step_y = CLAMP(text2num(mouse_control["icon-y"]) - 16, -(world.icon_size/2), world.icon_size/2)
+	if(ismovableatom(A))
+		var/atom/movable/AM = A
+		E.step_x = AM.step_x
+		E.step_y = AM.step_y
 	return TRUE
 
 ///Can this mob resist (default FALSE)

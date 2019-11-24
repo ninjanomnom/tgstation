@@ -497,5 +497,5 @@
 /obj/item/reagent_containers/glass/colocup/Initialize()
 	.=..()
 	icon_state = "colocup[rand(0, 6)]"
-	pixel_x = rand(-4,4)
-	pixel_y = rand(-4,4)
+	step_x = rand(-4,4)
+	step_y = rand(-4,4)

@@ -13,7 +13,8 @@
 	movement_type = FLYING
 	bound_height = 8
 	bound_width = 8
-	bound_x = 2
+	bound_x = 4
+	brotation = NONE
 	step_size = 16 // half a tile zoomer
 	//The sound this plays on impact.
 	var/hitsound = 'sound/weapons/pierce.ogg'
@@ -468,7 +469,7 @@
 	for(var/i in 1 to SSprojectiles.global_iterations_per_move)
 		if(QDELETED(src))
 			return
-		degstep(src, original_angle, 1)
+		degstepprojectile(src, original_angle, 1)
 		hitscan_last = loc
 	Range()
 

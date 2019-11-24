@@ -126,8 +126,8 @@
 	var/static/list/blacklisted_turfs
 
 /obj/structure/alien/weeds/Initialize()
-	pixel_x = -4
-	pixel_y = -4 //so the sprites line up right in the map editor
+	step_x = -4
+	step_y = -4 //so the sprites line up right in the map editor
 	. = ..()
 
 	if(!blacklisted_turfs)

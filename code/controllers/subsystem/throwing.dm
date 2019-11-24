@@ -117,7 +117,7 @@ SUBSYSTEM_DEF(throwing)
 			finalize()
 			return
 
-		degstep(AM, angle, 16)
+		degstepprojectile(AM, angle, 16)
 
 		if (!AM.throwing) // we hit something during our move
 			finalize(hit = TRUE)

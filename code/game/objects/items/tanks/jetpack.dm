@@ -76,7 +76,7 @@
 	if((num < 0.005 || air_contents.total_moles() < num))
 		turn_off(user)
 		return
-
+	num = num / (PIXELS / user.step_size)
 	var/datum/gas_mixture/removed = air_contents.remove(num)
 	if(removed.total_moles() < 0.005)
 		turn_off(user)

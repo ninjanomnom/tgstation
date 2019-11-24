@@ -51,8 +51,8 @@
 
 /obj/item/paper/Initialize()
 	. = ..()
-	pixel_y = rand(-8, 8)
-	pixel_x = rand(-9, 9)
+	step_y = rand(-8, 8)
+	step_x = rand(-9, 9)
 	update_icon_state()
 	updateinfolinks()
 
@@ -310,8 +310,8 @@
 			stamps = sheet.css_tag()
 		stamps += sheet.icon_tag(P.icon_state)
 		var/mutable_appearance/stampoverlay = mutable_appearance('icons/obj/bureaucracy.dmi', "paper_[P.icon_state]")
-		stampoverlay.pixel_x = rand(-2, 2)
-		stampoverlay.pixel_y = rand(-3, 2)
+		stampoverlay.step_x = rand(-2, 2)
+		stampoverlay.step_y = rand(-3, 2)
 
 		LAZYADD(stamped, P.icon_state)
 		add_overlay(stampoverlay)

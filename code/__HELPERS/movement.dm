@@ -16,6 +16,28 @@
 	NORMALIZE_STEP(place, x, y)
 	return thing.Move(place, get_dir(thing.loc, place), x, y)
 
+//degstep but more accurate, for projectiles, credit to kaiochao for the code this compensates for rounding errors
+//relevant post (http://www.byond.com/forum/post/1544790)
+/proc/degstepprojectile(atom/movable/thing, deg, dist)
+	var/turf/place = thing.loc
+	var/fx
+	var/fy
+	var/rx
+	var/ry
+	var/x = dist * sin(deg)
+	var/y = dist * cos(deg)
+	if(abs(x) > 1)
+		fx += x
+		rx = round(fx, 1)
+		fx -= rx
+	if(abs(y) > 1)
+		fy += y
+		ry = round(fy, 1)
+		fy -= ry
+	var/ss = thing.step_size
+	thing.step_size = max(abs(rx), abs(ry)) + 1
+	return (rx || ry) ? thing.Move(place, get_dir(thing.loc, place), thing.step_x + rx, thing.step_y + ry) : TRUE
+	thing.step_size = ss
 // Returns the direction from thingA to thingB in degrees
 // EAST is 0 and goes counter clockwise
 /proc/get_deg(atom/movable/thingA, atom/movable/thingB)

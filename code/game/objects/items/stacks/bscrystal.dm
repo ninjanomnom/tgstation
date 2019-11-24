@@ -20,8 +20,8 @@
 
 /obj/item/stack/ore/bluespace_crystal/Initialize()
 	. = ..()
-	pixel_x = rand(-5, 5)
-	pixel_y = rand(-5, 5)
+	step_x = rand(-5, 5)
+	step_y = rand(-5, 5)
 
 /obj/item/stack/ore/bluespace_crystal/get_part_rating()
 	return 1

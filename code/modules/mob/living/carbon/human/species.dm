@@ -1317,9 +1317,13 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 
 		//Thank you based whoneedsspace
 		target_collateral_human = locate(/mob/living/carbon/human) in target_shove_turf.contents
+		
 		if(target_collateral_human)
 			shove_blocked = TRUE
-		else
+			if(target_collateral_human == target)
+				shove_blocked = FALSE
+				target_collateral_human = null
+		if(!target_collateral_human)
 			target.Move(target_shove_turf, shove_dir)
 			if(get_turf(target) == target_oldturf)
 				target_table = locate(/obj/structure/table) in target_shove_turf.contents
