@@ -99,7 +99,7 @@ SUBSYSTEM_DEF(throwing)
 	// this might end up screwy in the long run, but this make sense to me right now
 	tilestomove *= 2
 	while (tilestomove-- > 0) 
-		if ((dist_travelled >= maxrange || AM.loc == target_turf) && AM.has_gravity(AM.loc))
+		if ((dist_travelled >= maxrange || (target_turf in AM.locs)) && AM.has_gravity(AM.loc))
 			finalize()
 			return
 

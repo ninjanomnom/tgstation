@@ -257,7 +257,7 @@
 //Called after a successful Move(). By this point, we've already moved
 /atom/movable/proc/Moved(atom/OldLoc, Dir, Forced = FALSE)
 	SEND_SIGNAL(src, COMSIG_MOVABLE_MOVED, OldLoc, Dir, Forced)
-	if(loc != OldLoc)
+	if(OldLoc != loc)
 		loc?.Entered(src, OldLoc)
 		OldLoc?.Exited(src, loc)
 	if (!inertia_moving)
@@ -796,7 +796,7 @@
 /atom/movable/proc/ConveyorMove(movedir)
 	set waitfor = FALSE
 	if(!anchored && has_gravity())
-		step(src, movedir)
+		step(src, movedir, 8)
 
 //Returns an atom's power cell, if it has one. Overload for individual items.
 /atom/movable/proc/get_cell()
@@ -820,6 +820,12 @@
 	set waitfor = FALSE
 	if(!istype(loc, /turf))
 		return
+	var/stepx = 0
+	var/stepy = 0
+	if(ismovableatom(target))
+		var/atom/movable/AM = target
+		stepx = AM.step_x
+		stepy = AM.step_y
 	var/image/I = image(icon = src, loc = loc, layer = layer + 0.1)
 	I.plane = GAME_PLANE
 	I.transform *= 0.75
@@ -832,15 +838,19 @@
 	if(!QDELETED(T) && !QDELETED(target))
 		direction = get_dir(T, target)
 	if(direction & NORTH)
-		to_y = 32
+		to_y = 32 + stepy
 	else if(direction & SOUTH)
-		to_y = -32
+		to_y = -32 - stepy
 	if(direction & EAST)
-		to_x = 32
+		to_x = 32 + stepx
 	else if(direction & WEST)
-		to_x = -32
+		to_x = -32 - step_x
 	if(!direction)
-		to_y = 16
+		if(!(stepx || stepy))
+			to_y = 8
+		else
+			to_x = stepx
+			to_y = stepy
 	flick_overlay(I, GLOB.clients, 6)
 	var/matrix/M = new
 	M.Turn(pick(-30, 30))

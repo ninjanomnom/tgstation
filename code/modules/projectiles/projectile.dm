@@ -11,11 +11,11 @@
 	pass_flags = PASSTABLE
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	movement_type = FLYING
-	bound_height = 19
-	bound_width = 5
-	bound_x = 14
-	bound_y = 7
-	brotation = BOUNDS_SIMPLE_ROTATE
+	bound_height = 16
+	bound_width = 16
+	bound_x = 8 // when its horizontal the bound_y becomes 14
+	bound_y = 8
+	brotation = NONE
 	step_size = 16 // half a tile zoomer
 	//The sound this plays on impact.
 	var/hitsound = 'sound/weapons/pierce.ogg'
@@ -276,10 +276,11 @@
 	SEND_SIGNAL(target, COMSIG_PROJECTILE_PREHIT, args)
 	var/result = target.bullet_act(src, def_zone)
 	if(result == BULLET_ACT_FORCE_PIERCE)
+		to_chat(world, "[src] hit [target] and it returned PIERCE")
 		if(!CHECK_BITFIELD(movement_type, UNSTOPPABLE))
 			temporary_unstoppable_movement = TRUE
 			ENABLE_BITFIELD(movement_type, UNSTOPPABLE)
-		return process_hit(select_target(target), qdel_self, TRUE)		//Hit whatever else we can since we're piercing through but we're still on the same tile.
+		return		//Bump will handle any further collisions on the turf
 	else if(result == BULLET_ACT_TURF)									//We hit the turf, we're done
 		qdel(src)
 		hit_something = TRUE
@@ -315,7 +316,7 @@
 	var/datum/point/vector/current = trajectory
 	if(!current)
 		var/turf/T = get_turf(src)
-		current = new(T.x, T.y, T.z, step_x, step_y, isnull(forced_angle)? Angle : forced_angle, SSprojectiles.global_pixel_speed)
+		current = new(T.x, T.y, T.z, pixel_x, pixel_y, isnull(forced_angle)? Angle : forced_angle, SSprojectiles.global_pixel_speed)
 	var/datum/point/vector/v = current.return_vector_after_increments(moves * SSprojectiles.global_iterations_per_move)
 	return v.return_turf()
 
@@ -366,6 +367,8 @@
 	if(spread)
 		setAngle(Angle + ((rand() - 0.5) * spread))
 	var/turf/starting = get_turf(src)
+	if(iswallturf(starting))
+		return process_hit(select_target(starting))
 	if(isnull(Angle))	//Try to resolve through offsets if there's no angle set.
 		if(isnull(xo) || isnull(yo))
 			stack_trace("WARNING: Projectile [type] deleted due to being unable to resolve a target after angle was null!")
@@ -381,14 +384,19 @@
 	trajectory_ignore_forcemove = TRUE
 	forceMove(starting)
 	trajectory_ignore_forcemove = FALSE
-	trajectory = new(starting.x, starting.y, starting.z, step_x, step_y, Angle, SSprojectiles.global_pixel_speed)
+	trajectory = new(starting.x, starting.y, starting.z, pixel_x, pixel_y, Angle, SSprojectiles.global_pixel_speed)
 	last_projectile_move = world.time
 	fired = TRUE
 	if(firer && (firer.step_x || firer.step_y))
-		if(angle2dir(Angle) == EAST)
+		if(firer.dir == EAST)
 			step_x = firer.step_x - 6 //offsets to ensure you can't shoot through walls
-		if(angle2dir(Angle) == NORTH)
+			step_y = firer.step_y
+		else if(firer.dir == NORTH)
+			step_x = firer.step_x
 			step_y = firer.step_y - 12
+		else
+			step_x = firer.step_x
+			step_y = firer.step_y
 	if(hitscan)
 		process_hitscan()
 	if(!(datum_flags & DF_ISPROCESSING))
@@ -465,6 +473,7 @@
 	if(!loc || !trajectory)
 		return
 	last_projectile_move = world.time
+	trajectory.increment(trajectory_multiplier)
 	if(!nondirectional_sprite && !hitscanning)
 		var/matrix/M = new
 		M.Turn(Angle)
@@ -474,7 +483,8 @@
 	for(var/i in 1 to SSprojectiles.global_iterations_per_move)
 		if(QDELETED(src))
 			return
-		degstepprojectile(src, Angle, 2)
+		if(!degstepprojectile(src, Angle, 2))
+			return process_hit(get_turf(src), TRUE, TRUE) // hit the turf and qdel yourself
 		hitscan_last = loc
 	Range()
 
@@ -508,7 +518,7 @@
 		var/mob/M = firer
 		if((target == firer) || ((target == firer.loc) && ismecha(firer.loc)) || (target in firer.buckled_mobs) || (istype(M) && (M.buckled == target)))
 			return FALSE
-	if(!ignore_loc && (loc != target.loc))
+	if(!ignore_loc && !(target.loc in locs))
 		return FALSE
 	if(target in passthrough)
 		return FALSE
@@ -583,19 +593,26 @@
 		angle = ATAN2(y - oy, x - ox)
 	return list(angle, p_x, p_y)
 
-/obj/projectile/Crossed(atom/movable/AM) //A mob moving on a tile with a projectile is hit by it.
+/obj/projectile/Cross(atom/movable/AM) //A mob moving on a tile with a projectile is hit by it.
 	. = ..()
 	if(isliving(AM) && !(pass_flags & PASSMOB))
 		var/mob/living/L = AM
 		if(can_hit_target(L, permutated, (AM == original)))
 			Bump(AM)
 
-/obj/projectile/Move(atom/newloc, dir = NONE)
+/obj/projectile/Move(atom/newloc, dir)
+	. = ..()
+	if(isclosedturf(loc)) 
+		if(fired && can_hit_target(get_turf(src), permutated, FALSE))
+			Bump(loc)
+
+/obj/projectile/Moved(atom/OldLoc, Dir)
 	. = ..()
 	if(.)
-		if(temporary_unstoppable_movement)
-			temporary_unstoppable_movement = FALSE
-			DISABLE_BITFIELD(movement_type, UNSTOPPABLE)
+		if(OldLoc != loc)
+			if(temporary_unstoppable_movement)
+				temporary_unstoppable_movement = FALSE
+				DISABLE_BITFIELD(movement_type, UNSTOPPABLE)
 		if(fired && can_hit_target(original, permutated, TRUE))
 			Bump(original)
 

@@ -245,6 +245,7 @@
 
 /obj/structure/reflector/box/auto_reflect(obj/projectile/P)
 	P.setAngle(rotation_angle)
+	to_chat(world, "[src]'s angle was changed to [rotation_angle]'")
 	return ..()
 
 /obj/structure/reflector/ex_act()

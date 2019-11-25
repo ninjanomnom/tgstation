@@ -10,13 +10,20 @@
 	allowed_area = A.name
 	. = ..()
 
-/mob/camera/aiEye/remote/xenobio/setLoc(var/t)
-	var/area/new_area = get_area(t)
+/mob/camera/aiEye/remote/xenobio/setLoc(atom/T, force_update, _pixel_x, _pixel_y)
+	var/area/new_area = get_area(T)
 	if(new_area && new_area.name == allowed_area || new_area && new_area.xenobiology_compatible)
 		return ..()
 	else
 		return
 
+/mob/camera/aiEye/remote/xenobio/relaymove(mob/user, direct)
+	var/area/new_area = get_area(get_step(src, direct))
+	if(new_area && new_area.name == allowed_area || new_area && new_area.xenobiology_compatible)
+		return ..()
+	else
+		return
+		
 /obj/machinery/computer/camera_advanced/xenobio
 	name = "Slime management console"
 	desc = "A computer used for remotely handling slimes."

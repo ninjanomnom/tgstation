@@ -31,6 +31,10 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 
 
 	max_integrity = 200
+	bound_height = 8 // assume all items are 8x8 centered at the center of a tile for throwing purposes
+	bound_width = 8
+	bound_x = 8
+	bound_y = 8
 	brotation = NONE
 	obj_flags = NONE
 	var/item_flags = NONE
