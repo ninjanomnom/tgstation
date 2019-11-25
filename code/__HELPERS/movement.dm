@@ -34,7 +34,7 @@
 		thing.fy -= ry
 	var/ss = thing.step_size
 	thing.step_size = max(1, abs(rx), abs(ry))
-	return (rx || ry) ? thing.Move(place, get_dir(thing.loc, place), thing.step_x + rx, thing.step_y + ry) : TRUE
+	. = (rx || ry) ? thing.Move(place, get_dir(thing.loc, place), thing.step_x + rx, thing.step_y + ry) : TRUE
 	thing.step_size = ss
 // Returns the direction from thingA to thingB in degrees
 // EAST is 0 and goes counter clockwise
