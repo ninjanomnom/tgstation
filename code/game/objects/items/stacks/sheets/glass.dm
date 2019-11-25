@@ -242,7 +242,6 @@ GLOBAL_LIST_INIT(plastitaniumglass_recipes, list(
 	bound_width = 8
 	bound_x = 8
 	bound_y = 20
-	brotation = NONE
 	w_class = WEIGHT_CLASS_TINY
 	force = 5
 	throwforce = 10

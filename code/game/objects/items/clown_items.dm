@@ -24,7 +24,6 @@
 	bound_width = 21
 	bound_x = 6
 	bound_y = 22
-	brotation = NONE
 	throwforce = 0
 	throw_speed = 3
 	throw_range = 7

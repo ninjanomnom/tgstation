@@ -22,10 +22,8 @@
 			if(lootspawn)
 				var/atom/movable/spawned_loot = new lootspawn(T)
 				if (!fan_out_items)
-					if (step_x)
-						spawned_loot.step_x = step_x
-					if (step_y)
-						spawned_loot.step_y = step_y
+					spawned_loot.step_x = step_x
+					spawned_loot.step_y = step_y
 				else
 					if (loot_spawned)
 						spawned_loot.step_x = spawned_loot.step_y = ((!(loot_spawned%2)*loot_spawned/2)*-1)+((loot_spawned%2)*(loot_spawned+1)/2*1)

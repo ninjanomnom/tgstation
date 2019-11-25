@@ -91,7 +91,7 @@ Key procs
 /mob/proc/update_movespeed(resort = TRUE)
 	if(resort)
 		sort_movespeed_modlist()
-	. = 0
+	. = 1
 	var/list/conflict_tracker = list()
 	for(var/id in get_movespeed_modifiers())
 		var/list/data = movespeed_modification[id]
@@ -109,7 +109,7 @@ Key procs
 			else
 				continue
 		. += amt
-	step_size = max(1, initial(step_size) / max(., 1))
+	step_size = max(1, initial(step_size) / .)
 
 ///Get the move speed modifiers list of the mob
 /mob/proc/get_movespeed_modifiers()
