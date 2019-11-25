@@ -11,8 +11,8 @@
 	pass_flags = PASSTABLE
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	movement_type = FLYING
-	bound_height = 16
-	bound_width = 16
+	bound_height = 8
+	bound_width = 8
 	bound_x = 8 // when its horizontal the bound_y becomes 14
 	bound_y = 8
 	brotation = NONE
@@ -276,11 +276,10 @@
 	SEND_SIGNAL(target, COMSIG_PROJECTILE_PREHIT, args)
 	var/result = target.bullet_act(src, def_zone)
 	if(result == BULLET_ACT_FORCE_PIERCE)
-		to_chat(world, "[src] hit [target] and it returned PIERCE")
 		if(!CHECK_BITFIELD(movement_type, UNSTOPPABLE))
 			temporary_unstoppable_movement = TRUE
 			ENABLE_BITFIELD(movement_type, UNSTOPPABLE)
-		return		//Bump will handle any further collisions on the turf
+		return FALSE	//Bump will handle any further collisions on the turf
 	else if(result == BULLET_ACT_TURF)									//We hit the turf, we're done
 		qdel(src)
 		hit_something = TRUE
@@ -473,7 +472,6 @@
 	if(!loc || !trajectory)
 		return
 	last_projectile_move = world.time
-	trajectory.increment(trajectory_multiplier)
 	if(!nondirectional_sprite && !hitscanning)
 		var/matrix/M = new
 		M.Turn(Angle)
@@ -483,8 +481,8 @@
 	for(var/i in 1 to SSprojectiles.global_iterations_per_move)
 		if(QDELETED(src))
 			return
-		if(!degstepprojectile(src, Angle, 2))
-			return process_hit(get_turf(src), TRUE, TRUE) // hit the turf and qdel yourself
+		trajectory.increment(trajectory_multiplier)
+		degstepprojectile(src, Angle, 2)
 		hitscan_last = loc
 	Range()
 

@@ -5,6 +5,10 @@
 	desc = "A base for reflector assemblies."
 	anchored = FALSE
 	density = FALSE
+	bound_x = 8
+	bound_y = 8
+	bound_width = 8
+	bound_height = 8
 	var/deflector_icon_state
 	var/image/deflector_overlay
 	var/finished = FALSE
@@ -72,6 +76,8 @@
 	P.ignore_source_check = TRUE
 	P.range = P.decayedRange
 	P.decayedRange = max(P.decayedRange--, 0)
+	P.step_x = step_x // reset their offsets
+	P.step_y = step_y
 	return BULLET_ACT_FORCE_PIERCE
 
 /obj/structure/reflector/attackby(obj/item/W, mob/user, params)
@@ -245,7 +251,6 @@
 
 /obj/structure/reflector/box/auto_reflect(obj/projectile/P)
 	P.setAngle(rotation_angle)
-	to_chat(world, "[src]'s angle was changed to [rotation_angle]'")
 	return ..()
 
 /obj/structure/reflector/ex_act()
