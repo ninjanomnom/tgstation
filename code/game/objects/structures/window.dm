@@ -282,9 +282,10 @@
 	return ..()
 
 
-/obj/structure/window/Move(atom/newloc, direct = ini_dir, _step_x, _step_y)
-	. = ..()
+/obj/structure/window/Move(atom/newloc, direct = 0, _step_x, _step_y)
 	var/turf/T = loc
+	direct = ini_dir
+	. = ..()
 	move_update_air(T)
 
 /obj/structure/window/CanAtmosPass(turf/T)

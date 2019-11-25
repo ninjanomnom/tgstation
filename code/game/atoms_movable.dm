@@ -333,7 +333,7 @@
 /atom/movable/proc/update_bounds(olddir, newdir)
 	SEND_SIGNAL(src, COMSIG_MOVABLE_UPDATE_BOUNDS, args)
 
-	if(bound_width == bound_height && !bound_x && !bound_y) // We're a square and have no offset
+	if(bound_width == bound_height && !bound_x && !bound_y && newdir != olddir) // We're a square and have no offset
 		return
 
 	if(brotation & BOUNDS_SIMPLE_ROTATE)
@@ -590,7 +590,7 @@
 
 /atom/movable/CanPass(atom/movable/mover, turf/target)
 	if(mover in buckled_mobs)
-		return 1
+		return TRUE
 	return ..()
 
 // called when this atom is removed from a storage item, which is passed on as S. The loc variable is already set to the new destination before this is called.
