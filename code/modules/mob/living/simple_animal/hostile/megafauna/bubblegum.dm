@@ -352,6 +352,9 @@ Difficulty: Hard
 
 /obj/effect/decal/cleanable/blood/bubblegum
 	bloodiness = 0
+	bound_width = 32 // these are a tile large
+	bound_height = 32
+	bound_x = 0
 
 /obj/effect/decal/cleanable/blood/bubblegum/can_bloodcrawl_in()
 	return TRUE
