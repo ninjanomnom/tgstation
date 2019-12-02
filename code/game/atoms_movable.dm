@@ -258,8 +258,7 @@
 /atom/movable/proc/Moved(atom/OldLoc, Dir, Forced = FALSE)
 	SEND_SIGNAL(src, COMSIG_MOVABLE_MOVED, OldLoc, Dir, Forced)
 	if(OldLoc != loc)
-		loc?.Entered(src, OldLoc)
-		OldLoc?.Exited(src, loc)
+		SEND_SIGNAL(src, COMSIG_MOVABLE_MOVED_TURF, OldLoc, Dir)
 	if (!inertia_moving)
 		inertia_next_move = world.time + inertia_move_delay
 		newtonian_move(Dir)
@@ -333,7 +332,9 @@
 /atom/movable/proc/update_bounds(olddir, newdir)
 	SEND_SIGNAL(src, COMSIG_MOVABLE_UPDATE_BOUNDS, args)
 
-	if(bound_width == bound_height && !bound_x && !bound_y || newdir == olddir) // We're a square and have no offset or the direction hasn't changed
+	if(newdir == olddir) // the direction hasn't changed
+		return
+	if(bound_width == bound_height && !bound_x && !bound_y) // We're a square and have no offset
 		return
 
 	if(brotation & BOUNDS_SIMPLE_ROTATE)

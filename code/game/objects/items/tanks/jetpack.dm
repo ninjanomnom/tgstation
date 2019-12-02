@@ -55,7 +55,7 @@
 	icon_state = "[initial(icon_state)]-on"
 	ion_trail.start()
 	ion_trail.set_up(user)
-	RegisterSignal(user, COMSIG_MOVABLE_MOVED, .proc/move_react)
+	RegisterSignal(user, COMSIG_MOVABLE_MOVED_TURF, .proc/move_react)
 	if(full_speed)
 		user.add_movespeed_modifier(MOVESPEED_ID_JETPACK, priority=100, multiplicative_slowdown=-0.25, movetypes=FLOATING, conflict=MOVE_CONFLICT_JETPACK)
 
@@ -76,7 +76,6 @@
 	if((num < 0.005 || air_contents.total_moles() < num))
 		turn_off(user)
 		return
-	num = num / (PIXELS / user.step_size)
 	var/datum/gas_mixture/removed = air_contents.remove(num)
 	if(removed.total_moles() < 0.005)
 		turn_off(user)
