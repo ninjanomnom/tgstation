@@ -218,7 +218,7 @@
 
 /obj/structure/window/proc/can_be_reached(mob/user)
 	if(!fulltile)
-		if(get_dir(user,src) & dir)
+		if(get_pixeldir(user,src) & dir)
 			for(var/obj/O in loc)
 				if(!O.CanPass(user, user.loc, 1))
 					return 0
@@ -282,10 +282,10 @@
 	return ..()
 
 
-/obj/structure/window/Move()
+/obj/structure/window/Move(atom/newloc, direct = 0, _step_x, _step_y)
 	var/turf/T = loc
+	direct = ini_dir
 	. = ..()
-	setDir(ini_dir)
 	move_update_air(T)
 
 /obj/structure/window/CanAtmosPass(turf/T)

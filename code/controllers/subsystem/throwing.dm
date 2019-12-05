@@ -61,7 +61,7 @@ SUBSYSTEM_DEF(throwing)
 	var/datum/callback/callback
 	var/sx = 16
 	var/sy = 16
-	var/angle
+	var/angle = 0
 	var/paused = FALSE
 	var/delayed_time = 0
 	var/last_move = 0
@@ -77,6 +77,8 @@ SUBSYSTEM_DEF(throwing)
 
 /datum/thrownthing/proc/tick()
 	var/atom/movable/AM = thrownthing
+	if(!angle)
+		angle = get_deg(AM, target_turf)
 	if (!isturf(AM.loc) || !AM.throwing)
 		finalize()
 		return
@@ -97,7 +99,7 @@ SUBSYSTEM_DEF(throwing)
 	// this might end up screwy in the long run, but this make sense to me right now
 	tilestomove *= 2
 	while (tilestomove-- > 0) 
-		if ((dist_travelled >= maxrange || AM.loc == target_turf) && AM.has_gravity(AM.loc))
+		if ((dist_travelled >= maxrange || (target_turf in AM.locs)) && AM.has_gravity(AM.loc))
 			finalize()
 			return
 
@@ -115,7 +117,7 @@ SUBSYSTEM_DEF(throwing)
 			finalize()
 			return
 
-		degstep(AM, angle, 16)
+		degstepprojectile(AM, angle, 16)
 
 		if (!AM.throwing) // we hit something during our move
 			finalize(hit = TRUE)

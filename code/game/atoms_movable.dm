@@ -4,6 +4,10 @@
 
 	// Movement related vars
 	step_size = 32
+	//PIXEL MOVEMENT VARS
+	var/fx // stores fractional pixel movement in the x
+	var/fy // stores fractional pixel movement in the y
+
 	var/walking = NONE
 	var/move_resist = MOVE_RESIST_DEFAULT
 	var/move_force = MOVE_FORCE_DEFAULT
@@ -167,7 +171,7 @@
 			var/mob/living/L = ex_pulled
 			L.update_mobility()// mob gets up if it was lyng down in a chokehold
 
-/atom/movable/proc/Move_Pulled(atom/A)
+/atom/movable/proc/Move_Pulled(atom/A, params)
 	if(!pulling)
 		return
 	if(pulling.anchored || pulling.move_resist > move_force || !pulling.Adjacent(src))
@@ -178,14 +182,18 @@
 		if(L.buckled && L.buckled.buckle_prevents_pull) //if they're buckled to something that disallows pulling, prevent it
 			stop_pulling()
 			return
-	if(A == loc && pulling.density)
-		return
 	if(!Process_Spacemove(get_dir(pulling.loc, A)))
 		return
-	step(pulling, get_dir(pulling.loc, A))
+	if(params)
+		var/list/mouse = params2list(params)
+		var/sx = text2num(mouse["icon-x"]) - 16
+		var/sy = text2num(mouse["icon-y"]) - 16
+		pulling.Move(get_step(pulling, get_dir(pulling.loc, A)), get_dir(pulling.loc, A), sx, sy)
+	else
+		step(pulling, get_dir(pulling.loc, A))
 	return TRUE
 
-/mob/living/Move_Pulled(atom/A)
+/mob/living/Move_Pulled(atom/A, params)
 	. = ..()
 	if(!. || !isliving(A))
 		return
@@ -252,6 +260,8 @@
 //Called after a successful Move(). By this point, we've already moved
 /atom/movable/proc/Moved(atom/OldLoc, Dir, Forced = FALSE)
 	SEND_SIGNAL(src, COMSIG_MOVABLE_MOVED, OldLoc, Dir, Forced)
+	if(OldLoc != loc)
+		SEND_SIGNAL(src, COMSIG_MOVABLE_MOVED_TURF, OldLoc, Dir)
 	if (!inertia_moving)
 		inertia_next_move = world.time + inertia_move_delay
 		newtonian_move(Dir)
@@ -325,6 +335,8 @@
 /atom/movable/proc/update_bounds(olddir, newdir)
 	SEND_SIGNAL(src, COMSIG_MOVABLE_UPDATE_BOUNDS, args)
 
+	if(newdir == olddir) // the direction hasn't changed
+		return
 	if(bound_width == bound_height && !bound_x && !bound_y) // We're a square and have no offset
 		return
 
@@ -582,7 +594,7 @@
 
 /atom/movable/CanPass(atom/movable/mover, turf/target)
 	if(mover in buckled_mobs)
-		return 1
+		return TRUE
 	return ..()
 
 // called when this atom is removed from a storage item, which is passed on as S. The loc variable is already set to the new destination before this is called.
@@ -595,7 +607,7 @@
 
 /atom/movable/proc/get_spacemove_backup()
 	var/atom/movable/dense_object_backup
-	for(var/A in orange(1, get_turf(src)))
+	for(var/A in obounds(src, 16))
 		if(isarea(A))
 			continue
 		else if(isturf(A))
@@ -794,7 +806,7 @@
 /atom/movable/proc/ConveyorMove(movedir)
 	set waitfor = FALSE
 	if(!anchored && has_gravity())
-		step(src, movedir)
+		step(src, movedir, 8)
 
 //Returns an atom's power cell, if it has one. Overload for individual items.
 /atom/movable/proc/get_cell()
@@ -818,6 +830,12 @@
 	set waitfor = FALSE
 	if(!istype(loc, /turf))
 		return
+	var/stepx = 0
+	var/stepy = 0
+	if(ismovableatom(target))
+		var/atom/movable/AM = target
+		stepx = AM.step_x
+		stepy = AM.step_y
 	var/image/I = image(icon = src, loc = loc, layer = layer + 0.1)
 	I.plane = GAME_PLANE
 	I.transform *= 0.75
@@ -830,15 +848,19 @@
 	if(!QDELETED(T) && !QDELETED(target))
 		direction = get_dir(T, target)
 	if(direction & NORTH)
-		to_y = 32
+		to_y = 32 + stepy
 	else if(direction & SOUTH)
-		to_y = -32
+		to_y = -32 - stepy
 	if(direction & EAST)
-		to_x = 32
+		to_x = 32 + stepx
 	else if(direction & WEST)
-		to_x = -32
+		to_x = -32 - step_x
 	if(!direction)
-		to_y = 16
+		if(!(stepx || stepy))
+			to_y = 8
+		else
+			to_x = stepx
+			to_y = stepy
 	flick_overlay(I, GLOB.clients, 6)
 	var/matrix/M = new
 	M.Turn(pick(-30, 30))

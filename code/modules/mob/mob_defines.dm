@@ -10,7 +10,7 @@
 	datum_flags = DF_USE_TAG
 	density = TRUE
 	layer = MOB_LAYER
-
+	step_size = 32 // mob movespeed system will handle
 	bound_width = 16
 	bound_height = 16
 	bound_x = 8

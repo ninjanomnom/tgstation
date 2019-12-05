@@ -36,12 +36,12 @@
 /mob/living/carbon/human/mob_negates_gravity()
 	return ((shoes && shoes.negates_gravity()) || (dna.species.negates_gravity(src)))
 
-/mob/living/carbon/human/Move(NewLoc, direct, _step_x, _step_y)
+/mob/living/carbon/human/Moved(atom/OldLoc, Dir)
 	. = ..()
 
 	if(shoes)
 		if(mobility_flags & MOBILITY_STAND)
-			if(loc == NewLoc)
+			if(loc != OldLoc)
 				if(!has_gravity(loc))
 					return
 				var/obj/item/clothing/shoes/S = shoes

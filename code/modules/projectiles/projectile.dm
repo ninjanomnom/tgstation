@@ -13,7 +13,9 @@
 	movement_type = FLYING
 	bound_height = 8
 	bound_width = 8
-	bound_x = 2
+	bound_x = 8 // when its horizontal the bound_y becomes 14
+	bound_y = 8
+	brotation = NONE
 	step_size = 16 // half a tile zoomer
 	//The sound this plays on impact.
 	var/hitsound = 'sound/weapons/pierce.ogg'
@@ -277,9 +279,11 @@
 		if(!CHECK_BITFIELD(movement_type, UNSTOPPABLE))
 			temporary_unstoppable_movement = TRUE
 			ENABLE_BITFIELD(movement_type, UNSTOPPABLE)
-		return process_hit(select_target(target), qdel_self, TRUE)		//Hit whatever else we can since we're piercing through but we're still on the same tile.
-	else if(result == BULLET_ACT_TURF)									//We hit the turf but instead we're going to also hit something else on it.
-		return process_hit(select_target(target), QDEL_SELF, TRUE)
+		return FALSE	//Bump will handle any further collisions on the turf
+	else if(result == BULLET_ACT_TURF)									//We hit the turf, we're done
+		qdel(src)
+		hit_something = TRUE
+		return hit_something
 	else		//Whether it hit or blocked, we're done!
 		qdel_self = QDEL_SELF
 		hit_something = TRUE
@@ -311,7 +315,7 @@
 	var/datum/point/vector/current = trajectory
 	if(!current)
 		var/turf/T = get_turf(src)
-		current = new(T.x, T.y, T.z, step_x, step_y, isnull(forced_angle)? Angle : forced_angle, SSprojectiles.global_pixel_speed)
+		current = new(T.x, T.y, T.z, pixel_x, pixel_y, isnull(forced_angle)? Angle : forced_angle, SSprojectiles.global_pixel_speed)
 	var/datum/point/vector/v = current.return_vector_after_increments(moves * SSprojectiles.global_iterations_per_move)
 	return v.return_turf()
 
@@ -343,7 +347,7 @@
 			time_offset += overrun * speed
 		time_offset += MODULUS(elapsed_time_deciseconds, speed)
 
-	for(var/i in 1 to required_moves * (32 / step_size)) // required moves is in turfs
+	for(var/i in 1 to required_moves) // required moves is in turfs
 		pixel_move(1, FALSE)
 
 /obj/projectile/proc/fire(angle, atom/direct_target)
@@ -362,6 +366,8 @@
 	if(spread)
 		setAngle(Angle + ((rand() - 0.5) * spread))
 	var/turf/starting = get_turf(src)
+	if(iswallturf(starting))
+		return process_hit(select_target(starting))
 	if(isnull(Angle))	//Try to resolve through offsets if there's no angle set.
 		if(isnull(xo) || isnull(yo))
 			stack_trace("WARNING: Projectile [type] deleted due to being unable to resolve a target after angle was null!")
@@ -377,12 +383,19 @@
 	trajectory_ignore_forcemove = TRUE
 	forceMove(starting)
 	trajectory_ignore_forcemove = FALSE
-	trajectory = new(starting.x, starting.y, starting.z, step_x, step_y, Angle, SSprojectiles.global_pixel_speed)
+	trajectory = new(starting.x, starting.y, starting.z, pixel_x, pixel_y, Angle, SSprojectiles.global_pixel_speed)
 	last_projectile_move = world.time
 	fired = TRUE
-	if(firer)
-		step_x = firer.step_x
-		step_y = firer.step_y
+	if(firer && (firer.step_x || firer.step_y))
+		if(firer.dir == EAST)
+			step_x = firer.step_x - 6 //offsets to ensure you can't shoot through walls
+			step_y = firer.step_y
+		else if(firer.dir == NORTH)
+			step_x = firer.step_x
+			step_y = firer.step_y - 12
+		else
+			step_x = firer.step_x
+			step_y = firer.step_y
 	SEND_SIGNAL(src, COMSIG_PROJECTILE_FIRE)
 	if(hitscan)
 		process_hitscan()
@@ -469,18 +482,9 @@
 	for(var/i in 1 to SSprojectiles.global_iterations_per_move)
 		if(QDELETED(src))
 			return
-		//trajectory.increment(trajectory_multiplier)
-		//var/turf/T = trajectory.return_turf()
-		degstep(src, original_angle, 1)
+		trajectory.increment(trajectory_multiplier)
+		degstepprojectile(src, Angle, 2)
 		hitscan_last = loc
-/* 		if(T?.z != loc?.z)
-			var/old = loc
-			before_z_change(loc, T)
-			trajectory_ignore_forcemove = TRUE
-			forceMove(T)
-			trajectory_ignore_forcemove = FALSE
-			after_z_change(old, loc)
-			hitscan_last = loc */
 	Range()
 
 /obj/projectile/proc/process_homing()			//may need speeding up in the future performance wise.
@@ -513,7 +517,7 @@
 		var/mob/M = firer
 		if((target == firer) || ((target == firer.loc) && ismecha(firer.loc)) || (target in firer.buckled_mobs) || (istype(M) && (M.buckled == target)))
 			return FALSE
-	if(!ignore_loc && (loc != target.loc))
+	if(!ignore_loc && !(target.loc in locs))
 		return FALSE
 	if(target in passthrough)
 		return FALSE
@@ -588,19 +592,26 @@
 		angle = ATAN2(y - oy, x - ox)
 	return list(angle, p_x, p_y)
 
-/obj/projectile/Crossed(atom/movable/AM) //A mob moving on a tile with a projectile is hit by it.
+/obj/projectile/Cross(atom/movable/AM) //A mob moving on a tile with a projectile is hit by it.
 	. = ..()
 	if(isliving(AM) && !(pass_flags & PASSMOB))
 		var/mob/living/L = AM
 		if(can_hit_target(L, permutated, (AM == original)))
 			Bump(AM)
 
-/obj/projectile/Move(atom/newloc, dir = NONE)
+/obj/projectile/Move(atom/newloc, dir)
+	. = ..()
+	if(isclosedturf(loc)) 
+		if(fired && can_hit_target(get_turf(src), permutated, FALSE))
+			Bump(loc)
+
+/obj/projectile/Moved(atom/OldLoc, Dir)
 	. = ..()
 	if(.)
-		if(temporary_unstoppable_movement)
-			temporary_unstoppable_movement = FALSE
-			DISABLE_BITFIELD(movement_type, UNSTOPPABLE)
+		if(OldLoc != loc)
+			if(temporary_unstoppable_movement)
+				temporary_unstoppable_movement = FALSE
+				DISABLE_BITFIELD(movement_type, UNSTOPPABLE)
 		if(fired && can_hit_target(original, permutated, TRUE))
 			Bump(original)
 

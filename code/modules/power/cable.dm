@@ -410,8 +410,8 @@ GLOBAL_LIST_INIT(cable_coil_recipes, list(new/datum/stack_recipe("cable restrain
 
 /obj/item/stack/cable_coil/Initialize(mapload, new_amount = null)
 	. = ..()
-	pixel_x = rand(-2,2)
-	pixel_y = rand(-2,2)
+	step_x = rand(-2,2)
+	step_y = rand(-2,2)
 	update_icon()
 	recipes = GLOB.cable_coil_recipes
 
@@ -546,8 +546,8 @@ GLOBAL_LIST_INIT(cable_coil_recipes, list(new/datum/stack_recipe("cable restrain
 	. = ..()
 	if(!amount)
 		amount = rand(1,2)
-	pixel_x = rand(-2,2)
-	pixel_y = rand(-2,2)
+	step_x = rand(-2,2)
+	step_y = rand(-2,2)
 	update_icon()
 
 /obj/item/stack/cable_coil/cyborg
