@@ -4,6 +4,11 @@
 	density = TRUE
 	ui_x = 320
 	ui_y = 335
+	bound_width = 30
+	bound_height = 17
+	bound_x = 1
+	bound_y = 3
+	brotation = NONE
 
 	var/on = FALSE
 	var/volume_rate = 1000

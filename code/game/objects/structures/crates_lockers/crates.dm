@@ -3,6 +3,12 @@
 	desc = "A rectangular steel crate."
 	icon = 'icons/obj/crates.dmi'
 	icon_state = "crate"
+
+	bound_width = 28
+	bound_height = 16
+	bound_x = 2
+	bound_y = 4
+
 	req_access = null
 	can_weld_shut = FALSE
 	horizontal = TRUE
@@ -28,7 +34,10 @@
 
 /obj/structure/closet/crate/CanPass(atom/movable/mover, turf/target)
 	if(!istype(mover, /obj/structure/closet))
-		var/obj/structure/closet/crate/locatedcrate = locate(/obj/structure/closet/crate) in get_turf(mover)
+		var/obj/structure/closet/crate/locatedcrate
+		for(var/obj/structure/closet/crate/thing in mover.bounds)
+			if(thing != src)
+				locatedcrate = thing
 		if(locatedcrate) //you can walk on it like tables, if you're not in an open crate trying to move to a closed crate
 			if(opened) //if we're open, allow entering regardless of located crate openness
 				return 1

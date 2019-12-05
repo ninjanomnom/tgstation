@@ -1,5 +1,6 @@
 /datum/component/waddling
-	dupe_mode = COMPONENT_DUPE_UNIQUE_PASSARGS
+    dupe_mode = COMPONENT_DUPE_UNIQUE_PASSARGS
+    var/next_waddle
 
 /datum/component/waddling/Initialize()
 	. = ..()
@@ -17,6 +18,12 @@
 	Waddle()
 
 /datum/component/waddling/proc/Waddle()
-	animate(parent, pixel_z = 4, time = 0)
-	animate(pixel_z = 0, transform = turn(matrix(), pick(-12, 0, 12)), time=2)
-	animate(pixel_z = 0, transform = matrix(), time = 0)
+    if(world.time < next_waddle)
+        return
+    next_waddle = world.time + 0.25 SECONDS
+    var/mob/living/L = parent
+    if(L.incapacitated() || !(L.mobility_flags & MOBILITY_STAND))
+        return
+    animate(L, pixel_z = 4, time = 0)
+    animate(pixel_z = 0, transform = turn(matrix(), pick(-12, 0, 12)), time=2)
+    animate(pixel_z = 0, transform = matrix(), time = 0)
