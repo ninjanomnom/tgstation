@@ -115,8 +115,8 @@
 
 /obj/item/paperslip/Initialize()
 	. = ..()
-	pixel_x = rand(-5, 5)
-	pixel_y = rand(-5, 5)
+	step_x = rand(-5, 5)
+	step_y = rand(-5, 5)
 
 
 /obj/item/hatchet/cutterblade

@@ -38,8 +38,8 @@
 
 /obj/item/seeds/Initialize(mapload, nogenes = 0)
 	. = ..()
-	pixel_x = rand(-8, 8)
-	pixel_y = rand(-8, 8)
+	step_x = rand(-8, 8)
+	step_y = rand(-8, 8)
 
 	if(!icon_grow)
 		icon_grow = "[species]-grow"

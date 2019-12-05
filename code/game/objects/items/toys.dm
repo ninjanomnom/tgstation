@@ -915,7 +915,7 @@
 	w_class = WEIGHT_CLASS_TINY
 	var/cardname = null
 	var/flipped = 0
-	pixel_x = -5
+	step_x = -5
 
 
 /obj/item/toy/cards/singlecard/examine(mob/user)
@@ -942,12 +942,12 @@
 		else
 			src.icon_state = "sc_Ace of Spades_[deckstyle]"
 			src.name = "What Card"
-		src.pixel_x = 5
+		src.step_x = 5
 	else if(flipped)
 		src.flipped = 0
 		src.icon_state = "singlecard_down_[deckstyle]"
 		src.name = "card"
-		src.pixel_x = -5
+		src.step_x = -5
 
 /obj/item/toy/cards/singlecard/attackby(obj/item/I, mob/living/user, params)
 	if(istype(I, /obj/item/toy/cards/singlecard/))
@@ -1484,8 +1484,8 @@
 
 /obj/item/toy/seashell/Initialize()
 	. = ..()
-	pixel_x = rand(-5, 5)
-	pixel_y = rand(-5, 5)
+	step_x = rand(-5, 5)
+	step_y = rand(-5, 5)
 	icon_state = "shell[rand(1,3)]"
 	color = pickweight(possible_colors)
 	setDir(pick(GLOB.cardinals))

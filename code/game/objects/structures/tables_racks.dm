@@ -79,7 +79,7 @@
 					return
 			user.stop_pulling()
 		else if(user.pulling.pass_flags & PASSTABLE)
-			user.Move_Pulled(src)
+			user.Move_Pulled(src, user.client?.mouseParams)
 			if (user.pulling.loc == loc)
 				user.visible_message("<span class='notice'>[user] places [user.pulling] onto [src].</span>",
 					"<span class='notice'>You place [user.pulling] onto [src].</span>")
@@ -179,8 +179,8 @@
 			if(!click_params || !click_params["icon-x"] || !click_params["icon-y"])
 				return
 			//Clamp it so that the icon never moves more than 16 pixels in either direction (thus leaving the table turf)
-			I.pixel_x = CLAMP(text2num(click_params["icon-x"]) - 16, -(world.icon_size/2), world.icon_size/2)
-			I.pixel_y = CLAMP(text2num(click_params["icon-y"]) - 16, -(world.icon_size/2), world.icon_size/2)
+			I.step_x = CLAMP(text2num(click_params["icon-x"]) - 16, -(world.icon_size/2), world.icon_size/2)
+			I.step_y = CLAMP(text2num(click_params["icon-y"]) - 16, -(world.icon_size/2), world.icon_size/2)
 			return 1
 	else
 		return ..()

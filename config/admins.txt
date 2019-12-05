@@ -13,6 +13,7 @@ MrStonedOne = Lazy Master
 microscopics = Game Master
 Gun Hog = Game Master
 KorPhaeron = Game Master
+SteelSlayer = Host
 razharas = Game Master
 Lordpidey = Game Master
 Niknakflak = Game Master

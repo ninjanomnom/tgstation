@@ -25,7 +25,7 @@
 
 /obj/structure/headpike/Initialize()
 	. = ..()
-	pixel_x = rand(-8, 8)
+	step_x = rand(-8, 8)
 
 /obj/structure/headpike/update_overlays()
 	. = ..()

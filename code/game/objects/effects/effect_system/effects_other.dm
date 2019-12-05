@@ -21,7 +21,6 @@
 
 /datum/effect_system/trail_follow/Destroy()
 	stop()
-	effects_list = null
 	return ..()
 
 /datum/effect_system/trail_follow/proc/stop()

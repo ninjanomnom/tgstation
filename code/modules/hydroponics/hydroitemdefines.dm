@@ -180,8 +180,8 @@
 
 /obj/item/reagent_containers/glass/bottle/nutrient/Initialize()
 	. = ..()
-	pixel_x = rand(-5, 5)
-	pixel_y = rand(-5, 5)
+	step_x = rand(-5, 5)
+	step_y = rand(-5, 5)
 
 
 /obj/item/reagent_containers/glass/bottle/nutrient/ez

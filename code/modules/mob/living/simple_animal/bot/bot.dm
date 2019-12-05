@@ -481,7 +481,7 @@ Pass a positive integer as an argument to override a bot's default speed.
 		return FALSE
 	dest = get_turf(dest) //We must always compare turfs, so get the turf of the dest var if dest was originally something else.
 	var/turf/last_node = get_turf(path[path.len]) //This is the turf at the end of the path, it should be equal to dest.
-	if(get_turf(src) == dest) //We have arrived, no need to move again.
+	if(dest in locs) //We have arrived, no need to move again.
 		return TRUE
 	else if(dest != last_node) //The path should lead us to our given destination. If this is not true, we must stop.
 		set_path(null)
@@ -501,7 +501,7 @@ Pass a positive integer as an argument to override a bot's default speed.
 		return FALSE
 	if(path.len > 1)
 		step_towards(src, path[1])
-		if(get_turf(src) == path[1]) //Successful move
+		if(path[1] in locs) //Successful move
 			increment_path()
 			tries = 0
 		else
@@ -621,7 +621,7 @@ Pass a positive integer as an argument to override a bot's default speed.
 	if(client)		// In use by player, don't actually move.
 		return
 
-	if(loc == patrol_target)		// reached target
+	if(patrol_target in locs)		// reached target
 		//Find the next beacon matching the target.
 		if(!get_next_patrol_target())
 			find_patrol_target() //If it fails, look for the nearest one instead.
