@@ -42,6 +42,7 @@
 	var/chosen_attack = 1 // chosen attack num
 	var/list/attack_action_types = list()
 	var/small_sprite_type
+	var/next_move_sound
 
 /mob/living/simple_animal/hostile/megafauna/Initialize(mapload)
 	. = ..()

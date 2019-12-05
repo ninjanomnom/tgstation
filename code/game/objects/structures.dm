@@ -67,7 +67,7 @@
 /obj/structure/proc/do_climb(atom/movable/A)
 	if(climbable)
 		density = FALSE
-		. = step(A,get_dir(A,src.loc))
+		. = step(A, get_pixeldir(A, src), 16)
 		density = TRUE
 
 /obj/structure/proc/climb_structure(mob/living/user)

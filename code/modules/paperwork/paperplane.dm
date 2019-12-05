@@ -20,8 +20,8 @@
 
 /obj/item/paperplane/Initialize(mapload, obj/item/paper/newPaper)
 	. = ..()
-	pixel_y = rand(-8, 8)
-	pixel_x = rand(-9, 9)
+	step_y = rand(-8, 8)
+	step_x = rand(-9, 9)
 	if(newPaper)
 		internalPaper = newPaper
 		flags_1 = newPaper.flags_1

@@ -463,11 +463,11 @@
 			if(0)
 				// do nothing
 			if(1)
-				num_steps = 10
+				num_steps = 10 * step_size
 			if(2)
-				num_steps = 5
+				num_steps = 5 * step_size
 			if(3)
-				num_steps = 3
+				num_steps = 3 * step_size
 
 		if(num_steps)
 			process_bot()
@@ -486,14 +486,14 @@
 			return
 
 		if(BOT_DELIVER, BOT_GO_HOME, BOT_BLOCKED) // navigating to deliver,home, or blocked
-			if(loc == target) // reached target
+			if(target in locs) // reached target
 				at_target()
 				return
 
 			else if(path.len > 0 && target) // valid path
 				var/turf/next = path[1]
 				reached_target = 0
-				if(next == loc)
+				if(next in locs)
 					path -= next
 					return
 				if(isturf(next))
