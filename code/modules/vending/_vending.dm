@@ -47,6 +47,9 @@ IF YOU MODIFY THE PRODUCTS LIST OF A MACHINE, MAKE SURE TO UPDATE ITS RESUPPLY C
 	icon_state = "generic"
 	layer = BELOW_OBJ_LAYER
 	density = TRUE
+	bound_width = 24
+	bound_x = 4
+	brotation = NONE
 	verb_say = "beeps"
 	verb_ask = "beeps"
 	verb_exclaim = "beeps"

@@ -16,6 +16,7 @@
 	var/grille_type = null
 	var/broken_type = /obj/structure/grille/broken
 	rad_flags = RAD_PROTECT_CONTENTS | RAD_NO_CONTAMINATE
+	var/shock_cooldown
 
 /obj/structure/grille/Destroy()
 	update_cable_icons_on_turf(get_turf(src))
@@ -75,8 +76,11 @@
 /obj/structure/grille/Bumped(atom/movable/AM)
 	if(!ismob(AM))
 		return
-	var/mob/M = AM
-	shock(M, 70)
+	var/thingdir = get_dir(src, AM)
+	for(var/obj/structure/window/window in OBOUNDS_EDGE(src, thingdir))
+		if(window.anchored)
+			return
+	shock(AM, 70)
 
 /obj/structure/grille/attack_animal(mob/user)
 	. = ..()
@@ -234,6 +238,8 @@
 		return FALSE
 	if(!in_range(src, user))//To prevent TK and mech users from getting shocked
 		return FALSE
+	if(shock_cooldown > world.time)
+		return FALSE
 	var/turf/T = get_turf(src)
 	var/obj/structure/cable/C = T.get_cable_node()
 	if(C)
@@ -241,6 +247,7 @@
 			var/datum/effect_system/spark_spread/s = new /datum/effect_system/spark_spread
 			s.set_up(3, 1, src)
 			s.start()
+			shock_cooldown = world.time + 0.5 SECONDS
 			return TRUE
 		else
 			return FALSE

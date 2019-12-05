@@ -463,7 +463,7 @@
 		log_cloning("[key_name(mob_occupant)] destroyed within [src] at [AREACOORD(src)] due to malfunction.")
 		QDEL_IN(mob_occupant, 40)
 
-/obj/machinery/clonepod/relaymove(mob/user)
+/obj/machinery/clonepod/relaymove(mob/user, direct)
 	container_resist(user)
 
 /obj/machinery/clonepod/container_resist(mob/living/user)

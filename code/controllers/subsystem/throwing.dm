@@ -126,6 +126,7 @@ SUBSYSTEM_DEF(throwing)
 /datum/thrownthing/proc/finalize(hit = FALSE, target=null)
 	set waitfor = FALSE
 	//done throwing, either because it hit something or it finished moving
+	stack_trace("[thrownthing] hit something at [get_turf(thrownthing)]")
 	if(!thrownthing)
 		return
 	thrownthing.throwing = null
