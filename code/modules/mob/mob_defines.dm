@@ -10,7 +10,12 @@
 	datum_flags = DF_USE_TAG
 	density = TRUE
 	layer = MOB_LAYER
-	animate_movement = SLIDE_STEPS
+
+	bound_width = 16
+	bound_height = 16
+	bound_x = 8
+	brotation = NONE
+
 	flags_1 = HEAR_1
 	hud_possible = list(ANTAG_HUD)
 	pressure_resistance = 8
@@ -23,8 +28,6 @@
 
 	/// List of movement speed modifiers applying to this mob
 	var/list/movespeed_modification				//Lazy list, see mob_movespeed.dm
-	/// The calculated mob speed slowdown based on the modifiers list
-	var/cached_multiplicative_slowdown
 	/// List of action hud items the user has
 	var/list/datum/action/actions = list()
 	/// A special action? No idea why this lives here
@@ -204,7 +207,8 @@
 
 	var/bloody_hands = 0
 
-	var/datum/focus //What receives our keyboard inputs. src by default
+	/// What receives our keyboard inputs. src by default
+	var/datum/focus
 
 	/// Used for tracking last uses of emotes for cooldown purposes
 	var/list/emotes_used

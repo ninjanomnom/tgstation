@@ -9,24 +9,6 @@
 		mob.dropItemToGround(mob.get_active_held_item())
 	return
 
-/**
-  * force move the control_object of your client mob
-  *
-  * Used in admin possession and called from the client Move proc
-  * ensures the possessed object moves and not the admin mob
-  *
-  * Has no sanity other than checking density
-  */
-/client/proc/Move_object(direct)
-	if(mob && mob.control_object)
-		if(mob.control_object.density)
-			step(mob.control_object,direct)
-			if(!mob.control_object)
-				return
-			mob.control_object.setDir(direct)
-		else
-			mob.control_object.forceMove(get_step(mob.control_object,direct))
-
 #define MOVEMENT_DELAY_BUFFER 0.75
 #define MOVEMENT_DELAY_BUFFER_DELTA 1.25
 
@@ -67,13 +49,6 @@
   *
   */
 /client/Move(n, direct)
-	if(world.time < move_delay) //do not move anything ahead of this check please
-		return FALSE
-	else
-		next_move_dir_add = 0
-		next_move_dir_sub = 0
-	var/old_move_delay = move_delay
-	move_delay = world.time + world.tick_lag //this is here because Move() can now be called mutiple times per tick
 	if(!mob || !mob.loc)
 		return FALSE
 	if(!n || !direct)
@@ -81,9 +56,9 @@
 	if(mob.notransform)
 		return FALSE	//This is sota the goto stop mobs from moving var
 	if(mob.control_object)
-		return Move_object(direct)
+		return step(mob.control_object, direct)
 	if(!isliving(mob))
-		return mob.Move(n, direct)
+		return step(mob, direct)
 	if(mob.stat == DEAD)
 		mob.ghostize()
 		return FALSE
@@ -117,11 +92,6 @@
 	if(!mob.Process_Spacemove(direct))
 		return FALSE
 	//We are now going to move
-	var/add_delay = mob.cached_multiplicative_slowdown
-	if(old_move_delay + (add_delay*MOVEMENT_DELAY_BUFFER_DELTA) + MOVEMENT_DELAY_BUFFER > world.time)
-		move_delay = old_move_delay
-	else
-		move_delay = world.time
 
 	if(L.confused)
 		var/newdir = 0
@@ -135,18 +105,21 @@
 			direct = newdir
 			n = get_step(L, direct)
 
-	. = ..()
+	. = step(mob, direct)
+	if(!.)
+		for(var/d in GLOB.cardinals)
+			if(direct & d)
+				. = step(mob, d)
+				if(.)
+					break
 
-	if((direct & (direct - 1)) && mob.loc == n) //moved diagonally successfully
-		add_delay *= 2
-	move_delay += add_delay
 	if(.) // If mob is null here, we deserve the runtime
 		if(mob.throwing)
 			mob.throwing.finalize(FALSE)
 
 	var/atom/movable/P = mob.pulling
 	if(P && !ismob(P) && P.density)
-		mob.setDir(turn(mob.dir, 180))
+		mob.setDir(get_dir(mob, P))
 
 /**
   * Checks to see if you're being grabbed and if so attempts to break it

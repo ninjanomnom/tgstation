@@ -63,11 +63,11 @@ Key procs
 
 ///Handles the special case of editing the movement var
 /mob/vv_edit_var(var_name, var_value)
-	var/slowdown_edit = (var_name == NAMEOF(src, cached_multiplicative_slowdown))
+	var/slowdown_edit = (var_name == NAMEOF(src, step_size))
 	var/diff
-	if(slowdown_edit && isnum(cached_multiplicative_slowdown) && isnum(var_value))
+	if(slowdown_edit && isnum(step_size) && isnum(var_value))
 		remove_movespeed_modifier(MOVESPEED_ID_ADMIN_VAREDIT)
-		diff = var_value - cached_multiplicative_slowdown
+		diff = var_value / max(step_size, 1)
 	. = ..()
 	if(. && slowdown_edit && isnum(diff))
 		add_movespeed_modifier(MOVESPEED_ID_ADMIN_VAREDIT, TRUE, 100, override = TRUE, multiplicative_slowdown = diff)
@@ -91,7 +91,7 @@ Key procs
 /mob/proc/update_movespeed(resort = TRUE)
 	if(resort)
 		sort_movespeed_modlist()
-	. = 0
+	. = 1
 	var/list/conflict_tracker = list()
 	for(var/id in get_movespeed_modifiers())
 		var/list/data = movespeed_modification[id]
@@ -108,8 +108,8 @@ Key procs
 				conflict_tracker[conflict] = amt
 			else
 				continue
-		. += amt
-	cached_multiplicative_slowdown = .
+		. *= amt
+	step_size = max(1, initial(step_size) / .)
 
 ///Get the move speed modifiers list of the mob
 /mob/proc/get_movespeed_modifiers()
