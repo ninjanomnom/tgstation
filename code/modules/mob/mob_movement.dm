@@ -59,10 +59,21 @@
 		return FALSE
 	if(mob.notransform)
 		return FALSE	//This is sota the goto stop mobs from moving var
+
+	var/diagonal_step = (direct & (NORTH|SOUTH)) && (direct & (EAST|WEST))
+	var/step_size
 	if(mob.control_object)
-		return step(mob.control_object, direct)
+		step_size = mob.control_object.step_size
+		if(diagonal_step)
+			step_size *= 0.7
+		return step(mob.control_object, direct, step_size)
+	else
+		step_size = mob.step_size
+		if(diagonal_step)
+			step_size *= 0.7
+
 	if(!isliving(mob))
-		return step(mob, direct)
+		return step(mob, direct, step_size)
 	if(mob.stat == DEAD)
 		mob.ghostize()
 		return FALSE
@@ -109,11 +120,11 @@
 			direct = newdir
 			n = get_step(L, direct)
 
-	. = step(mob, direct)
+	. = step(mob, direct, step_size)
 	if(!.)
 		for(var/d in GLOB.cardinals)
 			if(direct & d)
-				. = step(mob, d)
+				. = step(mob, d, step_size)
 				if(.)
 					break
 
@@ -148,7 +159,7 @@
   * Allows mobs to ignore density and phase through objects
   *
   * Called by client/Move()
-  * 
+  *
   * The behaviour depends on the incorporeal_move value of the mob
   *
   * * INCORPOREAL_MOVE_BASIC - forceMoved to the next tile with no stop
@@ -236,9 +247,9 @@
   * Handles mob/living movement in space (or no gravity)
   *
   * Called by /client/Move()
-  * 
+  *
   * return TRUE for movement or FALSE for none
-  * 
+  *
   * You can move in space if you have a spacewalk ability
   */
 /mob/Process_Spacemove(movement_dir = 0)
@@ -416,7 +427,7 @@
 
 /**
   * Toggle the move intent of the mob
-  * 
+  *
   * triggers an update the move intent hud as well
   */
 /mob/proc/toggle_move_intent(mob/user)
