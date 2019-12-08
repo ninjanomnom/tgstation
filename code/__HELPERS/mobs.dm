@@ -239,6 +239,8 @@ GLOBAL_LIST_EMPTY(species_list)
 		Tloc = target.loc
 
 	var/atom/Uloc = user.loc
+	var/Ustep_x = user.step_x
+	var/Ustep_y = user.step_y
 
 	var/drifting = 0
 	if(!user.Process_Spacemove(0) && user.inertia_dir)
@@ -267,8 +269,18 @@ GLOBAL_LIST_EMPTY(species_list)
 		if(drifting && !user.inertia_dir)
 			drifting = 0
 			Uloc = user.loc
+			Ustep_x = user.step_x
+			Ustep_y = user.step_y
 
-		if(QDELETED(user) || user.stat || (!drifting && user.loc != Uloc) || (extra_checks && !extra_checks.Invoke()))
+		if(QDELETED(user) || user.stat)
+			. = 0
+			break
+
+		if(!drifting && (user.loc != Uloc || user.step_x != Ustep_x || user.step_y != Ustep_y))
+			. = 0
+			break
+
+		if(extra_checks && !extra_checks.Invoke())
 			. = 0
 			break
 
@@ -306,6 +318,8 @@ GLOBAL_LIST_EMPTY(species_list)
 	if(!islist(targets))
 		targets = list(targets)
 	var/user_loc = user.loc
+	var/user_step_x = user.step_x
+	var/user_step_y = user.step_y
 
 	var/drifting = 0
 	if(!user.Process_Spacemove(0) && user.inertia_dir)
@@ -340,13 +354,18 @@ GLOBAL_LIST_EMPTY(species_list)
 			if(drifting && !user.inertia_dir)
 				drifting = 0
 				user_loc = user.loc
+				user_step_x = user.step_x
+				user_step_y = user.step_y
 
 			if(L && !CHECK_MULTIPLE_BITFIELDS(L.mobility_flags, required_mobility_flags))
 				. = 0
 				break
 
 			for(var/atom/target in targets)
-				if((!drifting && user_loc != user.loc) || QDELETED(target) || originalloc[target] != target.loc || user.get_active_held_item() != holding || user.incapacitated() || (extra_checks && !extra_checks.Invoke()))
+				if(!drifting && (user_loc != user.loc || user_step_x != user.step_x || user_step_y != user.step_y))
+					. = 0
+					break mainloop
+				if(QDELETED(target) || originalloc[target] != target.loc || user.get_active_held_item() != holding || user.incapacitated() || (extra_checks && !extra_checks.Invoke()))
 					. = 0
 					break mainloop
 	if(progbar)
