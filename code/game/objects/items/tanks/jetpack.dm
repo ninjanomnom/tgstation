@@ -13,6 +13,7 @@
 	var/stabilizers = FALSE
 	var/full_speed = TRUE // If the jetpack will have a speedboost in space/nograv or not
 	var/datum/effect_system/trail_follow/ion/ion_trail
+	var/consumption = 0.0025
 
 /obj/item/tank/jetpack/Initialize()
 	. = ..()
@@ -68,16 +69,16 @@
 	user.remove_movespeed_modifier(MOVESPEED_ID_JETPACK)
 
 /obj/item/tank/jetpack/proc/move_react(mob/user)
-	allow_thrust(0.01, user)
+	allow_thrust(consumption, user)
 
 /obj/item/tank/jetpack/proc/allow_thrust(num, mob/living/user)
 	if(!on)
 		return
-	if((num < 0.005 || air_contents.total_moles() < num))
+	if((num < consumption/2 || air_contents.total_moles() < num))
 		turn_off(user)
 		return
 	var/datum/gas_mixture/removed = air_contents.remove(num)
-	if(removed.total_moles() < 0.005)
+	if(removed.total_moles() < num/2)
 		turn_off(user)
 		return
 
