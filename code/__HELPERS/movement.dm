@@ -3,7 +3,7 @@
 /proc/walk_for(atom/movable/thing, direct, lag, speed, until)
 	set waitfor = FALSE
 	walk(thing, direct, lag, speed)
-	sleep(until)
+	stoplag(until)
 	walk(thing, NONE)
 
 // Like step but you move on an angle instead of a cardinal direction
