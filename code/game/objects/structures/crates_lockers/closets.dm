@@ -370,10 +370,13 @@
 // and due to an oversight in turf/Enter() were going through walls.  That
 // should be independently resolved, but this is also an interesting twist.
 /obj/structure/closet/Exit(atom/movable/AM)
-	open()
+	. = ..()
 	if(AM.loc == src)
-		return 0
-	return 1
+		return FALSE
+
+/obj/structure/closet/Exited(atom/movable/AM, atom/newLoc)
+	. = ..()
+	open()
 
 /obj/structure/closet/container_resist(mob/living/user)
 	if(opened)
