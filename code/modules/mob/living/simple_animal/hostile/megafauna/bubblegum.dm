@@ -174,16 +174,16 @@ Difficulty: Hard
 	charging = TRUE
 	revving_charge = TRUE
 	DestroySurroundings()
-	walk(src, 0)
+	walk(src, NONE)
 	setDir(dir)
 	var/obj/effect/temp_visual/decoy/D = new /obj/effect/temp_visual/decoy(loc,src)
 	animate(D, alpha = 0, color = "#FF0000", transform = matrix()*2, time = 3)
 	SLEEP_CHECK_DEATH(delay)
 	revving_charge = FALSE
-	var/movespeed = 0.7
-	walk_towards(src, T, movespeed)
-	SLEEP_CHECK_DEATH(get_dist(src, T) * movespeed)
-	walk(src, 0) // cancel the movement
+	var/charge_speed = step_size * 4
+	walk_towards(src, T, 0, charge_speed)
+	SLEEP_CHECK_DEATH(bounds_dist(src, T) / charge_speed)
+	walk(src, NONE) // cancel the movement
 	try_bloodattack()
 	charging = FALSE
 
