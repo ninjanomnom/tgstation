@@ -205,14 +205,10 @@
 /atom/movable/proc/check_pulling()
 	if(pulling)
 		var/atom/movable/pullee = pulling
-		if(pullee && get_dist(src, pullee) > 1)
+		if(pullee && bounds_dist(src, pullee) > 32)
 			stop_pulling()
 			return
 		if(!isturf(loc))
-			stop_pulling()
-			return
-		if(pullee && !isturf(pullee.loc) && pullee.loc != loc) //to be removed once all code that changes an object's loc uses forceMove().
-			log_game("DEBUG:[src]'s pull on [pullee] wasn't broken despite [pullee] being in [pullee.loc]. Pull stopped manually.")
 			stop_pulling()
 			return
 		if(pulling.anchored || pulling.move_resist > move_force)
@@ -223,12 +219,11 @@
 /atom/movable/proc/handle_pulled_movement()
 	if(pulling.anchored)
 		return FALSE
-	var/distance = bounds_dist(src, pulling)
-	if(distance > 32)
+	if(pulling.move_resist > move_force)
 		return FALSE
-	. = TRUE // Nothing beyond this stops the pulling
+	var/distance = bounds_dist(src, pulling)
 	if(distance < 8)
-		return
+		return FALSE
 	var/angle = get_deg(pulling, src)
 	if((angle % 45) > 1) // We arent directly on a cardinal from the thing
 		var/tempA = WRAP(angle, 0, 45)
@@ -237,11 +232,25 @@
 		else
 			angle -= min(ANGLE_ADJUST, tempA)
 	angle = SIMPLIFY_DEGREES(angle)
-	degstep(pulling, angle, distance-8)
+
+	if(!degstep(pulling, angle, distance-8))
+		return step_to(pulling, src, 0, step_size)
+	return TRUE
 #undef ANGLE_ADJUST
+
+/atom/movable/proc/handle_pulled_premove(atom/newloc, direct, _step_x, _step_y)
+	if(direct == get_dir(src, pulling))
+		return TRUE
+	if(bounds_dist(src, pulling) > 16 + step_size)
+		return FALSE
+	return TRUE
 
 /atom/movable/Move(atom/newloc, direct, _step_x, _step_y)
 	if(SEND_SIGNAL(src, COMSIG_MOVABLE_PRE_MOVE, newloc, direct, _step_x, _step_y) & COMPONENT_MOVABLE_BLOCK_PRE_MOVE)
+		return FALSE
+
+	if(pulling && !handle_pulled_premove(newloc, direct, _step_x, _step_y))
+		handle_pulled_movement()
 		return FALSE
 
 	var/atom/oldloc = loc
@@ -252,8 +261,9 @@
 	setDir(direct)
 	if(.)
 		Moved(oldloc, direct)
-		if(pulling && !handle_pulled_movement()) //we were pulling a thing and didn't lose it during our move.
-			stop_pulling()
+		if(pulling) //we were pulling a thing and didn't lose it during our move.
+			handle_pulled_movement()
+			check_pulling()
 		if(has_buckled_mobs() && !handle_buckled_mob_movement(loc, direct, step_x, step_y))
 			return FALSE
 	else
