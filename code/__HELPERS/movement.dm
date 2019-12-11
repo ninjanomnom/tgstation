@@ -36,6 +36,7 @@
 	thing.step_size = max(1, abs(rx), abs(ry))
 	. = (rx || ry) ? thing.Move(place, get_dir(thing.loc, place), thing.step_x + rx, thing.step_y + ry) : TRUE
 	thing.step_size = ss
+
 // Returns the direction from thingA to thingB in degrees
 // EAST is 0 and goes counter clockwise
 /proc/get_deg(atom/movable/thingA, atom/movable/thingB)
