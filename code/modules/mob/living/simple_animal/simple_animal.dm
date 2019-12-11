@@ -236,9 +236,7 @@
 		return
 	if(stop_automated_movement_when_pulled && pulledby)
 		return
-	var/anydir = pick(GLOB.cardinals)
-	if(prob(50))
-		anydir = pick(GLOB.diagonals)
+	var/anydir = pick(GLOB.alldirs)
 	if(!Process_Spacemove(anydir))
 		return
 	walk_for(src, anydir, until=0.5 SECONDS)
