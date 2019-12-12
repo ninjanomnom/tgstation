@@ -31,9 +31,7 @@
 	var/speech_span
 	var/inertia_dir = 0
 	var/atom/inertia_last_loc
-	var/inertia_moving = 0
-	var/inertia_next_move = 0
-	var/inertia_move_delay = 5
+	var/inertia_moving = FALSE
 	var/pass_flags = NONE
 	/// If false makes CanPass call CanPassThrough on this type instead of using default behaviour
 	var/generic_canpass = TRUE
@@ -274,7 +272,6 @@
 	if(OldLoc != loc)
 		SEND_SIGNAL(src, COMSIG_MOVABLE_MOVED_TURF, OldLoc, Dir)
 	if (!inertia_moving)
-		inertia_next_move = world.time + inertia_move_delay
 		newtonian_move(Dir)
 	if (length(client_mobs_in_contents))
 		update_parallax_contents()
@@ -622,7 +619,6 @@
 	return
 
 /atom/movable/proc/get_spacemove_backup()
-	var/atom/movable/dense_object_backup
 	for(var/A in obounds(src, 16))
 		if(isarea(A))
 			continue
@@ -634,11 +630,9 @@
 		else
 			var/atom/movable/AM = A
 			if(!AM.CanPass(src) || AM.density)
-				if(AM.anchored)
-					return AM
-				dense_object_backup = AM
-				break
-	. = dense_object_backup
+				if(AM.inertia_dir)
+					continue
+				return AM
 
 //called when a mob resists while inside a container that is itself inside something.
 /atom/movable/proc/relay_container_resist(mob/living/user, obj/O)
