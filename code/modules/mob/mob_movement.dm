@@ -109,14 +109,19 @@
 	//We are now going to move
 
 	if(L.confused)
-		var/newdir = 0
-		if(L.confused > 40)
+		var/newdir = NONE
+		if(L.confused_dir)
+			newdir = L.confused_dir
+		else if(L.confused > 40)
 			newdir = pick(GLOB.alldirs)
 		else if(prob(L.confused * 1.5))
 			newdir = angle2dir(dir2angle(direct) + pick(90, -90))
 		else if(prob(L.confused * 3))
 			newdir = angle2dir(dir2angle(direct) + pick(45, -45))
 		if(newdir)
+			if(!L.confused_dir)
+				L.confused_dir = newdir
+				addtimer(VARSET_CALLBACK(L, confused_dir, NONE), 0.25 SECONDS)
 			direct = newdir
 			n = get_step(L, direct)
 
