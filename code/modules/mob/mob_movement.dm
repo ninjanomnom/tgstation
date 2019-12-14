@@ -110,9 +110,9 @@
 			newdir = L.confused_dir
 		else if(L.confused > 40)
 			newdir = pick(GLOB.alldirs)
-		else if(prob(L.confused * 1.5))
+		else if(prob(L.confused * 0.4))
 			newdir = angle2dir(dir2angle(direct) + pick(90, -90))
-		else if(prob(L.confused * 3))
+		else if(prob(L.confused * 0.75))
 			newdir = angle2dir(dir2angle(direct) + pick(45, -45))
 		if(newdir)
 			if(!L.confused_dir)
