@@ -135,15 +135,11 @@ SUBSYSTEM_DEF(throwing)
 	if(!thrownthing)
 		return
 	thrownthing.throwing = null
+	if(target != src.target && bounds_dist(thrownthing, src.target) == 0)
+		target = src.target
 	if (!hit)
-		for (var/thing in get_turf(thrownthing)) //looking for our target on the turf we land on.
-			var/atom/A = thing
-			if (A == target)
-				hit = TRUE
-				thrownthing.throw_impact(A, src)
-				break
-		if (!hit)
-			thrownthing.throw_impact(get_turf(thrownthing), src)  // we haven't hit something yet and we still must, let's hit the ground.
+		if(!target in bounds(thrownthing))
+			target = get_turf(thrownthing)	// we haven't hit something yet and we still must, let's hit the ground.
 			thrownthing.newtonian_move(init_dir)
 	else
 		thrownthing.newtonian_move(init_dir)
