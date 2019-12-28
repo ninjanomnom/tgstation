@@ -165,7 +165,7 @@
 
 		return BULLET_ACT_HIT
 
-	if(ismovable(target))
+	if(ismovableatom(target))
 		var/atom/movable/AM = target
 		if(target == original)
 			hitx = AM.step_x + p_x - 16
@@ -173,7 +173,7 @@
 		else
 			hitx = AM.step_x + rand(-8, 8)
 			hity = AM.step_y + rand(-8, 8)
-			
+
 	if(!isliving(target))
 		if(impact_effect_type && !hitscan)
 			new impact_effect_type(target_loca, hitx, hity)
@@ -601,7 +601,7 @@
 
 /obj/projectile/Move(atom/newloc, dir)
 	. = ..()
-	if(isclosedturf(loc)) 
+	if(isclosedturf(loc))
 		if(fired && can_hit_target(get_turf(src), permutated, FALSE))
 			Bump(loc)
 
