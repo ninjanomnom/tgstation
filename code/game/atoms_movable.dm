@@ -323,8 +323,6 @@
 	SEND_SIGNAL(src, COMSIG_MOVABLE_UNCROSSED, AM)
 
 /atom/movable/Bump(atom/A)
-	if(!A)
-		CRASH("Bump was called with no argument.")
 	SEND_SIGNAL(src, COMSIG_MOVABLE_BUMP, A)
 	. = ..()
 	if(!QDELETED(throwing))
