@@ -9,6 +9,8 @@ GLOBAL_LIST_EMPTY(conveyors_by_id)
 	name = "conveyor belt"
 	desc = "A conveyor belt."
 	layer = BELOW_OPEN_DOOR_LAYER
+	speed_process = TRUE
+
 	var/operating = 0	// 1 if running forward, -1 if backwards, 0 if off
 	var/operable = 1	// true if can operate (no broken segments in this belt run)
 	var/forwards		// this is the default (forward) direction, set by the map dir
@@ -18,7 +20,6 @@ GLOBAL_LIST_EMPTY(conveyors_by_id)
 	var/list/affecting	// the list of all items that will be moved this ptick
 	var/id = ""			// the control ID	- must match controller ID
 	var/verted = 1		// Inverts the direction the conveyor belt moves.
-	speed_process = TRUE
 	var/conveying = FALSE
 
 /obj/machinery/conveyor/centcom_auto
@@ -54,11 +55,16 @@ GLOBAL_LIST_EMPTY(conveyors_by_id)
 		setDir(newdir)
 	if(newid)
 		id = newid
+	for(var/i in loc.contents)
+		if(i == src)
+			continue
+		RegisterMover(i)
 	update_move_direction()
 	LAZYADD(GLOB.conveyors_by_id[id], src)
 
 /obj/machinery/conveyor/Destroy()
 	LAZYREMOVE(GLOB.conveyors_by_id[id], src)
+	affecting = null
 	. = ..()
 
 /obj/machinery/conveyor/vv_edit_var(var_name, var_value)
@@ -69,6 +75,15 @@ GLOBAL_LIST_EMPTY(conveyors_by_id)
 		LAZYADD(GLOB.conveyors_by_id[id], src)
 	else
 		return ..()
+
+/obj/machinery/conveyor/Moved(atom/OldLoc, Dir)
+	. = ..()
+	for(var/i in affecting)
+		UnregisterMover(i)
+	for(var/i in loc.contents)
+		if(i == src)
+			continue
+		RegisterMover(i)
 
 /obj/machinery/conveyor/setDir(newdir)
 	. = ..()
@@ -123,35 +138,45 @@ GLOBAL_LIST_EMPTY(conveyors_by_id)
 		return FALSE
 	return TRUE
 
+/obj/machinery/conveyor/proc/RegisterMover(atom/movable/mover)
+	RegisterSignal(mover, COMSIG_PARENT_QDELETING, .proc/UnregisterMover)
+	if(!affecting)
+		affecting = list()
+	affecting += mover
+
+/obj/machinery/conveyor/proc/UnregisterMover(atom/movable/mover)
+	UnregisterSignal(mover, COMSIG_PARENT_QDELETING)
+	if(!affecting) // Some stuff like decal spawners get removed before init has happened
+		return
+	affecting -= mover
+	if(!length(affecting))
+		affecting = null
+
+/obj/machinery/conveyor/Crossed(atom/movable/AM, oldloc)
+	. = ..()
+	RegisterMover(AM)
+
+/obj/machinery/conveyor/Uncrossed(atom/movable/AM)
+	. = ..()
+	UnregisterMover(AM)
+
 	// machine process
 	// move items to the target location
+
 /obj/machinery/conveyor/process()
 	if(stat & (BROKEN | NOPOWER))
 		return
-	//If the conveyor is broken or already moving items
-	if(!operating || conveying)
+	if(!operating)
 		return
-	use_power(6)
-	//get the first 30 items in contents
-	affecting = list()
-	var/i = 0
-	for(var/item in loc.contents)
-		if(item == src)
-			continue
-		i++ // we're sure it's a real target to move at this point
-		if(i >= MAX_CONVEYOR_ITEMS_MOVE)
-			break
-		affecting.Add(item)
-	conveying = TRUE
-	addtimer(CALLBACK(src, .proc/convey, affecting), 1)
 
-/obj/machinery/conveyor/proc/convey(list/affecting)
-	for(var/atom/movable/A in affecting)
-		if(!QDELETED(A) && (A.loc == loc))
-			A.ConveyorMove(movedir)
-			//Give this a chance to yield if the server is busy
-			stoplag()
-	conveying = FALSE
+	use_power(6)
+
+	for(var/i in affecting)
+		var/atom/movable/thing = i
+		if(TICK_CHECK)
+			break
+		if(thing in bounds())
+			thing.ConveyorMove(movedir)
 
 // attack with item, place item on conveyor
 /obj/machinery/conveyor/attackby(obj/item/I, mob/user, params)
