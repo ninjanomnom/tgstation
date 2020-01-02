@@ -50,6 +50,7 @@ GLOBAL_LIST_EMPTY(conveyors_by_id)
 
 // create a conveyor
 /obj/machinery/conveyor/Initialize(mapload, newdir, newid)
+	START_PROCESSING(SSconveyors, src)
 	. = ..()
 	if(newdir)
 		setDir(newdir)
@@ -63,6 +64,7 @@ GLOBAL_LIST_EMPTY(conveyors_by_id)
 	LAZYADD(GLOB.conveyors_by_id[id], src)
 
 /obj/machinery/conveyor/Destroy()
+	STOP_PROCESSING(SSconveyors, src)
 	LAZYREMOVE(GLOB.conveyors_by_id[id], src)
 	affecting = null
 	. = ..()
