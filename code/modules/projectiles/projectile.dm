@@ -542,6 +542,8 @@
 	trajectory_ignore_forcemove = FALSE
 	starting = get_turf(source)
 	original = target
+	if(ismovableatom(source) && !firer)
+		firer = source
 	if(targloc || !params)
 		yo = targloc.y - curloc.y
 		xo = targloc.x - curloc.x
