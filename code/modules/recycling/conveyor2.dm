@@ -55,6 +55,7 @@ GLOBAL_LIST_EMPTY(conveyors_by_id)
 		setDir(newdir)
 	if(newid)
 		id = newid
+	STOP_PROCESSING(SSfastprocess, src)
 	for(var/i in loc.contents)
 		if(i == src)
 			continue
@@ -63,6 +64,7 @@ GLOBAL_LIST_EMPTY(conveyors_by_id)
 	LAZYADD(GLOB.conveyors_by_id[id], src)
 
 /obj/machinery/conveyor/Destroy()
+	STOP_PROCESSING(SSconveyors, src)
 	LAZYREMOVE(GLOB.conveyors_by_id[id], src)
 	affecting = null
 	. = ..()
@@ -142,7 +144,10 @@ GLOBAL_LIST_EMPTY(conveyors_by_id)
 	RegisterSignal(mover, COMSIG_PARENT_QDELETING, .proc/UnregisterMover)
 	if(!affecting)
 		affecting = list()
-	affecting += mover
+	if(!mover.anchored && mover.has_gravity())
+		affecting += mover
+	if(LAZYLEN(affecting))
+		START_PROCESSING(SSconveyors, src)
 
 /obj/machinery/conveyor/proc/UnregisterMover(atom/movable/mover)
 	UnregisterSignal(mover, COMSIG_PARENT_QDELETING)
@@ -151,6 +156,7 @@ GLOBAL_LIST_EMPTY(conveyors_by_id)
 	affecting -= mover
 	if(!length(affecting))
 		affecting = null
+		STOP_PROCESSING(SSconveyors, src)
 
 /obj/machinery/conveyor/Crossed(atom/movable/AM, oldloc)
 	. = ..()
