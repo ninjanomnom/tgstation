@@ -144,8 +144,10 @@ GLOBAL_LIST_EMPTY(conveyors_by_id)
 	RegisterSignal(mover, COMSIG_PARENT_QDELETING, .proc/UnregisterMover)
 	if(!affecting)
 		affecting = list()
-	affecting += mover
-	START_PROCESSING(SSconveyors, src)
+	if(!mover.anchored && mover.has_gravity())
+		affecting += mover
+	if(LAZYLEN(affecting))
+		START_PROCESSING(SSconveyors, src)
 
 /obj/machinery/conveyor/proc/UnregisterMover(atom/movable/mover)
 	UnregisterSignal(mover, COMSIG_PARENT_QDELETING)
