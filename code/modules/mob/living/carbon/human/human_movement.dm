@@ -41,7 +41,7 @@
 
 	if(shoes)
 		if(mobility_flags & MOBILITY_STAND)
-			if(!has_gravity(loc))
+			if(!has_gravity(loc) || movement_type & FLYING)
 				return
 			var/obj/item/clothing/shoes/S = shoes
 
