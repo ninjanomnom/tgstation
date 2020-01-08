@@ -141,7 +141,7 @@
 				return
 			else
 				var/obj/machinery/atmospherics/components/unary/portables_connector/possible_port = locate(/obj/machinery/atmospherics/components/unary/portables_connector) in obounds(src, -7)
-				if(!possible_port) // canister needs to be at least 5 pixels overlapping the port
+				if(!possible_port) // canister needs to be at least 7 pixels overlapping the port
 					to_chat(user, "<span class='notice'>Nothing happens.</span>")
 					return
 				if(!connect(possible_port))
