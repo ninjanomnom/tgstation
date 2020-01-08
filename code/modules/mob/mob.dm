@@ -927,7 +927,7 @@
 	if(M.loc != T)
 		var/old_density = density
 		density = FALSE
-		var/can_step = step_towards(M, T)
+		var/can_step = step_towards(M, T, 32)
 		density = old_density
 		if(!can_step)
 			return FALSE
