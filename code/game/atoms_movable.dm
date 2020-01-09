@@ -482,7 +482,7 @@
 
 /atom/movable/proc/throw_at(atom/target, range, speed, mob/thrower, spin = TRUE, diagonals_first = FALSE, datum/callback/callback, force = MOVE_FORCE_STRONG, params) //If this returns FALSE then callback will not be called.
 	. = FALSE
-	if (!target || speed <= 0)
+	if (!target || !get_turf(target) || speed <= 0)
 		return
 
 	if(SEND_SIGNAL(src, COMSIG_MOVABLE_PRE_THROW, args) & COMPONENT_CANCEL_THROW)

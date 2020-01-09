@@ -9,7 +9,10 @@
 	layer = MASSIVE_OBJ_LAYER
 	light_range = 6
 	appearance_flags = 0
-	step_size = 3
+	step_size = 1
+	movement_type = FLOATING | UNSTOPPABLE
+	resistance_flags = INDESTRUCTIBLE | LAVA_PROOF | FIRE_PROOF | UNACIDABLE | ACID_PROOF | FREEZE_PROOF
+	obj_flags = CAN_BE_HIT | DANGEROUS_POSSESSION
 	var/current_size = 1
 	var/allowed_size = 1
 	var/contained = 1 //Are we going to move around?
@@ -22,7 +25,10 @@
 	var/grav_pull = 4 //How many tiles out do we pull?
 	var/event_chance = 10 //Prob for event each tick
 	var/target = null //its target. moves towards the target if it has one
-	var/last_failed_movement = 0//Will not move in the same dir if it couldnt before, will help with the getting stuck on fields thing
+	/// The direction of failed moves
+	var/last_failed_movement = 0
+	/// The next time movement will be calculated
+	var/next_movement_change = 0
 	var/last_warning
 	var/consumedSupermatter = 0 //If the singularity has eaten a supermatter shard and can go to stage six
 	resistance_flags = INDESTRUCTIBLE | LAVA_PROOF | FIRE_PROOF | UNACIDABLE | ACID_PROOF | FREEZE_PROOF
@@ -74,8 +80,9 @@
 	consume(user)
 	return TRUE
 
-/obj/singularity/Process_Spacemove() //The singularity stops drifting for no man!
-	return FALSE
+// We don't drift around space, they drift around us
+/obj/singularity/Process_Spacemove()
+	return TRUE
 
 /obj/singularity/blob_act(obj/structure/blob/B)
 	return
@@ -305,10 +312,17 @@
 	if(!move_self)
 		return
 
-	var/movement_dir = force_move || pick(GLOB.alldirs - last_failed_movement)
+	if(!last_failed_movement && world.time < next_movement_change)
+		return
+	next_movement_change = world.time + 3 SECONDS
 
-	if(target && prob(60))
+	var/movement_dir
+	if(force_move)
+		movement_dir = force_move
+	else if(target && prob(60))
 		movement_dir = get_dir(src,target) //moves to a singulo beacon, if there is one
+	else
+		movement_dir = pick(GLOB.alldirs - last_failed_movement)
 
 	walk(src, movement_dir)
 
