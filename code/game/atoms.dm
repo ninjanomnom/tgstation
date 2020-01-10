@@ -312,7 +312,13 @@
 
 	return FALSE
 
+/// Gets the true pixel accurate x coordinate of the atom
+/atom/proc/true_x()
+	return x * PIXELS
 
+/// Gets the true pixel accurate y coordinate of the atom
+/atom/proc/true_y()
+	return y * PIXELS
 
 ///This atom has been hit by a hulkified mob in hulk mode (user)
 /atom/proc/attack_hulk(mob/living/carbon/human/user)
