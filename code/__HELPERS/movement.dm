@@ -39,22 +39,7 @@
 
 // Returns the direction from thingA to thingB in degrees
 // EAST is 0 and goes counter clockwise
-/proc/get_deg(atom/movable/thingA, atom/movable/thingB)
-	var/turf/placeA = get_turf(thingA)
-	var/turf/placeB = get_turf(thingB)
-	var/stepbx = 0
-	var/stepby = 0
-	var/stepax = 0
-	var/stepay = 0
-	if(ismovableatom(thingB))
-		stepbx = thingB.step_x
-		stepby = thingB.step_y
-	if(ismovableatom(thingA))
-		stepax = thingA.step_x
-		stepay = thingA.step_y
-	var/x = ((placeB.x*PIXELS)+stepbx) - ((placeA.x*PIXELS)+stepax)
-	var/y = ((placeB.y*PIXELS)+stepby) - ((placeA.y*PIXELS)+stepay)
-	return ATAN2(y, x)
+#define get_deg(thingA, thingB) ATAN2(thingB.true_y() - thingA.true_y(), thingB.true_x() - thingA.true_x())
 
 // use this instead of get_dir because this works on same turf
 /proc/get_pixeldir(atom/movable/thingA, atom/movable/thingB)

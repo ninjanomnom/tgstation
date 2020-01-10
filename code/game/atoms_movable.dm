@@ -358,6 +358,14 @@
 			bound_x = bound_y
 			bound_y = eastgap
 
+/atom/movable/true_x()
+	. = ..()
+	. += step_x
+
+/atom/movable/true_y()
+	. = ..()
+	. += step_y
+
 /atom/movable/proc/forceMove(atom/destination, _step_x, _step_y)
 	. = FALSE
 	if(destination)
