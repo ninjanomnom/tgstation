@@ -155,7 +155,8 @@
 	if(!client && (mob_size < MOB_SIZE_SMALL))
 		return
 	now_pushing = TRUE
-	var/t = dir2angle(get_pixeldir(src,  AM))
+	var/pd = get_deg(src, AM)
+	var/t = angle2dir(pd)
 	var/push_anchored = FALSE
 	if((AM.move_resist * MOVE_FORCE_CRUSH_RATIO) <= force)
 		if(move_crush(AM, move_force, t))
@@ -175,7 +176,7 @@
 	var/current_dir
 	if(isliving(AM))
 		current_dir = AM.dir
-	degstepprojectile(AM, t, step_size)
+	degstepprojectile(AM, pd, step_size)
 	if(current_dir)
 		AM.setDir(current_dir)
 	now_pushing = FALSE
@@ -564,7 +565,7 @@
 
 	var/old_direction = dir
 	var/turf/T = loc
-	
+
 	. = ..()
 
 	if(pulledby && get_dist(src, pulledby) > 1)//separated from our puller
