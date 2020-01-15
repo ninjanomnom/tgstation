@@ -132,7 +132,7 @@
 /client/proc/AIMove(n, direct, mob/living/silicon/ai/user)
 	if(world.time < move_delay)
 		return
-	move_delay = world.time + world.tick_lag // cameras and AI eyes still move tile by tile so we need a delay here
+	move_delay = world.time + 0.05 SECONDS // cameras and AI eyes still move tile by tile so we need a delay here
 	var/initial = initial(user.sprint)
 	var/max_sprint = 50
 
