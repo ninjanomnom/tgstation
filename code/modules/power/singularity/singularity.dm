@@ -288,11 +288,10 @@
 /obj/singularity/proc/eat()
 	if(!isturf(loc))
 		return
-	for(var/i in bounds(src, grav_pull*16))
+	for(var/i in obounds(src, grav_pull*16))
+		CHECK_TICK
 		var/atom/sucker = i
-		if(CHECK_TICK && QDELETED(sucker))
-			continue
-		if(sucker == src)
+		if(QDELETED(sucker))
 			continue
 		sucker.singularity_pull(src, current_size)
 

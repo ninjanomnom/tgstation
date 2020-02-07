@@ -145,6 +145,14 @@
 	if(prob(25))
 		mezzer()
 
+/obj/singularity/narsie/eat()
+	for(var/i in obounds(src, grav_pull*16))
+		CHECK_TICK
+		var/atom/sucker = i
+		if(QDELETED(sucker))
+			continue
+		consume(sucker)
+
 /obj/singularity/narsie/Bump(atom/A)
 	var/turf/T = get_turf(A)
 	if(T == loc)
