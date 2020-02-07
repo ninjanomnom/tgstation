@@ -4,10 +4,9 @@
 	if(istype(A))
 		appearance = A.appearance
 		dir = A.dir
-		if(ismovableatom(A))
+		if(loc && ismovableatom(A))
 			var/atom/movable/AM = A
-			step_x = AM.step_x
-			step_y = AM.step_y
+			forceMove(loc, AM.step_x, AM.step_y)
 	. = ..()
 
 /obj/item/camera/proc/camera_get_icon(list/turfs, turf/center, psize_x = 96, psize_y = 96, datum/turf_reservation/clone_area, size_x, size_y, total_x, total_y)

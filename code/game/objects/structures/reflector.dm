@@ -76,8 +76,7 @@
 	P.ignore_source_check = TRUE
 	P.range = P.decayedRange
 	P.decayedRange = max(P.decayedRange--, 0)
-	P.step_x = step_x // reset their offsets
-	P.step_y = step_y
+	P.forceMove(P.loc, step_x, step_y) // reset their offsets
 	return BULLET_ACT_FORCE_PIERCE
 
 /obj/structure/reflector/attackby(obj/item/W, mob/user, params)

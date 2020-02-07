@@ -364,8 +364,7 @@
 		switch(paint_mode)
 			if(PAINT_NORMAL)
 				C = new(target, paint_color, drawing, temp, graf_rot)
-				C.step_x = clickx
-				C.step_y = clicky
+				C.forceMove(C.loc, clickx, clicky)
 				affected_turfs += target
 			if(PAINT_LARGE_HORIZONTAL)
 				var/turf/left = locate(target.x-1,target.y,target.z)

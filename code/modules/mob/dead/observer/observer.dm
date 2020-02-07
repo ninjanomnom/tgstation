@@ -306,7 +306,6 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 	if(updatedir)
 		setDir(direct)
 	if(newloc)
-		NORMALIZE_STEP(newloc, _step_x, _step_y)
 		forceMove(newloc, _step_x, _step_y)
 		update_parallax_contents()
 	else

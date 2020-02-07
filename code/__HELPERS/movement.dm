@@ -13,7 +13,6 @@
 	var/turf/place = thing.loc
 	x += dist * sin(deg)
 	y += dist * cos(deg)
-	NORMALIZE_STEP(place, x, y)
 	return thing.Move(place, get_dir(thing.loc, place), x, y)
 
 //degstep but more accurate, for projectiles, credit to kaiochao for the code this compensates for rounding errors
@@ -37,8 +36,8 @@
 	. = (rx || ry) ? thing.Move(place, get_dir(thing.loc, place), thing.step_x + rx, thing.step_y + ry) : TRUE
 	thing.step_size = ss
 
-// Returns the direction from thingA to thingB in degrees
-// EAST is 0 and goes counter clockwise
+/// Returns the direction from thingA to thingB in degrees
+/// EAST is 0 and goes counter clockwise
 #define get_deg(thingA, thingB) ATAN2(thingB.true_y() - thingA.true_y(), thingB.true_x() - thingA.true_x())
 
 // use this instead of get_dir because this works on same turf

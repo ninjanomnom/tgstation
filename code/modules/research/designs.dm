@@ -49,7 +49,7 @@ other types of metals and chemistry for reagents).
 	return ..()
 
 /datum/design/proc/InitializeMaterials()
-	var/list/temp_list = list() 
+	var/list/temp_list = list()
 	for(var/i in materials) //Go through all of our materials, get the subsystem instance, and then replace the list.
 		var/amount = materials[i]
 		if(!istext(i)) //Not a category, so get the ref the normal way
@@ -78,8 +78,8 @@ other types of metals and chemistry for reagents).
 
 /obj/item/disk/design_disk/Initialize()
 	. = ..()
-	step_x = rand(-5, 5)
-	step_y = rand(-5, 5)
+	if(loc)
+		forceMove(loc, rand(-5, 5), rand(-5, 5))
 	for(var/i in 1 to max_blueprints)
 		blueprints += null
 

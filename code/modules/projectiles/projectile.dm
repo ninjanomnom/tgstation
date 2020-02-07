@@ -386,16 +386,19 @@
 	trajectory = new(starting.x, starting.y, starting.z, pixel_x, pixel_y, Angle, SSprojectiles.global_pixel_speed)
 	last_projectile_move = world.time
 	fired = TRUE
+	var/_step_x
+	var/_step_y
 	if(firer && (firer.step_x || firer.step_y))
 		if(firer.dir == EAST)
-			step_x = firer.step_x - 6 //offsets to ensure you can't shoot through walls
-			step_y = firer.step_y
+			_step_x = firer.step_x - 6 //offsets to ensure you can't shoot through walls
+			_step_y = firer.step_y
 		else if(firer.dir == NORTH)
-			step_x = firer.step_x
-			step_y = firer.step_y - 12
+			_step_x = firer.step_x
+			_step_y = firer.step_y - 12
 		else
-			step_x = firer.step_x
-			step_y = firer.step_y
+			_step_x = firer.step_x
+			_step_y = firer.step_y
+	forceMove(loc, _step_x, _step_y)
 	SEND_SIGNAL(src, COMSIG_PROJECTILE_FIRE)
 	if(hitscan)
 		process_hitscan()

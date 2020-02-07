@@ -448,12 +448,12 @@
 
 	var/obj/effect/E = new /obj/effect/temp_visual/point(A,invisibility)
 	var/list/mouse_control = params2list(client.mouseParams)
-	E.step_x = CLAMP(text2num(mouse_control["icon-x"]) - 16, -(world.icon_size/2), world.icon_size/2)
-	E.step_y = CLAMP(text2num(mouse_control["icon-y"]) - 16, -(world.icon_size/2), world.icon_size/2)
+	var/_step_x = CLAMP(text2num(mouse_control["icon-x"]) - 16, -(world.icon_size/2), world.icon_size/2)
+	var/_step_y = CLAMP(text2num(mouse_control["icon-y"]) - 16, -(world.icon_size/2), world.icon_size/2)
+	E.forceMove(E.loc, _step_x, _step_y)
 	if(ismovableatom(A))
 		var/atom/movable/AM = A
-		E.step_x = AM.step_x
-		E.step_y = AM.step_y
+		E.forceMove(E.loc, AM.step_x, AM.step_y)
 	return TRUE
 
 ///Can this mob resist (default FALSE)

@@ -550,5 +550,6 @@ Class Procs:
 	for (var/i in 1 to 32)
 		. += hex2num(md5[i])
 	. = . % 9
-	AM.step_x = -8 + ((.%3)*8)
-	AM.step_y = -8 + (round( . / 3)*8)
+	var/_step_x = -8 + ((.%3)*8)
+	var/_step_y = -8 + (round( . / 3)*8)
+	AM.forceMove(AM.loc, _step_x, _step_y)

@@ -15,5 +15,5 @@
 
 /obj/item/stack/sheet/Initialize(mapload, new_amount, merge)
 	. = ..()
-	step_x = rand(-4, 4)
-	step_y = rand(-4, 4)
+	if(loc)
+		forceMove(loc, rand(-4, 4), rand(-4, 4))

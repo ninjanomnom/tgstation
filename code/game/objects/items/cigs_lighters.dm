@@ -366,8 +366,7 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 
 /obj/item/clothing/mask/cigarette/rollie/Initialize()
 	. = ..()
-	step_x = rand(-5, 5)
-	step_y = rand(-5, 5)
+	forceMove(loc, rand(-5, 5), rand(-5, 5))
 
 /obj/item/clothing/mask/cigarette/rollie/nicotine
 	list_reagents = list(/datum/reagent/drug/nicotine = 15)
@@ -406,9 +405,8 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 
 /obj/item/cigbutt/roach/Initialize()
 	. = ..()
-	step_x = rand(-5, 5)
-	step_y = rand(-5, 5)
-
+	if(loc)
+		forceMove(loc, rand(-5, 5), rand(-5, 5))
 
 ////////////
 // CIGARS //

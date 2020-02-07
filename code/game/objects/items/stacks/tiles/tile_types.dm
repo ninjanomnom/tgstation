@@ -17,8 +17,8 @@
 
 /obj/item/stack/tile/Initialize(mapload, amount)
 	. = ..()
-	step_x = rand(-3, 3)
-	step_y = rand(-3, 3) //randomize a little
+	if(loc)
+		forceMove(loc, rand(-3, 3), rand(-3, 3)) //randomize a little
 
 /obj/item/stack/tile/attackby(obj/item/W, mob/user, params)
 

@@ -8,8 +8,8 @@
 
 /obj/item/disk/tech_disk/Initialize()
 	. = ..()
-	step_x = rand(-5, 5)
-	step_y = rand(-5, 5)
+	if(loc)
+		forceMove(loc, rand(-5, 5), rand(-5, 5))
 	stored_research = new /datum/techweb
 
 /obj/item/disk/tech_disk/debug

@@ -605,8 +605,7 @@
 					newdir = turn(get_dir(target_turf, start), 180)
 				if(!blood_exists)
 					var/obj/effect/decal/cleanable/trail_holder/T = new /obj/effect/decal/cleanable/trail_holder(start, get_static_viruses())
-					T.step_x = step_x
-					T.step_y = step_y
+					T.forceMove(T.loc, step_x, step_y)
 				for(var/obj/effect/decal/cleanable/trail_holder/TH in start)
 					if((!(newdir in TH.existing_dirs) || trail_type == "trails_1" || trail_type == "trails_2") && TH.existing_dirs.len <= 16) //maximum amount of overlays is 16 (all light & heavy directions filled)
 						TH.existing_dirs += newdir

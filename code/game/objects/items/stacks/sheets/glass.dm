@@ -269,16 +269,20 @@ GLOBAL_LIST_INIT(plastitaniumglass_recipes, list(
 	AddComponent(/datum/component/caltrop, force)
 	AddComponent(/datum/component/butchering, 150, 65)
 	icon_state = pick("large", "medium", "small")
+	var/_step_x
+	var/_step_y
 	switch(icon_state)
 		if("small")
-			step_x = rand(-12, 12)
-			step_y = rand(-12, 12)
+			_step_x = rand(-12, 12)
+			_step_y = rand(-12, 12)
 		if("medium")
-			step_x = rand(-8, 8)
-			step_y = rand(-8, 8)
+			_step_x = rand(-8, 8)
+			_step_y = rand(-8, 8)
 		if("large")
-			step_x = rand(-5, 5)
-			step_y = rand(-5, 5)
+			_step_x = rand(-5, 5)
+			_step_y = rand(-5, 5)
+	if(loc)
+		forceMove(loc, _step_x, _step_y)
 	if (icon_prefix)
 		icon_state = "[icon_prefix][icon_state]"
 

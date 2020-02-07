@@ -16,6 +16,7 @@
 	return
 
 /mob/camera/forceMove(atom/destination, _step_x, _step_y)
+	NORMALIZE_STEP(destination, _step_x, _step_y)
 	var/oldloc = loc
 	loc = destination
 	step_x = _step_x

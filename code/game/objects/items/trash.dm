@@ -105,8 +105,8 @@
 
 /obj/item/trash/can/Initialize()
 	. = ..()
-	step_x = rand(-4,4)
-	step_y = rand(-4,4)
+	if(loc)
+		forceMove(loc, rand(-4,4), rand(-4,4))
 
 /obj/item/trash/attack(mob/M, mob/living/user)
 	return

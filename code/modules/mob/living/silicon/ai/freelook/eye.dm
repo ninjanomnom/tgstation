@@ -69,6 +69,7 @@
 // It will also stream the chunk that the new loc is in.
 
 /mob/camera/aiEye/proc/setLoc(atom/T, force_update = FALSE, _step_x, _step_y)
+	NORMALIZE_STEP(T, _step_x, _step_y)
 	if(ai)
 		if(!isturf(ai.loc))
 			return
@@ -76,7 +77,6 @@
 		if(!force_update && (T == get_turf(src)) )
 			return //we are already here!
 		if (T)
-			NORMALIZE_STEP(T, _step_x, _step_y)
 			forceMove(T, _step_x, _step_y)
 		else
 			moveToNullspace()

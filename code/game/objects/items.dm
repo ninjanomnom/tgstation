@@ -587,15 +587,12 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 	callback = CALLBACK(src, .proc/after_throw, callback) //replace their callback with our own
 	. = ..()
 
-
 /obj/item/proc/after_throw(datum/callback/callback)
 	if (callback) //call the original callback
 		. = callback.Invoke()
 	item_flags &= ~IN_INVENTORY
-	if(!step_y && !step_x)
-		step_x = rand(-8,8)
-		step_y = rand(-8,8)
-
+	if(loc && !step_y && !step_x)
+		forceMove(loc, rand(-8,8), rand(-8,8))
 
 /obj/item/proc/remove_item_from_storage(atom/newLoc) //please use this if you're going to snowflake an item out of a obj/item/storage
 	if(!newLoc)
@@ -702,8 +699,7 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 	if(!QDELETED(src))
 		var/turf/T = get_turf(src)
 		var/obj/effect/decal/cleanable/molten_object/MO = new(T)
-		MO.step_x = step_x
-		MO.step_y = step_y
+		MO.forceMove(MO.loc, step_x, step_y)
 		MO.desc = "Looks like this was \an [src] some time ago."
 		..()
 

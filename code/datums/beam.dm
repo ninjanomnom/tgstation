@@ -111,8 +111,9 @@
 		X.pixel_x = Pixel_x
 		X.pixel_y = Pixel_y
 		if(originp && targetp)
-			X.step_x = abs(originp.step_x + targetp.step_x) / 2
-			X.step_y = abs(originp.step_y + targetp.step_y) / 2
+			var/_step_x = abs(originp.step_x + targetp.step_x) / 2
+			var/_step_y = abs(originp.step_y + targetp.step_y) / 2
+			X.forceMove(X.loc, _step_x, _step_y)
 		CHECK_TICK
 	afterDraw()
 

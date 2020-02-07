@@ -124,8 +124,8 @@ If you create T5+ please take a pass at gene_modder.dm [L40]. Max_values MUST fi
 
 /obj/item/stock_parts/Initialize()
 	. = ..()
-	step_x = rand(-5, 5)
-	step_y = rand(-5, 5)
+	if(loc)
+		forceMove(loc, rand(-5, 5), rand(-5, 5))
 
 /obj/item/stock_parts/get_part_rating()
 	return rating

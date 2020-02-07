@@ -68,8 +68,7 @@ would spawn and follow the beaker, even if it is carried or thrown.
 			stepx = AM.step_x
 			stepy = AM.step_y
 	var/obj/effect/E = new effect_type(location)
-	E.step_x = stepx
-	E.step_y = stepy
+	E.forceMove(E.loc, stepx, stepy)
 	total_effects++
 	var/direction
 	if(cardinals)

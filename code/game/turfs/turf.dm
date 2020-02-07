@@ -467,8 +467,7 @@
 /turf/proc/add_vomit_floor(mob/living/M, toxvomit = NONE, purge = FALSE)
 
 	var/obj/effect/decal/cleanable/vomit/V = new /obj/effect/decal/cleanable/vomit(src, M.get_static_viruses())
-	V.step_x = M.step_x
-	V.step_y = M.step_y
+	V.forceMove(V.loc, M.step_x, M.step_y)
 
 	//if the vomit combined, apply toxicity and reagents to the old vomit
 	if (QDELETED(V))

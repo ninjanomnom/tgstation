@@ -557,8 +557,8 @@ GLOBAL_LIST_INIT(bronze_recipes, list ( \
 
 /obj/item/stack/sheet/paperframes/Initialize()
 	. = ..()
-	step_x = 0
-	step_y = 0
+	if(loc)
+		forceMove(loc, 0, 0)
 
 /obj/item/stack/tile/bronze/thirty
 	amount = 30

@@ -266,7 +266,8 @@
 			return FALSE
 	else
 		walk(src, NONE)
-//Called after a successful Move(). By this point, we've already moved
+
+///Called after a successful Move(). By this point, we've already moved
 /atom/movable/proc/Moved(atom/OldLoc, Dir, Forced = FALSE)
 	SEND_SIGNAL(src, COMSIG_MOVABLE_MOVED, OldLoc, Dir, Forced)
 	if(OldLoc != loc)
@@ -379,6 +380,8 @@
 /atom/movable/proc/doMove(atom/destination, _step_x=0, _step_y=0)
 	. = FALSE
 
+	NORMALIZE_STEP(destination, _step_x, _step_y)
+
 	if(destination == loc && _step_x == step_x && _step_y == step_y) // Force move in place?
 		Moved(loc, NONE, TRUE)
 		return TRUE
@@ -386,7 +389,7 @@
 	var/atom/oldloc = loc
 	var/area/oldarea = get_area(oldloc)
 	var/area/destarea = get_area(destination)
-	var/list/old_bounds = bounds()
+	var/list/old_bounds = obounds()
 
 	loc = destination
 	step_x = _step_x
@@ -397,7 +400,7 @@
 		if(oldarea && oldarea != destarea)
 			oldarea.Exited(src, destination)
 
-	var/list/new_bounds = bounds()
+	var/list/new_bounds = obounds()
 
 	for(var/i in old_bounds)
 		if(i in new_bounds)

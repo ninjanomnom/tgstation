@@ -115,9 +115,8 @@
 
 /obj/item/paperslip/Initialize()
 	. = ..()
-	step_x = rand(-5, 5)
-	step_y = rand(-5, 5)
-
+	if(loc)
+		forceMove(loc, rand(-5, 5), rand(-5, 5))
 
 /obj/item/hatchet/cutterblade
 	name = "paper cutter"

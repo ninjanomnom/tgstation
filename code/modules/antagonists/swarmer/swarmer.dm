@@ -429,8 +429,7 @@
 		do_attack_animation(target)
 		changeNext_move(CLICK_CD_MELEE)
 		var/obj/effect/temp_visual/swarmer/integrate/I = new /obj/effect/temp_visual/swarmer/integrate(get_turf(target))
-		I.step_x = target.step_x
-		I.step_y = target.step_y
+		I.forceMove(I.loc, target.step_x, target.step_y)
 		if(istype(target, /obj/item/stack))
 			var/obj/item/stack/S = target
 			S.use(1)
@@ -492,8 +491,7 @@
 	do_attack_animation(target)
 	to_chat(src, "<span class='info'>We begin to dismantle this machine. We will need to be uninterrupted.</span>")
 	var/obj/effect/temp_visual/swarmer/dismantle/D = new /obj/effect/temp_visual/swarmer/dismantle(get_turf(target))
-	D.step_x = target.step_x
-	D.step_y = target.step_y
+	D.forceMove(D.loc, target.step_x, target.step_y)
 	if(do_mob(src, target, 100))
 		to_chat(src, "<span class='info'>Dismantling complete.</span>")
 		var/atom/Tsec = target.drop_location()
@@ -501,8 +499,7 @@
 		for(var/obj/item/I in target.component_parts)
 			I.forceMove(Tsec)
 		var/obj/effect/temp_visual/swarmer/disintegration/N = new /obj/effect/temp_visual/swarmer/disintegration(get_turf(target))
-		N.step_x = target.step_x
-		N.step_y = target.step_y
+		N.forceMove(N.loc, target.step_x, target.step_y)
 		target.dropContents()
 		if(istype(target, /obj/machinery/computer))
 			var/obj/machinery/computer/C = target

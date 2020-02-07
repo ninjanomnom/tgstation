@@ -19,8 +19,7 @@
 /obj/item/reagent_containers/food/Initialize(mapload)
 	. = ..()
 	if(!mapload)
-		step_x = rand(-5, 5)
-		step_y = rand(-5, 5)
+		forceMove(loc, rand(-5, 5), rand(-5, 5))
 
 /obj/item/reagent_containers/food/proc/checkLiked(var/fraction, mob/M)
 	if(last_check_time + 50 < world.time)

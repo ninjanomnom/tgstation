@@ -866,8 +866,7 @@ What a mess.*/
 	var/obj/item/photo/P = new/obj/item/photo(drop_location())
 	var/datum/picture/toEmbed = new(name = person_name, desc = "The photo on file for [person_name].", image = temp)
 	P.set_picture(toEmbed, TRUE, TRUE)
-	P.step_x = rand(-10, 10)
-	P.step_y = rand(-10, 10)
+	P.forceMove(P.loc, rand(-10, 10), rand(-10, 10))
 	printing = FALSE
 
 /obj/machinery/computer/secure_data/emp_act(severity)

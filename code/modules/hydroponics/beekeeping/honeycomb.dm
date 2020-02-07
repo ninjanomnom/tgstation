@@ -15,8 +15,8 @@
 
 /obj/item/reagent_containers/honeycomb/Initialize()
 	. = ..()
-	step_x = rand(8,-8)
-	step_y = rand(8,-8)
+	if(loc)
+		forceMove(loc, rand(8,-8), rand(8,-8))
 	update_icon()
 
 

@@ -5,6 +5,8 @@
 	var/datum/movement_detector/tracker
 	var/last_move
 
+	var/atom/movable/current_mover
+
 //radius: range to orbit at, radius of the circle formed by orbiting (in pixels)
 //clockwise: whether you orbit clockwise or anti clockwise
 //rotation_speed: how fast to rotate (how many ds should it take for a rotation to complete)
@@ -83,7 +85,9 @@
 	var/atom/movable/topmost = parent
 	while(topmost.loc != newturf)
 		topmost = topmost.loc
+	current_mover = orbiter
 	orbiter.forceMove(newturf, topmost.step_x, topmost.step_y)
+	current_mover = null
 	to_chat(orbiter, "<span class='notice'>Now orbiting [parent].</span>")
 
 /datum/component/orbiter/proc/end_orbit(atom/movable/orbiter, refreshing=FALSE)
@@ -99,7 +103,7 @@
 		qdel(src)
 
 // This proc can receive signals by either the thing being directly orbited or anything holding it
-/datum/component/orbiter/proc/move_react(atom/movable/master, atom/mover, atom/oldloc, direction)
+/datum/component/orbiter/proc/move_react(atom/movable/master, atom/movable/mover, atom/oldloc, direction)
 	set waitfor = FALSE // Transfer calls this directly and it doesnt care if the ghosts arent done moving
 
 	var/this_move
@@ -118,15 +122,16 @@
 		var/atom/movable/thing = i
 		if(QDELETED(thing))
 			continue
+		current_mover = thing
 		thing.forceMove(newturf, topmost.step_x, topmost.step_y)
 		if(CHECK_TICK && this_move != last_move)
 			// We moved again during the checktick, cancel current operation
 			return
+	current_mover = null
 
 /datum/component/orbiter/proc/orbiter_move_react(atom/movable/orbiter, atom/oldloc, direction)
-	if(orbiter.loc == get_turf(parent))
-		return
-	end_orbit(orbiter)
+	if(orbiter != current_mover)
+		end_orbit(orbiter)
 
 /////////////////////
 

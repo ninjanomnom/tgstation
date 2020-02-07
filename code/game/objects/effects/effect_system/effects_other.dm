@@ -49,8 +49,7 @@
 				stepx = AM.step_x
 				stepy = AM.step_y
 			var/obj/effect/E = new effect_type(get_turf(holder))
-			E.step_x = stepx
-			E.step_y = stepy
+			E.forceMove(E.loc, stepx, stepy)
 			set_dir(E)
 			if(fade)
 				flick(fadetype, E)

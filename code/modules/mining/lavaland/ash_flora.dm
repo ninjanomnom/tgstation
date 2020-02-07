@@ -161,8 +161,8 @@
 
 /obj/item/reagent_containers/food/snacks/grown/ash_flora/Initialize()
 	. = ..()
-	step_x = rand(-4, 4)
-	step_y = rand(-4, 4)
+	if(loc)
+		forceMove(loc, rand(-4, 4), rand(-4, 4))
 
 /obj/item/reagent_containers/food/snacks/grown/ash_flora/shavings //So we can't craft bowls from everything.
 

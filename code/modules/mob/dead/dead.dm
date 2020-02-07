@@ -34,6 +34,7 @@ INITIALIZE_IMMEDIATE(/mob/dead)
 	return
 
 /mob/dead/forceMove(atom/destination, _step_x, _step_y)
+	NORMALIZE_STEP(destination, _step_x, _step_y)
 	var/turf/old_turf = get_turf(src)
 	var/turf/new_turf = get_turf(destination)
 	if (old_turf?.z != new_turf?.z)

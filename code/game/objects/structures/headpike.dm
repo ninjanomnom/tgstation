@@ -25,7 +25,8 @@
 
 /obj/structure/headpike/Initialize()
 	. = ..()
-	step_x = rand(-8, 8)
+	if(loc)
+		forceMove(loc, rand(-8, 8), step_y)
 
 /obj/structure/headpike/update_overlays()
 	. = ..()

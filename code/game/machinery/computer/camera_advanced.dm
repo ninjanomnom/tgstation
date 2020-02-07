@@ -196,7 +196,6 @@
 	if(eye_user)
 		T = get_turf(T)
 		if (T)
-			NORMALIZE_STEP(T, _pixel_x, _pixel_y)
 			forceMove(T, _pixel_x, _pixel_y)
 		else
 			moveToNullspace()
