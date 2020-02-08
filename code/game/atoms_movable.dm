@@ -237,7 +237,7 @@
 #undef ANGLE_ADJUST
 
 /atom/movable/proc/handle_pulled_premove(atom/newloc, direct, _step_x, _step_y)
-	if(direct == get_dir(src, pulling))
+	if(direct & get_pixeldir(src, pulling))
 		return TRUE
 	if(bounds_dist(src, pulling) > 16 + step_size)
 		return FALSE

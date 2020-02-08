@@ -40,6 +40,5 @@
 /// EAST is 0 and goes counter clockwise
 #define get_deg(thingA, thingB) ATAN2(thingB.true_y() - thingA.true_y(), thingB.true_x() - thingA.true_x())
 
-// use this instead of get_dir because this works on same turf
-/proc/get_pixeldir(atom/movable/thingA, atom/movable/thingB)
-	return angle2dir(get_deg(thingA, thingB))
+/// Use this instead of get_dir when things can be on the same turf
+#define get_pixeldir(thingA, thingB) (get_dir(thingA, thingB) || angle2dir(get_deg(thingA, thingB)))
