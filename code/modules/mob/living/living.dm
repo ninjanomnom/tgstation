@@ -568,9 +568,7 @@
 
 	. = ..()
 
-	if(pulledby && get_dist(src, pulledby) > 1)//separated from our puller
-		pulledby.stop_pulling()
-	else
+	if(!check_pulling())
 		if(isliving(pulledby))
 			var/mob/living/L = pulledby
 			L.set_pull_offsets(src, pulledby.grab_state)

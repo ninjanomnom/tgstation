@@ -86,8 +86,8 @@
 		if(istype(G) && G.Touch(A,0)) // for magic gloves
 			return
 
-	if(isturf(A) && get_dist(src,A) <= 1)
-		src.Move_Pulled(A, mouseparams)
+	if(isturf(A) && bounds_dist(src, A) <= 8)
+		Move_Pulled(A, mouseparams)
 		return
 
 /*

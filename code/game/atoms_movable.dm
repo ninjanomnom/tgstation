@@ -162,27 +162,18 @@
 	return TRUE
 
 /atom/movable/proc/stop_pulling()
-	if(pulling)
-		pulling.pulledby = null
-		var/mob/living/ex_pulled = pulling
-		pulling = null
-		setGrabState(0)
-		if(isliving(ex_pulled))
-			var/mob/living/L = ex_pulled
-			L.update_mobility()// mob gets up if it was lyng down in a chokehold
-
-/atom/movable/proc/Move_Pulled(atom/A, params)
 	if(!pulling)
 		return
-	if(pulling.anchored || pulling.move_resist > move_force || !pulling.Adjacent(src))
-		stop_pulling()
-		return
-	if(isliving(pulling))
-		var/mob/living/L = pulling
-		if(L.buckled && L.buckled.buckle_prevents_pull) //if they're buckled to something that disallows pulling, prevent it
-			stop_pulling()
-			return
-	if(!Process_Spacemove(get_dir(pulling.loc, A)))
+	pulling.pulledby = null
+	var/atom/movable/ex_pulled = pulling
+	pulling = null
+	setGrabState(0)
+	if(isliving(ex_pulled))
+		var/mob/living/L = ex_pulled
+		L.update_mobility()// mob gets up if it was lyng down in a chokehold
+
+/atom/movable/proc/Move_Pulled(atom/A, params)
+	if(!check_pulling())
 		return
 	if(params)
 		var/list/mouse = params2list(params)
@@ -201,20 +192,29 @@
 	set_pull_offsets(L, grab_state)
 
 /atom/movable/proc/check_pulling()
-	if(pulling)
-		var/atom/movable/pullee = pulling
-		if(pullee && bounds_dist(src, pullee) > 32)
+	. = FALSE
+	if(!pulling)
+		return
+	if(bounds_dist(src, pulling) > 32)
+		stop_pulling()
+		return
+	if(!isturf(loc))
+		stop_pulling()
+		return
+	if(pulling.anchored || pulling.move_resist > move_force)
+		stop_pulling()
+		return
+	if(isliving(pulling))
+		var/mob/living/liv = pulling
+		if(liv.buckled?.buckle_prevents_pull) //if they're buckled to something that disallows pulling, prevent it
 			stop_pulling()
 			return
-		if(!isturf(loc))
-			stop_pulling()
-			return
-		if(pulling.anchored || pulling.move_resist > move_force)
-			stop_pulling()
-			return
+	return TRUE
 
 #define ANGLE_ADJUST 10
 /atom/movable/proc/handle_pulled_movement()
+	if(!pulling)
+		return FALSE
 	if(pulling.anchored)
 		return FALSE
 	if(pulling.move_resist > move_force)
@@ -237,9 +237,7 @@
 #undef ANGLE_ADJUST
 
 /atom/movable/proc/handle_pulled_premove(atom/newloc, direct, _step_x, _step_y)
-	if(direct & get_pixeldir(src, pulling))
-		return TRUE
-	if(bounds_dist(src, pulling) > 16 + step_size)
+	if((bounds_dist(src, pulling) > 16 + step_size) && !(direct & get_pixeldir(src, pulling)))
 		return FALSE
 	return TRUE
 
