@@ -67,10 +67,10 @@
 	if(!check_loc && M.loc != loc)
 		M.forceMove(loc)
 
+	M.forceMove(M.loc, step_x, step_y)
 	M.buckling = null
 	M.buckled = src
 	M.setDir(dir)
-	M.forceMove(M.loc, step_x, step_y)
 	buckled_mobs |= M
 	M.update_mobility()
 	M.throw_alert("buckled", /obj/screen/alert/restrained/buckled)
