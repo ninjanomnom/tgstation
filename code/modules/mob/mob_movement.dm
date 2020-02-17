@@ -122,12 +122,6 @@
 			n = get_step(L, direct)
 
 	. = step(mob, direct, step_size)
-	if(!.)
-		for(var/d in GLOB.cardinals)
-			if(direct & d)
-				. = step(mob, d, step_size)
-				if(.)
-					break
 
 	if(.) // If mob is null here, we deserve the runtime
 		if(mob.throwing)

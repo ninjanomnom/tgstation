@@ -7,6 +7,7 @@
 	//PIXEL MOVEMENT VARS
 	var/fx // stores fractional pixel movement in the x
 	var/fy // stores fractional pixel movement in the y
+	var/sliding // currently sliding?
 
 	var/walking = NONE
 	var/move_resist = MOVE_RESIST_DEFAULT
@@ -252,7 +253,15 @@
 	var/atom/oldloc = loc
 
 	. = ..()
-
+	if(!. && !sliding)
+		sliding = TRUE
+		for(var/d in GLOB.cardinals)
+			if(direct & d)
+				. = step(src, d, step_size)
+				if(.)
+					direct = d
+					break
+		sliding = FALSE
 	last_move = direct
 	setDir(direct)
 	if(.)
