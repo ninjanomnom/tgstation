@@ -5,11 +5,13 @@
 	id_arg_index = 2
 	var/dunk_amount // the amount of reagents that will be transfered from the container to the item on each click
 
+/datum/element/dunkable/Initialize(eletype, amount_per_dunk)
+	dunk_amount = amount_per_dunk
+
 /datum/element/dunkable/Attach(datum/target, amount_per_dunk)
 	. = ..()
 	if(!isitem(target))
 		return ELEMENT_INCOMPATIBLE
-	dunk_amount = amount_per_dunk
 	RegisterSignal(target, COMSIG_ITEM_AFTERATTACK, .proc/get_dunked)
 
 /datum/element/dunkable/Detach(datum/target)

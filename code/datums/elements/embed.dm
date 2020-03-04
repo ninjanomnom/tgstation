@@ -19,21 +19,54 @@
 	id_arg_index = 2
 
 	// all of this stuff is explained in _DEFINES/combat.dm
-	var/embed_chance
-	var/fall_chance
-	var/pain_chance
-	var/pain_mult
-	var/remove_pain_mult
-	var/impact_pain_mult
-	var/rip_time
-	var/ignore_throwspeed_threshold
-	var/jostle_chance
-	var/jostle_pain_mult
-	var/pain_stam_pct
+	var/embed_chance = EMBED_CHANCE
+	var/fall_chance = EMBEDDED_ITEM_FALLOUT
+	var/pain_chance = EMBEDDED_PAIN_CHANCE
+	var/pain_mult = EMBEDDED_PAIN_MULTIPLIER
+	var/remove_pain_mult = EMBEDDED_UNSAFE_REMOVAL_PAIN_MULTIPLIER
+	var/impact_pain_mult = EMBEDDED_UNSAFE_REMOVAL_TIME
+	var/rip_time = EMBEDDED_IMPACT_PAIN_MULTIPLIER
+	var/ignore_throwspeed_threshold = FALSE
+	var/jostle_chance = EMBEDDED_JOSTLE_CHANCE
+	var/jostle_pain_mult = EMBEDDED_JOSTLE_PAIN_MULTIPLIER
+	var/pain_stam_pct = EMBEDDED_PAIN_STAM_PCT
 
-/datum/element/embed/Attach(datum/target, list/embedArgs)
+/datum/element/embed/Initialize(eletype,
+	embed_chance, fall_chance, pain_chance,
+	pain_mult, remove_pain_mult, rip_time,
+	impact_pain_mult, ignore_throwspeed_threshold, jostle_chance,
+	jostle_pain_mult, pain_stam_pct)
+
+	if(!isnull(embed_chance))
+		src.embed_chance = embed_chance
+	if(!isnull(fall_chance))
+		src.fall_chance = fall_chance
+	if(!isnull(pain_chance))
+		src.pain_chance = pain_chance
+	if(!isnull(pain_mult))
+		src.pain_mult = pain_mult
+	if(!isnull(remove_pain_mult))
+		src.remove_pain_mult = remove_pain_mult
+	if(!isnull(rip_time))
+		src.rip_time = rip_time
+	if(!isnull(impact_pain_mult))
+		src.impact_pain_mult = impact_pain_mult
+	if(!isnull(ignore_throwspeed_threshold))
+		src.ignore_throwspeed_threshold = ignore_throwspeed_threshold
+	if(!isnull(jostle_chance))
+		src.jostle_chance = jostle_chance
+	if(!isnull(jostle_pain_mult))
+		src.jostle_pain_mult = jostle_pain_mult
+	if(!isnull(pain_stam_pct))
+		src.pain_stam_pct = pain_stam_pct
+
+/datum/element/embed/Attach(datum/target,
+	embed_chance, fall_chance, pain_chance,
+	pain_mult, remove_pain_mult, rip_time,
+	impact_pain_mult, ignore_throwspeed_threshold, jostle_chance,
+	jostle_pain_mult, pain_stam_pct)
+
 	. = ..()
-	parseArgs(arglist(embedArgs))
 
 	if(!isitem(target))
 		return ELEMENT_INCOMPATIBLE
@@ -94,30 +127,6 @@
 			jostle_chance = jostle_chance,\
 			jostle_pain_mult = jostle_pain_mult,\
 			pain_stam_pct = pain_stam_pct)
-
-/datum/element/embed/proc/parseArgs(embed_chance = EMBED_CHANCE,
-		fall_chance = EMBEDDED_ITEM_FALLOUT,
-		pain_chance = EMBEDDED_PAIN_CHANCE,
-		pain_mult = EMBEDDED_PAIN_MULTIPLIER,
-		remove_pain_mult = EMBEDDED_UNSAFE_REMOVAL_PAIN_MULTIPLIER,
-		rip_time = EMBEDDED_UNSAFE_REMOVAL_TIME,
-		impact_pain_mult = EMBEDDED_IMPACT_PAIN_MULTIPLIER,
-		ignore_throwspeed_threshold = FALSE,
-		jostle_chance = EMBEDDED_JOSTLE_CHANCE,
-		jostle_pain_mult = EMBEDDED_JOSTLE_PAIN_MULTIPLIER,
-		pain_stam_pct = EMBEDDED_PAIN_STAM_PCT)
-
-	src.embed_chance = embed_chance
-	src.fall_chance = fall_chance
-	src.pain_chance = pain_chance
-	src.pain_mult = pain_mult
-	src.remove_pain_mult = remove_pain_mult
-	src.impact_pain_mult = impact_pain_mult
-	src.rip_time = rip_time
-	src.ignore_throwspeed_threshold = ignore_throwspeed_threshold
-	src.jostle_chance = jostle_chance
-	src.jostle_pain_mult = jostle_pain_mult
-	src.pain_stam_pct = pain_stam_pct
 
 ///A different embed element has been attached, so we'll detach and let them handle things
 /datum/element/embed/proc/severancePackage(obj/item/weapon, datum/element/E)

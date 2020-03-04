@@ -16,6 +16,9 @@
 	  */
 	var/id_arg_index = INFINITY
 
+/datum/element/proc/Initialize(eletype, ...)
+	return
+
 /// Activates the functionality defined by the element on the given target datum
 /datum/element/proc/Attach(datum/target)
 	SHOULD_CALL_PARENT(1)
@@ -40,7 +43,7 @@
 //DATUM PROCS
 
 /// Finds the singleton for the element type given and attaches it to src
-/datum/proc/_AddElement(list/arguments)
+/datum/proc/ListAddElement(list/arguments)
 	var/datum/element/ele = SSdcs.GetElement(arguments)
 	arguments[1] = src
 	if(ele.Attach(arglist(arguments)) == ELEMENT_INCOMPATIBLE)
@@ -50,6 +53,6 @@
   * Finds the singleton for the element type given and detaches it from src
   * You only need additional arguments beyond the type if you're using [ELEMENT_BESPOKE]
   */
-/datum/proc/_RemoveElement(list/arguments)
+/datum/proc/ListRemoveElement(list/arguments)
 	var/datum/element/ele = SSdcs.GetElement(arguments)
 	ele.Detach(src)

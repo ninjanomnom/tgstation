@@ -4,6 +4,10 @@
 	var/override_throw_val
 	var/override_speed_val
 
+/datum/element/selfknockback/Initialize(eletype, throw_amount, speed_amount)
+	override_throw_val = throw_amount
+	override_speed_val = speed_amount
+
 /* Adds the ability to put recoil on various things, throwing the user back proportional to the force and speed set.
 Important note: Force/Throw_Amount, is how far you want to throw a user. By default, it is calculated based on damage below.
 Speed_Amount, is a measure of how long it will take a user to get thrown to the target. By default, it is calculated by
@@ -16,9 +20,6 @@ clamping the Knockback_Force value below. */
 		RegisterSignal(target, COMSIG_PROJECTILE_FIRE, .proc/Projectile_SelfKnockback)
 	else
 		return ELEMENT_INCOMPATIBLE
-
-	override_throw_val = throw_amount
-	override_speed_val = speed_amount
 
 /datum/element/selfknockback/Detach(datum/source, force)
 	. = ..()

@@ -174,14 +174,14 @@ GLOBAL_VAR_INIT(embedpocalypse, FALSE) // if true, all items will be able to emb
 
 	// this proc says it's for initializing components, but we're initializing elements too because it's you and me against the world >:)
 	if(embedding)
-		AddElement(/datum/element/embed, embedding)
+		ListAddElement(embedding)
 	else if(GLOB.embedpocalypse)
 		embedding = EMBED_POINTY
-		AddElement(/datum/element/embed, embedding)
+		ListAddElement(embedding)
 		name = "pointy [name]"
 	else if(GLOB.stickpocalypse)
 		embedding = EMBED_HARMLESS
-		AddElement(/datum/element/embed, embedding)
+		ListAddElement(embedding)
 		name = "sticky [name]"
 
 	if(GLOB.rpg_loot_items)

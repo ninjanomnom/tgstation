@@ -6,10 +6,10 @@
 
 #define SEND_GLOBAL_SIGNAL(sigtype, arguments...) ( SEND_SIGNAL(SSdcs, sigtype, ##arguments) )
 
-/// A wrapper for _AddElement that allows us to pretend we're using normal named arguments
-#define AddElement(arguments...) _AddElement(list(##arguments))
-/// A wrapper for _RemoveElement that allows us to pretend we're using normal named arguments
-#define RemoveElement(arguments...) _RemoveElement(list(##arguments))
+/// A wrapper for ListAddElement that allows us to pretend we're using normal named arguments
+#define AddElement(arguments...) ListAddElement(list(##arguments))
+/// A wrapper for ListRemoveElement that allows us to pretend we're using normal named arguments
+#define RemoveElement(arguments...) ListRemoveElement(list(##arguments))
 
 /// A wrapper for _AddComponent that allows us to pretend we're using normal named arguments
 #define AddComponent(arguments...) _AddComponent(list(##arguments))

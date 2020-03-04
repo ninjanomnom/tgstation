@@ -7,14 +7,15 @@
 	/// How many firestacks to apply per hit
 	var/amount
 
+/datum/element/firestacker/Initialize(eletype, amount)
+	src.amount = amount
+
 /datum/element/firestacker/Attach(datum/target, amount)
 	. = ..()
-	
+
 	if(!ismovable(target))
 		return ELEMENT_INCOMPATIBLE
-	
-	src.amount = amount
-	
+
 	RegisterSignal(target, COMSIG_MOVABLE_IMPACT, .proc/impact, override = TRUE)
 	if(isitem(target))
 		RegisterSignal(target, COMSIG_ITEM_ATTACK, .proc/item_attack, override = TRUE)

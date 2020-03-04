@@ -2,7 +2,7 @@ PROCESSING_SUBSYSTEM_DEF(dcs)
 	name = "Datum Component System"
 	flags = SS_NO_INIT
 
-	var/list/elements_by_type = list()
+	var/list/datum/element/elements_by_type = list()
 
 /datum/controller/subsystem/processing/dcs/Recover()
 	comp_lookup = SSdcs.comp_lookup
@@ -21,6 +21,7 @@ PROCESSING_SUBSYSTEM_DEF(dcs)
 	if(.)
 		return
 	. = elements_by_type[element_id] = new eletype
+	elements_by_type[element_id].Initialize(arglist(arguments))
 
 /****
 	* Generates an id for bespoke elements when given the argument list
