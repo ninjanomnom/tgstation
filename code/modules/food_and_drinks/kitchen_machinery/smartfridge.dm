@@ -41,24 +41,11 @@
 		. += "<span class='notice'>The status display reads: This unit can hold a maximum of <b>[max_n_of_items]</b> items.</span>"
 
 /obj/machinery/smartfridge/update_icon_state()
+	. = ..()
 	if(machine_stat)
 		icon_state = "[initial(icon_state)]-off"
-		return ..()
-
-	if(!visible_contents)
+	else
 		icon_state = "[initial(icon_state)]"
-		return ..()
-
-	switch(contents.len)
-		if(0)
-			icon_state = "[initial(icon_state)]"
-		if(1 to 25)
-			icon_state = "[initial(icon_state)]1"
-		if(26 to 75)
-			icon_state = "[initial(icon_state)]2"
-		if(76 to INFINITY)
-			icon_state = "[initial(icon_state)]3"
-	return ..()
 
 /obj/machinery/smartfridge/update_overlays()
 	. = ..()

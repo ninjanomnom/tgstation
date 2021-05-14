@@ -22,7 +22,7 @@ again.
 	icon = 'icons/obj/structures_spawners.dmi'
 	icon_state = "window_spawner"
 	name = "window spawner"
-	spawn_list = list(/turf/closed/wall/window_frame/grille_and_window)
+	spawn_list = list(/turf/closed/wall/low_wall/window)
 	dir = SOUTH
 
 /obj/effect/spawner/structure/window/Initialize()
@@ -91,7 +91,7 @@ again.
 /obj/effect/spawner/structure/window/reinforced
 	name = "reinforced window spawner"
 	icon_state = "rwindow_spawner"
-	spawn_list = list(/obj/structure/grille, /obj/structure/window/reinforced/fulltile)
+	spawn_list = list(/turf/closed/wall/low_wall/window/reinforced)
 
 /obj/effect/spawner/structure/window/hollow/reinforced
 	name = "hollow reinforced window spawner"
@@ -160,7 +160,7 @@ again.
 /obj/effect/spawner/structure/window/shuttle
 	name = "shuttle window spawner"
 	icon_state = "swindow_spawner"
-	spawn_list = list(/obj/structure/grille, /obj/structure/window/shuttle)
+	spawn_list = list(/turf/closed/wall/low_wall/titanium/window)
 
 
 //plastitanium window
