@@ -204,7 +204,7 @@
 
 /turf/closed/indestructible/fakedoor
 	name = "CentCom Access"
-	icon = 'icons/obj/doors/airlocks/centcom/centcom.dmi'
+	icon = 'icons/obj/doors/airlocks/tall/centcom.dmi'
 	icon_state = "fake_door"
 
 /turf/closed/indestructible/rock
