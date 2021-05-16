@@ -7,5 +7,5 @@
 
 #define IS_OPAQUE_TURF(turf) (turf.directional_opacity == ALL_CARDINALS)
 
-#define WINDOW_FRAME_WITH_GRILLES (1<<0)
-#define WINDOW_FRAME_WITH_WINDOW (1<<1)
+#define LOW_WALL_WITH_GRILLES (1<<0)
+#define LOW_WALL_WITH_WINDOW (1<<1)
