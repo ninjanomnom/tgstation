@@ -64,6 +64,11 @@
 	window_icon_state = "reinforced_window"
 	frill_icon = 'icons/effects/frills/window_reinforced_frill.dmi'
 
+/turf/closed/wall/low_wall/window/tinted
+	window_icon = 'icons/turf/walls/low_walls/windows/tinted_window.dmi'
+	window_icon_state = "tinted_window"
+	frill_icon = 'icons/effects/frills/window_tinted_frill.dmi'
+
 /turf/closed/wall/low_wall/titanium
 	name = "shuttle window frame"
 	icon = 'icons/turf/walls/low_walls/low_wall_shuttle.dmi'

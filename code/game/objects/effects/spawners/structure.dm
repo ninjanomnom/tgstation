@@ -152,7 +152,7 @@ again.
 /obj/effect/spawner/structure/window/reinforced/tinted
 	name = "tinted reinforced window spawner"
 	icon_state = "twindow_spawner"
-	spawn_list = list(/obj/structure/grille, /obj/structure/window/reinforced/tinted/fulltile)
+	spawn_list = list(/turf/closed/wall/low_wall/window/tinted)
 
 
 //shuttle window
