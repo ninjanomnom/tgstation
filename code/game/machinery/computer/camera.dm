@@ -273,6 +273,22 @@
 	circuit = null
 	interaction_flags_atom = NONE  // interact() is called by BigClick()
 
+/obj/machinery/computer/security/telescreen/entertainment/directional/north
+	dir = SOUTH
+	pixel_y = 32
+
+/obj/machinery/computer/security/telescreen/entertainment/directional/south
+	dir = NORTH
+	pixel_y = -32
+
+/obj/machinery/computer/security/telescreen/entertainment/directional/east
+	dir = WEST
+	pixel_x = 32
+
+/obj/machinery/computer/security/telescreen/entertainment/directional/west
+	dir = EAST
+	pixel_x = -32
+
 /obj/machinery/computer/security/telescreen/entertainment/Initialize()
 	. = ..()
 	RegisterSignal(src, COMSIG_CLICK, .proc/BigClick)
@@ -284,7 +300,7 @@
 
 	INVOKE_ASYNC(src, /atom.proc/interact, usr)
 
-obj/machinery/computer/security/telescreen/entertainment/proc/notify(on)
+/obj/machinery/computer/security/telescreen/entertainment/proc/notify(on)
 	if(on)
 		say(pick(
 			"Feats of bravery live now at the thunderdome!",

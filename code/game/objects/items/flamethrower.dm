@@ -224,7 +224,6 @@
 	//Burn it based on transfered gas
 	target.hotspot_expose((tank_mix.temperature*2) + 380,500)
 	//location.hotspot_expose(1000,500,1)
-	SSair.add_to_active(target)
 
 /obj/item/flamethrower/Initialize(mapload)
 	. = ..()
@@ -265,6 +264,7 @@
 	F.default_ignite(location,release_amount)
 
 /obj/item/flamethrower/proc/instant_refill()
+	SIGNAL_HANDLER
 	if(ptank)
 		var/datum/gas_mixture/tank_mix = ptank.return_air()
 		tank_mix.assert_gas(/datum/gas/plasma)

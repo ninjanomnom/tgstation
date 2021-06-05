@@ -574,6 +574,7 @@
 	fixed_mut_color = "ff0"
 	say_mod = "honks"
 	inherent_traits = list(
+		TRAIT_ADVANCEDTOOLUSER,
 		TRAIT_CAN_STRIP,
 		TRAIT_RESISTHEAT,
 		TRAIT_NOBREATH,
@@ -670,6 +671,7 @@
 	playsound(get_turf(H), 'sound/misc/sadtrombone.ogg', 70, FALSE)
 
 /datum/species/golem/bananium/proc/handle_speech(datum/source, list/speech_args)
+	SIGNAL_HANDLER
 	speech_args[SPEECH_SPANS] |= SPAN_CLOWN
 
 /datum/species/golem/runic
@@ -751,6 +753,7 @@
 	species_traits = list(NOBLOOD,NO_UNDERWEAR) //no mutcolors, and can burn
 	inherent_traits = list(
 		TRAIT_ADVANCEDTOOLUSER,
+		TRAIT_CAN_STRIP,
 		TRAIT_RESISTCOLD,
 		TRAIT_NOBREATH,
 		TRAIT_RESISTHIGHPRESSURE,

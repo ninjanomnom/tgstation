@@ -150,12 +150,27 @@
 	density = FALSE
 	reagent_id = /datum/reagent/consumable/condensedcapsaicin
 
+/obj/structure/reagent_dispensers/peppertank/directional/north
+	dir = SOUTH
+	pixel_y = 30
+
+/obj/structure/reagent_dispensers/peppertank/directional/south
+	dir = NORTH
+	pixel_y = -30
+
+/obj/structure/reagent_dispensers/peppertank/directional/east
+	dir = WEST
+	pixel_x = 30
+
+/obj/structure/reagent_dispensers/peppertank/directional/west
+	dir = EAST
+	pixel_x = -30
+
 /obj/structure/reagent_dispensers/peppertank/Initialize()
 	. = ..()
 	AddElement(/datum/element/wall_mount)
 	if(prob(1))
 		desc = "IT'S PEPPER TIME, BITCH!"
-
 
 /obj/structure/reagent_dispensers/water_cooler
 	name = "liquid cooler"

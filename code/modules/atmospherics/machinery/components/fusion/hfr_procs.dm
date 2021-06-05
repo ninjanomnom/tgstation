@@ -113,6 +113,7 @@
  * * only_signals: default FALSE, if true the proc will not call the deactivate() proc
  */
 /obj/machinery/atmospherics/components/unary/hypertorus/core/proc/unregister_signals(only_signals = FALSE)
+	SIGNAL_HANDLER
 	UnregisterSignal(linked_interface, COMSIG_PARENT_QDELETING)
 	UnregisterSignal(linked_input, COMSIG_PARENT_QDELETING)
 	UnregisterSignal(linked_output, COMSIG_PARENT_QDELETING)
@@ -325,7 +326,6 @@
 			remove = remove_fusion.remove_ratio(0.1)
 			var/turf/local = pick(around_turfs)
 			local.assume_air(remove)
-			local.air_update_turf(FALSE, FALSE)
 		loc.assume_air(internal_fusion)
 	var/datum/gas_mixture/remove_moderator
 	if(moderator_internal.total_moles() > 0)
@@ -335,7 +335,5 @@
 			remove = remove_moderator.remove_ratio(0.1)
 			var/turf/local = pick(around_turfs)
 			local.assume_air(remove)
-			local.air_update_turf(FALSE, FALSE)
 		loc.assume_air(moderator_internal)
-	air_update_turf(FALSE, FALSE)
 	qdel(src)
