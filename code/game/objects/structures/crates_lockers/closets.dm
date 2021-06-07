@@ -11,6 +11,7 @@
 	integrity_failure = 0.25
 	armor = list(MELEE = 20, BULLET = 10, LASER = 10, ENERGY = 0, BOMB = 10, BIO = 0, RAD = 0, FIRE = 70, ACID = 60)
 
+	var/enable_door_overlay = TRUE
 	var/icon_door = null
 	var/icon_door_override = FALSE //override to have open overlay use icon different to its base's
 	var/secure = FALSE //secure locker or not, also used if overriding a non-secure locker with a secure door overlay to add fancy lights
@@ -79,11 +80,15 @@
 
 /obj/structure/closet/proc/closet_update_overlays(list/new_overlays)
 	. = new_overlays
+	if(enable_door_overlay)
+		if(opened)
+			. += "[icon_door_override ? icon_door : icon_state]_open"
+		else
+			. += "[icon_door || icon_state]_door"
+
 	if(opened)
-		. += "[icon_door_override ? icon_door : icon_state]_open"
 		return
 
-	. += "[icon_door || icon_state]_door"
 	if(welded)
 		. += icon_welded
 
