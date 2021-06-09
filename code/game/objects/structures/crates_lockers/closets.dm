@@ -82,9 +82,9 @@
 /obj/structure/closet/proc/closet_update_overlays(list/new_overlays)
 	. = new_overlays
 	if(enable_door_overlay)
-		if(opened)
+		if(opened && has_opened_overlay)
 			. += "[icon_door_override ? icon_door : icon_state]_open"
-		else
+		else if(has_closed_overlay)
 			. += "[icon_door || icon_state]_door"
 
 	if(opened)
