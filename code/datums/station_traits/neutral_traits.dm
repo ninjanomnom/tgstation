@@ -336,3 +336,125 @@
 	show_in_report = TRUE
 	report_message = "There sure are a lot of trees out there."
 
+/// Replaces the station structure with weird things like meat
+/datum/station_trait/unusual_materials
+	name = "Unusual materials"
+	trait_type = STATION_TRAIT_NEUTRAL
+	trait_to_give = STATION_TRAIT_UNUSUAL_MATERIALS
+	trait_flags = STATION_TRAIT_MAP_UNRESTRICTED
+	show_in_report = TRUE
+	report_message = "The contractors for this station chose... nonstandard materials."
+	force = TRUE
+
+	/// A typecache of valid objects to replace the materials of in place
+	var/static/valid_station_objects = typecacheof(list(
+		/obj/structure/table,
+		/obj/machinery/door/airlock/material,
+	))
+
+	var/datum/material/chosen_material
+	var/list/turf_materials
+
+	var/announcement_additional_information
+
+/datum/station_trait/unusual_materials/New()
+	. = ..()
+	var/static/list/possible_station_materials
+	if(!possible_station_materials)
+		possible_station_materials = list()
+		possible_station_materials[GET_MATERIAL_REF(/datum/material/meat)] = PROC_REF(SetupMeatStation)
+		possible_station_materials[GET_MATERIAL_REF(/datum/material/cardboard)] = PROC_REF(SetupCardboardStation)
+
+	chosen_material = pick(possible_station_materials)
+	call(src, possible_station_materials[chosen_material])() // We want this finished before we start modifying
+
+	RegisterSignal(SSmapping, COMSIG_SUBSYSTEM_POST_INITIALIZE, PROC_REF(PreInitModifyStation))
+	RegisterSignal(SSatoms, COMSIG_SUBSYSTEM_POST_INITIALIZE, PROC_REF(PostInitModifyStation))
+
+/datum/station_trait/unusual_materials/on_round_start()
+	. = ..()
+	addtimer(CALLBACK(src, PROC_REF(Announce)), 10 SECONDS)
+
+/datum/station_trait/unusual_materials/proc/SetupMeatStation()
+	announcement_additional_information = "Please do not consume station infrastructure and get your meals from the provided kitchen. Violations will be docked from your pay."
+
+/datum/station_trait/unusual_materials/proc/SetupCardboardStation()
+	announcement_additional_information = "Be careful with fire sources."
+
+/datum/station_trait/unusual_materials/proc/Announce()
+	var/message = "There was a shortage of the usual materials while constructing this station, however our inspectors have assured us that productivity should not be impacted by the substitute.[announcement_additional_information ? " " : ""][announcement_additional_information]"
+	priority_announce(message)
+
+/datum/station_trait/unusual_materials/proc/CustomMatWithPrimaryReplaced(atom/thing, datum/material/new_material)
+	var/list/new_materials = list()
+	if(!length(thing.custom_materials))
+		new_materials[new_material] = 100
+		return new_materials
+
+	var/main_material_amount = thing.custom_materials[thing.custom_materials[1]]
+	new_materials[new_material] = main_material_amount
+
+	if(length(thing.custom_materials) > 1)
+		new_materials += thing.custom_materials.Copy(2)
+
+	return new_materials
+
+// PRE INIT
+
+/datum/station_trait/unusual_materials/proc/PreInitModifyStation()
+	SIGNAL_HANDLER
+	can_revert = FALSE // It has begun, too late to turn back now
+
+	if(!turf_materials)
+		turf_materials = list()
+		turf_materials[chosen_material] = 100
+
+	for(var/z in SSmapping.levels_by_trait(ZTRAIT_STATION))
+		for(var/turf/place as anything in Z_TURFS(z))
+			CHECK_TICK
+			PreInitModifyTurfAndContents(place)
+
+/datum/station_trait/unusual_materials/proc/PreInitModifyTurfAndContents(turf/place)
+	if(istype(place, /turf/closed/wall))
+		place.ChangeTurf(/turf/closed/wall/material, flags=CHANGETURF_SKIP)
+		place.set_custom_materials(turf_materials)
+
+	if(istype(place, /turf/open/floor/iron))
+		place.ChangeTurf(/turf/open/floor/material, flags=CHANGETURF_SKIP)
+		place.set_custom_materials(turf_materials)
+
+// POST INIT
+
+/datum/station_trait/unusual_materials/proc/PostInitModifyStation()
+	SIGNAL_HANDLER
+
+	for(var/z in SSmapping.levels_by_trait(ZTRAIT_STATION))
+		for(var/turf/place as anything in Z_TURFS(z))
+			CHECK_TICK
+			PostInitModifyTurfAndContents(place)
+
+/datum/station_trait/unusual_materials/proc/PostInitModifyTurfAndContents(turf/place)
+	for(var/atom/movable/thing as anything in place)
+		if(valid_station_objects[thing.type])
+			thing.set_custom_materials(CustomMatWithPrimaryReplaced(thing, chosen_material))
+			continue
+
+		if(istype(thing, /obj/machinery/door/airlock))
+			var/obj/machinery/door/airlock/airlock = thing
+			var/new_name = airlock.name != initial(airlock.name) ? airlock.name : null
+			var/req_access = airlock.req_access
+			var/req_one_access = airlock.req_one_access
+			qdel(airlock)
+
+			var/obj/machinery/door/airlock/material/new_door
+			if(airlock.opacity)
+				new_door = new(place)
+			else
+				new_door = new /obj/machinery/door/airlock/material/glass(place)
+
+			new_door.set_custom_materials(CustomMatWithPrimaryReplaced(airlock, chosen_material))
+			if(new_name)
+				new_door.name = new_name
+			new_door.req_access = req_access
+			new_door.req_one_access = req_one_access
+
