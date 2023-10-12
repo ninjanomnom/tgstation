@@ -180,3 +180,111 @@ GLOBAL_LIST_INIT(dreams, populate_dream_list())
 
 /datum/dream/hear_something/proc/StopSound(mob/living/carbon/dreamer)
 	SEND_SOUND(dreamer, sound(channel=reserved_sound_channel))
+
+/datum/dream/leathy_knowledge
+	weight = 1
+
+	sleep_until_finished = TRUE
+
+	var/sound/dream_loop
+	var/sound/rip
+
+	var/list/ckey_been_here = list()
+
+	var/list/pregenerated_dream_sequence
+	var/list/youve_been_here_before
+
+/datum/dream/leathy_knowledge/New()
+	. = ..()
+	RegisterSignal(SSsounds, COMSIG_SUBSYSTEM_POST_INITIALIZE, PROC_REF(ReserveSoundChannel))
+	dream_loop = sound('sound/ambience/dream_loop.ogg', volume=50, repeat=TRUE)
+	rip = sound('sound/effects/wounds/crackandbleed.ogg', volume=30)
+	pregenerated_dream_sequence = list(
+		"you're in a forest",
+		"you know the way",
+		"the leaves release a scent you cannot describe, and will never remember until",
+		CALLBACK(src, PROC_REF(StartAmbience)),
+		"have you been here before?",
+		"in the distance you see a church",
+		"a figure beckons you",
+		"you call out, but no sound comes out",
+		"the figure has the wings of a moth but their face",
+		"remember",
+		"the pews are full with no one",
+		"there are three objects on the altar",
+		"a <b><font color='purple'>fine drink</font></b>",
+		"<b><font color='orange'>sweetest honey</font></b>",
+		"the <b><font color='light blue'>remnants of a lost soul</font></b>",
+		"the figure places an empty glass on the altar",
+		"you look back but darkness shrouds you like the curtain at a theatre",
+		"three objects disappear into the glass",
+		"the figure reaches behind their back",
+		CALLBACK(src, PROC_REF(WingRip)),
+		"the <b><font color='grey'>wing of a light seeker</font></b>",
+		"it falls to dust as it enters the glass",
+		CALLBACK(src, PROC_REF(DrinkChant)),
+		"you raise the glass",
+		CALLBACK(src, PROC_REF(DrinkChant)),
+		"the liquid disappears down your throat",
+		CALLBACK(src, PROC_REF(DrinkChant)),
+		CALLBACK(src, PROC_REF(UnlockKnowledge)),
+		"you feel compelled to taste it once more",
+		"you're in a forest",
+		"you know the way",
+	)
+	youve_been_here_before = list(
+		"you're in a forest",
+		"you no longer remember the way",
+	)
+
+/datum/dream/leathy_knowledge/GenerateDream(mob/living/carbon/dreamer)
+	if(dreamer.client?.ckey in ckey_been_here)
+		return youve_been_here_before.Copy()
+	else
+		return pregenerated_dream_sequence.Copy()
+
+/datum/dream/leathy_knowledge/OnDreamEnd(mob/living/carbon/dreamer)
+	. = ..()
+	dream_loop.volume = 25
+	dream_loop.status = SOUND_UPDATE
+	SEND_SOUND(dreamer, dream_loop)
+	addtimer(CALLBACK(src, PROC_REF(StopAmbience), dreamer), 5 SECONDS)
+
+/datum/dream/leathy_knowledge/proc/ReserveSoundChannel()
+	dream_loop.channel=SSsounds.reserve_sound_channel(src)
+	UnregisterSignal(SSsounds, COMSIG_SUBSYSTEM_POST_INITIALIZE)
+
+/datum/dream/leathy_knowledge/proc/StartAmbience(mob/living/carbon/dreamer)
+	dream_loop.volume = 50
+	dream_loop.status = NONE
+	SEND_SOUND(dreamer, dream_loop)
+	return "the air is vibrating here"
+
+/datum/dream/leathy_knowledge/proc/StopAmbience(mob/living/carbon/dreamer)
+	SEND_SOUND(dreamer, sound(channel=dream_loop.channel))
+
+/datum/dream/leathy_knowledge/proc/WingRip(mob/living/carbon/dreamer)
+	SEND_SOUND(dreamer, rip)
+	return "<font color='red'>an awful tearing sound</font>"
+
+/datum/dream/leathy_knowledge/proc/DrinkChant(mob/living/carbon/dreamer)
+	var/static/list/drink_translations = list(
+		"DRINK.",
+		"Drink it!",
+		"BEVILO.", // Italian
+		"YYX!", // Mongolian
+		"TIEU XIA.", // Viatnamese... kinda
+		"Boire!", // French
+		"Trinken!", // German
+		"Pij!", // Polish
+		"QEVAX.", // rot13
+	)
+	var/list/output = list()
+	for(var/i in 1 to rand(2, 5))
+		output += "\"[pick(drink_translations)]\""
+	return output.Join(" ")
+
+/datum/dream/leathy_knowledge/proc/UnlockKnowledge(mob/living/carbon/dreamer)
+	// TODO: Unlock crafting
+	ckey_been_here += dreamer.client?.ckey
+	return "you remember yourself, [dreamer]! [span_hypnophrase("You are not entirely the same as you were before")]"

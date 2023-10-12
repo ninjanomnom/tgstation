@@ -1038,6 +1038,13 @@
 	icon = 'icons/obj/drinks/mixed_drinks.dmi'
 	icon_state = "blue_hawaiian"
 
+/datum/glass_style/drinking_glass/leathy
+	required_drink_type = /datum/reagent/consumable/ethanol/leathy
+	name = "Leathy"
+	desc = "<span class='singing'>The tongue and the eye, and now we begin! Forget your name, forget your skin.</span>"
+	icon = 'icons/effects/leathy.dmi'
+	icon_state = "drink"
+
 // Shot glasses
 
 /datum/glass_style/shot_glass/toxins_special

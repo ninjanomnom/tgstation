@@ -18,7 +18,7 @@
 	var/list/data
 	/// increments everytime on_mob_life is called
 	var/current_cycle = 0
-	///pretend this is moles
+	/// The quantity of this reagent in the holder. Measurement units aren't real.
 	var/volume = 0
 	/// pH of the reagent
 	var/ph = 7
