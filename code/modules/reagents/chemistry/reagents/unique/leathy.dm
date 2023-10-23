@@ -51,6 +51,13 @@
 	else
 		drinker.apply_status_effect(/datum/status_effect/forgotten_by_the_world, metabolization_rate)
 
+/datum/reagent/consumable/ethanol/leathy/on_mob_dead(mob/living/carbon/affected_mob, seconds_per_tick)
+	. = ..()
+	if(volume < 10)
+		holder.remove_reagent(type, metabolization_rate)
+	else if(SPT_PROB(1.6, seconds_per_tick)) // This can only happen if someone intentionally injected leathy into a corpse to start generating it
+		holder.add_reagent(type, 1) // You'd need 60 corpses with leathy in them to sustain a single person with the status effect forever, good luck
+
 //------------------
 // STATUS EFFECT
 
