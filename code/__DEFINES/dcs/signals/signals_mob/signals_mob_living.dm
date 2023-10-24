@@ -143,6 +143,8 @@
 #define COMSIG_LIVING_MOB_BUMP "living_mob_bump"
 ///From base of mob/living/Bump() (turf/closed)
 #define COMSIG_LIVING_WALL_BUMP "living_wall_bump"
+///From within mob/living/Bump(), called when starting a bump swap (mob/swap_target)
+#define COMSIG_LIVING_STARTING_SWAP "living_starting_swap"
 ///From base of turf/closed/Exited() (turf/closed)
 #define COMSIG_LIVING_WALL_EXITED "living_wall_exited"
 ///From base of mob/living/ZImpactDamage() (mob/living, levels, turf/t)

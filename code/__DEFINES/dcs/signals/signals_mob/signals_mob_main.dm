@@ -222,3 +222,6 @@
 
 /// from /mob/proc/change_mob_type_unchecked() : ()
 #define COMSIG_MOB_CHANGED_TYPE "mob_changed_type"
+
+///From within mob/living/Bump(), called when something else is swapping with us (mob/swap_target)
+#define COMSIG_MOB_BEING_SWAPPED "mob_being_swapped"

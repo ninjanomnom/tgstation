@@ -148,6 +148,8 @@
 			)
 				mob_swap = TRUE
 		if(mob_swap)
+			SEND_SIGNAL(src, COMSIG_LIVING_STARTING_SWAP, M)
+			SEND_SIGNAL(M, COMSIG_MOB_BEING_SWAPPED, src)
 			//switch our position with M
 			if(loc && !loc.Adjacent(M.loc))
 				return TRUE
