@@ -47,7 +47,7 @@
 	. = ..()
 	var/datum/status_effect/forgotten_by_the_world/forgotten = drinker.has_status_effect(/datum/status_effect/forgotten_by_the_world)
 	if(forgotten)
-		forgotten.add_energy(metabolization_rate)
+		forgotten.add_energy(metabolization_rate*2)
 	else
 		drinker.apply_status_effect(/datum/status_effect/forgotten_by_the_world, metabolization_rate)
 
@@ -62,6 +62,9 @@
 // STATUS EFFECT
 
 /datum/status_effect/forgotten_by_the_world
+	alert_type = /atom/movable/screen/alert/status_effect/forgotten_by_the_world
+	alert_shown_initially = FALSE
+
 	processing_speed = STATUS_EFFECT_NORMAL_PROCESS
 
 	var/remaining_energy
@@ -69,6 +72,12 @@
 
 	var/degrade_time_start
 	var/degrade_warned = FALSE
+
+	var/list/alert_description = list(
+		"You're an observer of your own life, but there's nothing to observe anymore.",
+		"ENERGY TEXT HERE",
+		"DEGRADATION STATUS HERE",
+	)
 
 	var/static/list/fading_messages = list(
 		"What was your name again?",
@@ -102,19 +111,34 @@
 	. = ..()
 	owner.vis_contents -= blackener
 	if(activated)
+		owner.set_invis_see(initial(owner.see_invisible))
+		qdel(owner.GetComponent(/datum/component/fragile_invisibility))
+
 		owner.remove_filter(blackener_id)
 		owner.remove_filter(wavering_id)
+		owner.remove_filter("[wavering_id]2")
 		owner.remove_filter(gaussian_id)
 
 /datum/status_effect/forgotten_by_the_world/tick(seconds_between_ticks)
-	if(world.time > degrade_time_start)
-		if(!degrade_warned)
-			if(activated)
-				to_chat(owner, span_warning("You cannot hide from reality forever."))
-			else
-				to_chat(owner, span_notice("Ugh... what did you drink last night?"))
-			degrade_warned = TRUE
-		use_energy(1)
+	switch(degrade_time_start - world.time)
+		if(-INFINITY to 0)
+			if(!degrade_warned)
+				if(activated)
+					to_chat(owner, span_warning("You cannot hide from reality forever."))
+				else
+					to_chat(owner, span_notice("Ugh... what did you drink last night?"))
+				degrade_warned = TRUE
+			linked_alert.icon_state = "eye-open"
+			alert_description[3] = "You cannot hide from the world forever."
+			use_energy(0.1 * seconds_between_ticks)
+		if(0 to 1 MINUTES)
+			linked_alert.icon_state = "eye-half"
+			alert_description[3] = "The world is aware it has forgotten, you will soon be found."
+		if(1 MINUTES to INFINITY)
+			linked_alert.icon_state = "eye-closed"
+			alert_description[3] = "What happens to an entity whose existence is only real to itself?"
+
+	update_alert_description()
 
 	if(!activated && SPT_PROB(remaining_energy * 2, seconds_between_ticks))
 		to_chat(owner, span_notice(pick(fading_messages)))
@@ -124,12 +148,21 @@
 
 /datum/status_effect/forgotten_by_the_world/proc/use_energy(amount)
 	remaining_energy -= amount
+	update_energy_display()
+
+	// Shake animation
+	animate(linked_alert, time=0.25 SECONDS, pixel_x=-5)
+	animate(time=0.5 SECONDS, pixel_x=5)
+	animate(time=0.25 SECONDS, pixel_x=0)
+
 	if(remaining_energy <= 0)
 		qdel(src)
 		return
 
 /datum/status_effect/forgotten_by_the_world/proc/add_energy(amount)
 	remaining_energy += amount
+	update_energy_display()
+
 	degrade_time_start = max(world.time, degrade_time_start) + (amount * 10 SECONDS)
 	if(!activated && remaining_energy >= 10)
 		and_now_we_begin()
@@ -142,43 +175,53 @@
 	set waitfor = FALSE
 
 	activated = TRUE
+	show_alert()
 
 	forget_your_name()
 	addtimer(CALLBACK(src, PROC_REF(forget_your_skin)), 1 SECONDS)
 
 /datum/status_effect/forgotten_by_the_world/proc/forget_your_name()
-	to_chat(owner, span_warning("Something is horribly wrong. What was your name again?"))
-	sleep(5 SECONDS)
-	if(owner.get_idcard(TRUE))
-		to_chat(owner, span_warning("You have your id on you, let's see..."))
-	else
-		to_chat(owner, span_warning("If only you had your id on you..."))
-	sleep(5 SECONDS)
-	to_chat(owner, span_warning("That's right, your name was [censor_block(owner.name)]!"))
-	sleep(1 SECONDS)
-	to_chat(owner, span_warning("Wait, that can't be right..."))
 
 /datum/status_effect/forgotten_by_the_world/proc/forget_your_skin()
 	owner.add_filter(blackener_id, 1, layering_filter(render_source=blackener.render_target, blend_mode=BLEND_INSET_OVERLAY))
 	blackener.alpha = 0
 	animate(blackener, time=10, alpha=240)
 
-	owner.add_filter(wavering_id, 1, wave_filter(x=10, y=0, size=5, offset=0))
+	owner.add_filter(wavering_id, 1, wave_filter(x=5, y=0, size=5, offset=0))
 	var/wave_filter = owner.get_filter(wavering_id)
 	animate(wave_filter, time=0, loop=-1, flags=ANIMATION_PARALLEL, offset=0)
 	animate(offset=-1, time=3 SECONDS)
 
+	owner.add_filter("[wavering_id]2", 1, wave_filter(x=5, y=0, size=5, offset=0))
+	wave_filter = owner.get_filter("[wavering_id]2")
+	animate(wave_filter, time=0, loop=-1, flags=ANIMATION_PARALLEL, offset=0)
+	animate(offset=1, time=3 SECONDS)
+
 	owner.add_filter(gaussian_id, 1, gauss_blur_filter(size=0.5))
 
-	sleep(10 SECONDS)
+	owner.set_invis_see(INVISIBILITY_REVENANT)
+	owner.AddComponent(/datum/component/fragile_invisibility, invisibility_level=INVISIBILITY_REVENANT, onVisible=CALLBACK(src, PROC_REF(on_invis_broken)))
 
-	owner.AddComponent(/datum/component/fragile_invisibility, onVisible=CALLBACK(src, PROC_REF(on_invis_broken)))
+/datum/status_effect/forgotten_by_the_world/proc/update_energy_display()
+	alert_description[2] = "<b>Remaining Energy: <font color=purple>[remaining_energy]</font></b>"
+	update_alert_description()
+
+/datum/status_effect/forgotten_by_the_world/proc/update_alert_description()
+	linked_alert.desc = alert_description.Join("<br><br>")
 
 //---------------
 // STUFF
 
 /datum/status_effect/forgotten_by_the_world/proc/on_invis_broken()
 	use_energy(0.5)
+
+//-----------------
+// ALERT TYPE
+
+/atom/movable/screen/alert/status_effect/forgotten_by_the_world
+	name = "Forgotten by the World"
+	icon = 'icons/effects/leathy.dmi'
+	icon_state = "eye-closed"
 
 //----------------
 // EFFECTS OBJECTS

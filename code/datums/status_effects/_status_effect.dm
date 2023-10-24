@@ -21,6 +21,8 @@
 	/// The typepath to the alert thrown by the status effect when created.
 	/// Status effect "name"s and "description"s are shown to the owner here.
 	var/alert_type = /atom/movable/screen/alert/status_effect
+	/// If there is an alert but it shouldn't be shown at the start, set this to FALSE. Call show_alert() to start displaying it.
+	var/alert_shown_initially = TRUE
 	/// The alert itself, created in [proc/on_creation] (if alert_type is specified).
 	var/atom/movable/screen/alert/status_effect/linked_alert
 	/// Used to define if the status effect should be using SSfastprocess or SSprocessing
@@ -34,6 +36,23 @@
 
 /datum/status_effect/New(list/arguments)
 	on_creation(arglist(arguments))
+
+/datum/status_effect/Destroy()
+	switch(processing_speed)
+		if(STATUS_EFFECT_FAST_PROCESS)
+			STOP_PROCESSING(SSfastprocess, src)
+		if(STATUS_EFFECT_NORMAL_PROCESS)
+			STOP_PROCESSING(SSprocessing, src)
+	if(owner)
+		linked_alert = null
+		owner.clear_alert(id)
+		LAZYREMOVE(owner.status_effects, src)
+		on_remove()
+		UnregisterSignal(owner, COMSIG_LIVING_POST_FULLY_HEAL)
+		owner = null
+	if(particle_effect)
+		QDEL_NULL(particle_effect)
+	return ..()
 
 /// Called from New() with any supplied status effect arguments.
 /// Not guaranteed to exist by the end.
@@ -53,10 +72,8 @@
 	if(tick_interval != -1)
 		tick_interval = world.time + tick_interval
 
-	if(alert_type)
-		var/atom/movable/screen/alert/status_effect/new_alert = owner.throw_alert(id, alert_type)
-		new_alert.attached_effect = src //so the alert can reference us, if it needs to
-		linked_alert = new_alert //so we can reference the alert, if we need to
+	if(alert_type && alert_shown_initially)
+		show_alert()
 
 	if(duration > world.time || tick_interval > world.time) //don't process if we don't care
 		switch(processing_speed)
@@ -69,22 +86,13 @@
 
 	return TRUE
 
-/datum/status_effect/Destroy()
-	switch(processing_speed)
-		if(STATUS_EFFECT_FAST_PROCESS)
-			STOP_PROCESSING(SSfastprocess, src)
-		if(STATUS_EFFECT_NORMAL_PROCESS)
-			STOP_PROCESSING(SSprocessing, src)
-	if(owner)
-		linked_alert = null
-		owner.clear_alert(id)
-		LAZYREMOVE(owner.status_effects, src)
-		on_remove()
-		UnregisterSignal(owner, COMSIG_LIVING_POST_FULLY_HEAL)
-		owner = null
-	if(particle_effect)
-		QDEL_NULL(particle_effect)
-	return ..()
+/// If the status effect's alert is not displayed yet you can call this to display it to the user
+/datum/status_effect/proc/show_alert()
+	if(linked_alert)
+		return
+	var/atom/movable/screen/alert/status_effect/new_alert = owner.throw_alert(id, alert_type)
+	new_alert.attached_effect = src //so the alert can reference us, if it needs to
+	linked_alert = new_alert //so we can reference the alert, if we need to
 
 // Status effect process. Handles adjusting its duration and ticks.
 // If you're adding processed effects, put them in [proc/tick]
@@ -205,4 +213,3 @@
 /atom/movable/screen/alert/status_effect/Destroy()
 	attached_effect = null //Don't keep a ref now
 	return ..()
-
